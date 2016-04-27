@@ -43,5 +43,7 @@ multidensity(as.list(as.data.frame(logCPM)), xlab = "log2 CPM", legend = NULL, m
 plotSmear(dge, lowess = TRUE)
 abline(h = 0, col = "blue", lwd = 2)
 
+dgenorm <- calcNormFactors(dge)
+
 plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
 legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
