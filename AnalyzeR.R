@@ -1,4 +1,4 @@
-
+# david path setwd("/Users/davidmasp/GD_UPF-bioinformatica/IEO/IEO_PRAC_analysis/data/")
 
 ### Loading packages:
 library("SummarizedExperiment")
@@ -8,12 +8,19 @@ library("ggplot2")
 
 ### Reading data
 
-lclse <- readRDS("data/sePRAD.rds")
-lclse
+pracse <- readRDS("sePRAD.rds")
+pracse
+
+#check if it is the new data
+metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
+
+mcols(colData(pracse), use.names=TRUE)
+
 
 ### elements of the data
-feature.info <- mcols(lclse)
-sample.info <- colData(lclse)
+
+feature.info <- mcols(pracse)
+sample.info <- colData(pracse)
 dim(sample.info)
 colnames(sample.info) # get the sample info fields
 sample.info.df <- as.data.frame(sample.info)
@@ -24,7 +31,7 @@ qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
 
 ### NORMALITZATION PIPELINE
 
-dge <- DGEList(counts = assays(lclse)$counts, genes = mcols(lclse), group = lclse$type)
+dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
 names(dge)
 
 head(dge$samples)
