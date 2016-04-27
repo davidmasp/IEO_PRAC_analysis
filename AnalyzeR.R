@@ -2,7 +2,7 @@
 
 ### Loading packages:
 library("SummarizedExperiment")
-library("edgeR", lib.loc="/Library/Frameworks/R.framework/Versions/3.2/Resources/library")
+library("edgeR")
 library("geneplotter")
 library("ggplot2")
 
