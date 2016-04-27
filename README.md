@@ -23,6 +23,14 @@ Complete Name: Prostate Adenocarcinoma
 
 source: [Cancer Genome - NIH](http://cancergenome.nih.gov/cancersselected/prostatecancer)
 
+## TCGA Cell article highlights
+
+1. Analysis of 333 primary prostate carcinomas.
+
+2. 74% of all tumors being assignable to one of seven molecular classes based on distinct oncogenic drivers: fusions involving (1) ERG, (2) ETV1, (3) ETV4, or (4) FLI1 (46%, 8%, 4%, and 1%, respectively); mutations in (5) SPOP or (6) FOXA1; or (7) IDH1 mutations (11%, 3%, and 1%, respectively.
+
+3. 25% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19%.
+
 ##Tips & Tricks
 Open R with terminal instead of Rstudio (Ubuntu users). It shuts down your other applications, a side from Rstudio itself.
 
