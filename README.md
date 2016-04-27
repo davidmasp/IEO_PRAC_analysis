@@ -22,3 +22,7 @@ reproductive system.  Nearly all prostate cancer is prostate adenocarcinoma.
 Complete Name: Prostate Adenocarcinoma
 
 source: [Cancer Genome - NIH](http://cancergenome.nih.gov/cancersselected/prostatecancer)
+
+##Tips & Tricks
+Open R with terminal instead of Rstudio (Ubuntu users). It shuts down your other applications, a side from Rstudio itself.
+
