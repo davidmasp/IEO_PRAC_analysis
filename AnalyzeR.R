@@ -1,17 +1,26 @@
-# david path setwd("/Users/davidmasp/GD_UPF-bioinformatica/IEO/IEO_PRAC_analysis/data/")
+# david path setwd("/Users/davidmasp/GD_UPF-bioinformatica/IEO/IEO_PRAC_analysis/")
 
-### Loading packages:
+# PRAC Analysis
+
+#### Authors: 
+#### ADRIA AULADELL
+#### JOAN MARTI
+#### DAVID MAS
+
+
+## LOADING PACKAGES
+
 library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
 library("ggplot2")
 
-### Reading data
+## READING DATA
 
 pracse <- readRDS("data/sePRAD.rds")
 pracse
 
-#check if it is the new data
+# check if it is the new data
 metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
 
 mcols(colData(pracse), use.names=TRUE)
@@ -25,6 +34,7 @@ dim(sample.info)
 colnames(sample.info) # get the sample info fields
 sample.info.df <- as.data.frame(sample.info)
 
+sample.info
 ## Ploting some descriptives from samples
 
 qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
