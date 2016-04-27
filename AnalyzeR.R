@@ -8,7 +8,7 @@ library("ggplot2")
 
 ### Reading data
 
-pracse <- readRDS("sePRAD.rds")
+pracse <- readRDS("data/sePRAD.rds")
 pracse
 
 #check if it is the new data
