@@ -28,6 +28,8 @@ sample.info.df <- as.data.frame(sample.info)
 ## Ploting some descriptives from samples
 
 qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
+qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
+
 
 ### NORMALITZATION PIPELINE
 
