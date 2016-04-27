@@ -8,14 +8,14 @@
 #### DAVID MAS
 
 
-## LOADING PACKAGES
+## 0.1 LOADING PACKAGES
 
 library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
 library("ggplot2")
 
-## READING DATA
+## 0.2 READING DATA
 
 pracse <- readRDS("data/sePRAD.rds")
 pracse
@@ -30,16 +30,28 @@ mcols(colData(pracse), use.names=TRUE)
 
 feature.info <- mcols(pracse)
 sample.info <- colData(pracse)
-dim(sample.info)
-colnames(sample.info) # get the sample info fields
+sample.info.sum <- sapply(sample.info, summary)
+
+filter.NAS <- function(i){
+  if (sum(is.na(i)) / length(i) < 0.5) {
+    TRUE
+  } else {
+    FALSE
+  }
+}
+
+sample.info.mask <- sapply(colData(pracse), filter.NAS)
+
+
+# dim(sample.info)
+# colnames(sample.info) # get the sample info fields
+
 sample.info.df <- as.data.frame(sample.info)
 
-sample.info
 ## Ploting some descriptives from samples
 
 qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
 qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
-
 
 ### NORMALITZATION PIPELINE
 
