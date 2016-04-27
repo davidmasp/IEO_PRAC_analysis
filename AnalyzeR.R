@@ -31,17 +31,41 @@ mcols(colData(pracse), use.names=TRUE)
 feature.info <- mcols(pracse)
 sample.info <- colData(pracse)
 sample.info.sum <- sapply(sample.info, summary)
+head(sample.info)
+TSS <- substr(rownames(sample.info),6,7) # Tissue Sort Site
+center <- substr(rownames(sample.info),27,28)
+summary(as.data.frame(center))
+summary(as.data.frame(TSS))
 
-filter.NAS <- function(i){
-  if (sum(is.na(i)) / length(i) < 0.5) {
+# to filter for NA values (currently not working for NOT AVAILABLE)
+filter.NAS <- function(i) {
+  if (sum(is.na(i)) / length(i) < 0.20) {
     TRUE
   } else {
     FALSE
   }
 }
 
+# to show 
+colData(pracse)$project_code
+
+# to apply the filter.NAS function to the 
 sample.info.mask <- sapply(colData(pracse), filter.NAS)
 
+# to get a list of sample variants
+colnames(sample.info[sample.info.mask])
+
+# to show a summary of a sample variable
+summary(sample.info[,"tissue_source_site"])
+
+# to check the CDEID code for a sample variable
+mcols(colData(pracse), use.names=TRUE)["tissue_source_site",]
+
+
+### POSSIBLE BATCH EFFECT
+# prospective_collection
+# tissue_source_site
+summary(as.data.frame(sample.info[,"tissue_source_site"])) # as all of them are andenocarcinomas we can check TSS as the place of processing.
 
 # dim(sample.info)
 # colnames(sample.info) # get the sample info fields
@@ -57,7 +81,7 @@ qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
 
 dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
 names(dge)
-
+summary(pracse$type)
 head(dge$samples)
 
 logCPM <- cpm(dge, log = TRUE, prior.count = 3.25)
@@ -71,3 +95,79 @@ dgenorm <- calcNormFactors(dge)
 
 plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
 legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
+
+
+
+# Batch Effect Detection
+
+## Check BE in prospective collection
+
+pc <- pracse$prospective_collection
+
+table(data.frame(TYPE = pracse$type, PC = pc))
+
+d <- as.dist(1 - cor(logCPM, method = "spearman")) 
+sampleClustering <- hclust(d)
+
+batch <- as.integer(pracse$prospective_collection)
+sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
+names(batch) <- colnames(pracse)
+outcome <- as.character(pracse$type)
+names(outcome) <- colnames(pracse)
+sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+  ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
+  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  x
+}, batch, outcome)  ## these are the second and third arguments in the function
+
+plot(sampleDendrogram)
+legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+
+## Result Negative
+
+
+## Check for TSS
+
+pc <- TSS
+
+table(data.frame(TYPE = pracse$type, TSS = pc))
+
+d <- as.dist(1 - cor(logCPM, method = "spearman")) 
+sampleClustering <- hclust(d)
+
+ConvertNamesToColor <- function(x){
+  x <- as.factor(x)
+  levels(x) <- 1:length(levels(x))
+  x <- as.numeric(x)
+  return(x)
+}
+
+
+batch <- ConvertNamesToColor(TSS)
+
+sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
+names(batch) <- colnames(pracse)
+outcome <- as.character(pracse$type)
+names(outcome) <- colnames(pracse)
+sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+  ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
+  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  x
+}, batch, outcome)  ## these are the second and third arguments in the function
+
+plot(sampleDendrogram)
+legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+
+## NOT SURE -> go to sva
+
+
+library(sva)
+
+mod <- model.matrix(~ type + tissue_source_site, data = colData(pracse)) 
+head(mod)
+mod0 <- model.matrix(~tissue_source_site, data = colData(pracse))
+
+sv <- sva(logCPM, mod, mod0)
+sv
