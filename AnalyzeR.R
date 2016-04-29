@@ -163,7 +163,7 @@ legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch
 ## NOT SURE -> go to sva
 
 
-library(sva)
+library("sva")
 
 mod <- model.matrix(~ type + tissue_source_site, data = colData(pracse)) 
 head(mod)
@@ -171,3 +171,11 @@ mod0 <- model.matrix(~tissue_source_site, data = colData(pracse))
 
 sv <- sva(logCPM, mod, mod0)
 sv
+
+
+### Library Sizes
+
+ord <- order(dge$sample$lib.size/1e6)
+barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
