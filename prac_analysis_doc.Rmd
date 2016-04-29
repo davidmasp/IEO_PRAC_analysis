@@ -1,0 +1,58 @@
+---
+title: "Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma "
+author: "Joan Martí, David Mas, Adrià Auladell"
+date: "29 de abril de 2016"
+output: html_document
+---
+
+# Introduction
+
+[Prostate cancer](https://en.wikipedia.org/wiki/Prostate_cancer)
+is a disease of the prostate, a walnut-size gland in the male
+reproductive system.  Nearly all prostate cancer is prostate adenocarcinoma.
+ Prostate cancer is graded based on its Gleason score, which is how the cells
+ look under a microscope and ranges from two to ten. A low Gleason score means
+ that the cancer tissue is similar to normal cells and unlikely to spread. A
+ high Gleason score means that the cancer cells are very different from normal
+ cells and are likely to spread. For patients whose cancer has spread, their
+ survival time is usually one to three years. It was estimated that for 2011,
+ 240,890 men would be diagnosed and 33,720 would die from prostate cancer.
+
+The Cancer Genome Atlas already studied this dataset for a wide characterization of the prostate adenocarcinoma subtypes. TCGA established the following points:
+
+* 74% of all tumors being assignable to one of seven molecular classes based on distinct oncogenic drivers: 
+    - fusions involving (1) **ERG**, (2) **ETV1**, (3) **ETV4**, or (4) **FLI1** (46%, 8%, 4%, and 1%, respectively)
+    - mutations in (5) **SPOP** or (6) **FOXA1**; or (7) **IDH1**. (11%, 3%, and 1%, respectively).
+    
+* 25% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19%.
+
+You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025).
+
+## Data import
+First, we install the packages:
+
+```{r install, eval=FALSE}
+source("http://www.bioconductor.org/biocLite.R")
+library(BiocInstaller)
+biocLite(c("edgeR","SummarizedExperiment","geneplotter","sva"))
+install.packages(ggplot2)
+```
+
+After installing, we use them to generate the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) (in RDS format):
+
+
+```{r loading, message=FALSE}
+library("SummarizedExperiment")
+library("edgeR")
+library("geneplotter")
+library("ggplot2")
+```
+
+```{r load}
+pracse <- readRDS("data/sePRAD.rds")
+pracse
+
+```
+
+
+
