@@ -130,7 +130,7 @@ $(document).ready(function () {
 <p>You can find the full article <a href="http://dx.doi.org/10.1016/j.cell.2015.10.025">here</a>.</p>
 <div id="data-import" class="section level2">
 <h2>Data import</h2>
-<p>First, we install the packages:</p>
+<p>First, we install the packages using BiocInstaller:</p>
 <pre class="r"><code>source(&quot;http://www.bioconductor.org/biocLite.R&quot;)
 library(BiocInstaller)
 biocLite(c(&quot;edgeR&quot;,&quot;SummarizedExperiment&quot;,&quot;geneplotter&quot;,&quot;sva&quot;))
@@ -157,6 +157,7 @@ pracse</code></pre>
 <p>Then, we observe the distribution of the dataset.</p>
 <pre class="r"><code>dim(colData(pracse))</code></pre>
 <pre><code>## [1] 554 549</code></pre>
+<p>Our dataset presents 554 different samples, presenting 549 clinical variables</p>
 <pre class="r"><code>colData(pracse)[1:5, 1:5]</code></pre>
 <pre><code>## DataFrame with 5 rows and 5 columns
 ##                                  type                     bcr_patient_uuid
@@ -208,7 +209,7 @@ pracse</code></pre>
 ## lymph_nodes_aortic_pos_by_he          3151832
 ## lymph_nodes_aortic_pos_by_ihc         3151831
 ## lymph_nodes_aortic_pos_total          3151827</code></pre>
-<p>We observe 549 studied clinical variables. By seeing the values, we observe that most of them have NA values. Some of the variables are related directly with prostate cancer, like the gleason score, the official measurement of the development of the adenocarcinoma.</p>
+<p>By observing the clinical attributes of the samples, from the 549 present some of them have information collected and others present NA values. Our interest is present in the variables with some value present.There are variables related directly with prostate cancer, like the gleason score, the measurement of the development of the adenocarcinoma.</p>
 <p>By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the <a href="https://www.nlm.nih.gov/cde/glossary.html#cdedefinition">CDEID</a>code to obtain more information.</p>
 <pre class="r"><code>table(pracse$type)</code></pre>
 <pre><code>## 
@@ -246,6 +247,40 @@ pracse</code></pre>
 ##   103091865 0.5924125
 ##   -------
 ##   seqinfo: 455 sequences (1 circular) from hg38 genome</code></pre>
+<p>For each gene we have present the chromosome, the range of position, the strand, his symbol (here in the dataset each gene is represented only by a number), the length of the transcript and the GC content.</p>
+<p>Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a ‘DGEList Object’. Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.</p>
+<pre class="r"><code>dge &lt;- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)</code></pre>
+<pre><code>## Warning in as.data.frame.DataFrame(genes, stringsAsFactors = FALSE):
+## Arguments in '...' ignored</code></pre>
+<pre class="r"><code>head(dge$samples)</code></pre>
+<pre><code>##                              group lib.size norm.factors
+## TCGA.2A.A8VL.01A.21R.A37L.07 tumor 36714836            1
+## TCGA.2A.A8VO.01A.11R.A37L.07 tumor 26883656            1
+## TCGA.2A.A8VT.01A.11R.A37L.07 tumor 42636097            1
+## TCGA.2A.A8VV.01A.11R.A37L.07 tumor 39132257            1
+## TCGA.2A.A8VX.01A.11R.A37L.07 tumor 36293081            1
+## TCGA.2A.A8W1.01A.11R.A37L.07 tumor 36955738            1</code></pre>
+<p>Finally, from each CPM value we calculate the <span class="math inline">\(\log_2\)</span> measure and we include it in our dataset in order to use it in the following comparisons/normalizations.</p>
+<pre class="r"><code>assays(pracse)$logCPM &lt;- cpm(dge, log=TRUE, prior.count=3.5)
+assays(pracse)$logCPM[1:5, 1:5]</code></pre>
+<pre><code>##    TCGA.2A.A8VL.01A.21R.A37L.07 TCGA.2A.A8VO.01A.11R.A37L.07
+## 1                      2.030317                   0.01585209
+## 2                      8.111182                  10.23848110
+## 9                     -3.623878                  -3.62387802
+## 10                    -3.623878                  -3.62387802
+## 12                     5.322306                   5.50185474
+##    TCGA.2A.A8VT.01A.11R.A37L.07 TCGA.2A.A8VV.01A.11R.A37L.07
+## 1                     0.3793317                   -0.1133961
+## 2                     8.3965136                    8.9351599
+## 9                    -3.6238780                   -3.6238780
+## 10                   -3.6238780                   -3.6238780
+## 12                    5.7006877                    5.6144791
+##    TCGA.2A.A8VX.01A.11R.A37L.07
+## 1                      1.065240
+## 2                      8.936584
+## 9                     -3.623878
+## 10                    -3.623878
+## 12                     5.682520</code></pre>
 </div>
 </div>
 
