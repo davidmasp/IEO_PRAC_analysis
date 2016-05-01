@@ -135,7 +135,7 @@ $(document).ready(function () {
 library(BiocInstaller)
 biocLite(c(&quot;edgeR&quot;,&quot;SummarizedExperiment&quot;,&quot;geneplotter&quot;,&quot;sva&quot;))
 install.packages(ggplot2)</code></pre>
-<p>After installing, we use them to generate the <a href="http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds">dataset</a> (in RDS format):</p>
+<p>After installing, we use them to import the <a href="http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds">dataset</a> (in RDS format):</p>
 <pre class="r"><code>library(&quot;SummarizedExperiment&quot;)
 library(&quot;edgeR&quot;)
 library(&quot;geneplotter&quot;)
@@ -154,6 +154,98 @@ pracse</code></pre>
 ##   TCGA.J4.A83J.11A.11R.A36G.07
 ## colData names(549): type bcr_patient_uuid ...
 ##   lymph_nodes_aortic_pos_by_ihc lymph_nodes_aortic_pos_total</code></pre>
+<p>Then, we observe the distribution of the dataset.</p>
+<pre class="r"><code>dim(colData(pracse))</code></pre>
+<pre><code>## [1] 554 549</code></pre>
+<pre class="r"><code>colData(pracse)[1:5, 1:5]</code></pre>
+<pre><code>## DataFrame with 5 rows and 5 columns
+##                                  type                     bcr_patient_uuid
+##                              &lt;factor&gt;                             &lt;factor&gt;
+## TCGA.2A.A8VL.01A.21R.A37L.07    tumor 49197847-CC83-4CE1-8397-D09CEA4C4928
+## TCGA.2A.A8VO.01A.11R.A37L.07    tumor 91C0D161-2B59-4B7A-8C19-6D26DEA31849
+## TCGA.2A.A8VT.01A.11R.A37L.07    tumor 931B549F-B9F2-4E8D-83ED-FF663671883C
+## TCGA.2A.A8VV.01A.11R.A37L.07    tumor 75A7AFB5-66D5-47E3-8A8A-3E3A1E749A96
+## TCGA.2A.A8VX.01A.11R.A37L.07    tumor 942F1788-D977-4AC0-A177-659F9D4CD077
+##                              bcr_patient_barcode form_completion_date
+##                                         &lt;factor&gt;             &lt;factor&gt;
+## TCGA.2A.A8VL.01A.21R.A37L.07        TCGA-2A-A8VL            2014-3-29
+## TCGA.2A.A8VO.01A.11R.A37L.07        TCGA-2A-A8VO            2014-3-30
+## TCGA.2A.A8VT.01A.11R.A37L.07        TCGA-2A-A8VT            2014-3-29
+## TCGA.2A.A8VV.01A.11R.A37L.07        TCGA-2A-A8VV            2014-3-29
+## TCGA.2A.A8VX.01A.11R.A37L.07        TCGA-2A-A8VX            2014-3-29
+##                              prospective_collection
+##                                            &lt;factor&gt;
+## TCGA.2A.A8VL.01A.21R.A37L.07                     NO
+## TCGA.2A.A8VO.01A.11R.A37L.07                     NO
+## TCGA.2A.A8VT.01A.11R.A37L.07                     NO
+## TCGA.2A.A8VV.01A.11R.A37L.07                     NO
+## TCGA.2A.A8VX.01A.11R.A37L.07                     NO</code></pre>
+<pre class="r"><code>mcols(colData(pracse), use.names=TRUE)</code></pre>
+<pre><code>## DataFrame with 549 rows and 2 columns
+##                                                          labelDescription
+##                                                               &lt;character&gt;
+## type                                           sample type (tumor/normal)
+## bcr_patient_uuid                                         bcr patient uuid
+## bcr_patient_barcode                                   bcr patient barcode
+## form_completion_date                                 form completion date
+## prospective_collection            tissue prospective collection indicator
+## ...                                                                   ...
+## lymph_nodes_pelvic_pos_total                               total pelv lnp
+## lymph_nodes_aortic_examined_count                           total aor lnr
+## lymph_nodes_aortic_pos_by_he                          aln pos light micro
+## lymph_nodes_aortic_pos_by_ihc                                 aln pos ihc
+## lymph_nodes_aortic_pos_total                                total aor-lnp
+##                                         CDEID
+##                                   &lt;character&gt;
+## type                                       NA
+## bcr_patient_uuid                           NA
+## bcr_patient_barcode                   2673794
+## form_completion_date                       NA
+## prospective_collection                3088492
+## ...                                       ...
+## lymph_nodes_pelvic_pos_total          3151828
+## lymph_nodes_aortic_examined_count     3104460
+## lymph_nodes_aortic_pos_by_he          3151832
+## lymph_nodes_aortic_pos_by_ihc         3151831
+## lymph_nodes_aortic_pos_total          3151827</code></pre>
+<p>We observe 549 studied clinical variables. By seeing the values, we observe that most of them have NA values. Some of the variables are related directly with prostate cancer, like the gleason score, the official measurement of the development of the adenocarcinoma.</p>
+<p>By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the <a href="https://www.nlm.nih.gov/cde/glossary.html#cdedefinition">CDEID</a>code to obtain more information.</p>
+<pre class="r"><code>table(pracse$type)</code></pre>
+<pre><code>## 
+## normal  tumor 
+##     52    502</code></pre>
+<p>The dataset presents 554 samples, with 52 obtained for healthy individuals and 502 from patients presenting a tumor.</p>
+<p>By looking at the row data, in this case genes of the sample, we observe the following:</p>
+<pre class="r"><code>rowRanges(pracse)</code></pre>
+<pre><code>## GRanges object with 20115 ranges and 3 metadata columns:
+##             seqnames               ranges strand   |      symbol     txlen
+##                &lt;Rle&gt;            &lt;IRanges&gt;  &lt;Rle&gt;   | &lt;character&gt; &lt;integer&gt;
+##           1    chr19 [58345178, 58362751]      -   |        A1BG      3322
+##           2    chr12 [ 9067664,  9116229]      -   |         A2M      4844
+##           9     chr8 [18170477, 18223689]      +   |        NAT1      2280
+##          10     chr8 [18391245, 18401218]      +   |        NAT2      1322
+##          12    chr14 [94592058, 94624646]      +   |    SERPINA3      3067
+##         ...      ...                  ...    ... ...         ...       ...
+##   100996331    chr15 [20835372, 21877298]      -   |       POTEB      1706
+##   101340251    chr17 [40027542, 40027645]      -   |    SNORD124       104
+##   101340252     chr9 [33934296, 33934376]      -   |   SNORD121B        81
+##   102724473     chrX [49303669, 49319844]      +   |      GAGE10       538
+##   103091865    chr21 [39313935, 39314962]      +   |   BRWD1-IT2      1028
+##                  txgc
+##             &lt;numeric&gt;
+##           1 0.5644190
+##           2 0.4882329
+##           9 0.3942982
+##          10 0.3895613
+##          12 0.5249429
+##         ...       ...
+##   100996331 0.4308324
+##   101340251 0.4903846
+##   101340252 0.4074074
+##   102724473 0.5055762
+##   103091865 0.5924125
+##   -------
+##   seqinfo: 455 sequences (1 circular) from hg38 genome</code></pre>
 </div>
 </div>
 

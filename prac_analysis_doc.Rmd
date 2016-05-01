@@ -38,7 +38,7 @@ biocLite(c("edgeR","SummarizedExperiment","geneplotter","sva"))
 install.packages(ggplot2)
 ```
 
-After installing, we use them to generate the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) (in RDS format):
+After installing, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) (in RDS format):
 
 
 ```{r loading, message=FALSE}
@@ -54,5 +54,27 @@ pracse
 
 ```
 
+Then, we observe the distribution of the dataset.
+```{r data}
+dim(colData(pracse))
+colData(pracse)[1:5, 1:5]
+mcols(colData(pracse), use.names=TRUE)
+```
+We observe 549 studied clinical variables. By seeing the values, we observe that most of them have NA values. Some of the variables are related directly with prostate cancer, like the gleason score, the official measurement of the development of the adenocarcinoma. 
 
+By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition )code to obtain more information. 
 
+```{r table types}
+table(pracse$type)
+
+```
+
+The dataset presents 554 samples, with 52 obtained for healthy individuals and 502 from patients presenting a tumor. 
+
+By looking at the row data, in this case genes of the sample, we observe the following:
+
+```{r}
+rowRanges(pracse)
+```
+
+For each gene we have present the chromosome, the range of position, the strand, his symbol (here in the dataset each gene is represented only by a number), the length of the transcript and the GC content. 
