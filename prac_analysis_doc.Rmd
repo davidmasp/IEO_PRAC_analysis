@@ -100,7 +100,14 @@ pracse.filt.dupl
 table(colData(pracse.filt.dupl)$type)
 
 # Subset the non-paired 
-
+pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode 
+                             %in% n_occur$Var1[n_occur$Freq == 1] & 
+                                !is.na(colData(pracse)$bcr_patient_barcode) |
+                                (colData(pracse)$bcr_patient_barcode %in% 
+                                n_occur$Var1[n_occur$Freq > 1] & 
+                                colData(pracse)$type == "normal" & 
+                                !is.na(colData(pracse)$bcr_patient_barcode))]
+table(colData(pracse.filt.unique)$type)
 ```
 
 ## Normalizing
