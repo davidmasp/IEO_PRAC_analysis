@@ -100,7 +100,14 @@ pracse.filt.dupl
 table(colData(pracse.filt.dupl)$type)
 
 # Subset the non-paired 
-
+pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode 
+                             %in% n_occur$Var1[n_occur$Freq == 1] & 
+                                !is.na(colData(pracse)$bcr_patient_barcode) |
+                                (colData(pracse)$bcr_patient_barcode %in% 
+                                n_occur$Var1[n_occur$Freq > 1] & 
+                                colData(pracse)$type == "normal" & 
+                                !is.na(colData(pracse)$bcr_patient_barcode))]
+table(colData(pracse.filt.unique)$type)
 ```
 
 ## Normalizing
@@ -121,3 +128,17 @@ assays(pracse)$logCPM[1:5, 1:5]
 ```
 
 #### Filtering by library size
+Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples.
+
+```{r lib_size}
+
+dge.filtred <- dge[,(dge$sampl$es$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+
+ord <- order(dge.filtred$samples$lib.size/1e6)
+
+barplot((dge.filtred$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+```
+We obtain the following dataset: normal 25 out of 52, tumor 112 out of 502.

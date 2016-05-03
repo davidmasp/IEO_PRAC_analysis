@@ -313,9 +313,9 @@ n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
 
 pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
 
-pracse.filt.unique <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode) | (colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & colData(pracse)$type == "normal" & !is.na(colData(pracse)$bcr_patient_barcode))]
 
-
+table(pracse.filt.unique$type)
 #########ADRIA_END
 
 
