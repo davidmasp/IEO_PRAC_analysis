@@ -103,6 +103,7 @@ table(colData(pracse.filt.dupl)$type)
 
 ```
 
+## Normalizing
 
 Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
 Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
@@ -119,4 +120,4 @@ assays(pracse)$logCPM <- cpm(dge, log=TRUE, prior.count=3.5)
 assays(pracse)$logCPM[1:5, 1:5]
 ```
 
-
+#### Filtering by library size
