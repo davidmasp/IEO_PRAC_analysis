@@ -263,9 +263,18 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 
 ##########JOAN_BEGIN
+	
+plot(density(dge$samples$lib.size/1e6))
 
+dge.filtred <- dge[,(dge$samples$lib.size/1e6) > 50 ]
+
+ord <- order(dge.filtred$samples$lib.size/1e6)
+barplot(dge.filtred$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+# normal 25 of 52, tumor 112 of 502
+	
 ##########JOAN_END
-
 
 ##########ADRIA_BEGIN
 
