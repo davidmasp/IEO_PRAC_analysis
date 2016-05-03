@@ -191,6 +191,37 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ##########ADRIA_BEGIN
 
+pracse[, !duplicated(colData(pracse)$bcr_patient_barcode) & duplicated(colData(pracse)$type == 'normal')]
+unique <- unique(colData(pracse)$bcr_patient_barcode)
+tumor_unique <- pracse[ , colnames(pracse) %in%  unique]
+# tumor_unique <- unique(pracse[,(colData(pracse)$type == 'tumor')])
+normal
+normal_dupl <- pracse[, colData(pracse)$type == 'normal']
+normal_dupl
+normal_dupl[,!duplicated(colData(normal_dupl)$bcr_patient_barcode)]
+
+
+# Non duplicated values 
+
+pracse.unique <- pracse[,!duplicated(colData(pracse)$bcr_patient_barcode) ] 
+
+table(colData(pracse.unique)$type)
+
+dup.list <- colData(pracse)$bcr_patient_barcode[duplicated(colData(pracse)$bcr_patient_barcode)]
+length(dup.list)
+pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% dup.list & !is.na(colData(pracse)$bcr_patient_barcode)]
+duplicated(colData(pracse.filt.dupl)$bcr_patient_barcode)
+
+table(pracse.filt.dupl$type)
+# IMPLEMENTACIÓ TAUL
+
+n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
+
+pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+
+pracse.filt.unique <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+
+
 #########ADRIA_END
 
 
