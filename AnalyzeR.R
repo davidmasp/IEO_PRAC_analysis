@@ -283,5 +283,24 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 #########DAVID_BEGIN
 
+
+dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
+head(dge$samples)
+
+assays(pracse)$logCPM <- cpm(dge, log=TRUE, prior.count=3.5)
+assays(pracse)$logCPM[1:5, 1:5]
+
+n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
+
+pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+
+pracse.filt.unique <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+
+dge
+assays(pracse.filt.unique)$logCPM[1:5, 1:5]
+
+
+
+dge.filtred <- assays(pracse)$logCPM[,(dge$samples$lib.size/1e6) > 50 ]
 #########DAVID_END
 
