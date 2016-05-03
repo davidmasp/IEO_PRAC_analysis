@@ -29,7 +29,7 @@ The Cancer Genome Atlas already studied this dataset for a wide characterization
 You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025).
 
 ## Data import
-First, we install the packages:
+First, we install the packages using BiocInstaller:
 
 ```{r install, eval=FALSE}
 source("http://www.bioconductor.org/biocLite.R")
@@ -38,7 +38,7 @@ biocLite(c("edgeR","SummarizedExperiment","geneplotter","sva"))
 install.packages(ggplot2)
 ```
 
-After installing, we use them to generate the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) (in RDS format):
+After installing, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) (in RDS format):
 
 
 ```{r loading, message=FALSE}
@@ -54,5 +54,47 @@ pracse
 
 ```
 
+Then, we observe the distribution of the dataset.
+```{r dim}
+dim(colData(pracse))
+```
 
+Our dataset presents 554 different samples, presenting 549 clinical variables.
+```{r data}
+colData(pracse)[1:5, 1:5]
+mcols(colData(pracse), use.names=TRUE)
+```
+By observing the clinical attributes of the samples, from the 549 present some of them have information collected and others present NA values. Our interest is present in the variables with some value present.There are variables related directly with prostate cancer, like the gleason score, the measurement of the development of the adenocarcinoma. 
+
+By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition )code to obtain more information. 
+
+```{r table types}
+table(pracse$type)
+
+```
+
+The dataset presents 554 samples, with 52 obtained for healthy individuals and 502 from patients presenting a tumor. 
+
+By looking at the row data, in this case genes of the sample, we observe the following:
+
+```{r}
+rowRanges(pracse)
+```
+
+For each gene we have present the chromosome, the range of position, the strand, his symbol (here in the dataset each gene is represented only by a number), the length of the transcript and the GC content. 
+
+Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
+Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
+
+```{r dge}
+dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
+head(dge$samples)
+```
+
+Finally, from each CPM value we calculate the $\log_2$ measure and we include it in our dataset in order to use it in the following comparisons/normalizations. 
+
+```{r log2}
+assays(pracse)$logCPM <- cpm(dge, log=TRUE, prior.count=3.5)
+assays(pracse)$logCPM[1:5, 1:5]
+```
 

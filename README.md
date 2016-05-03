@@ -60,3 +60,26 @@ Get the article from [here](http://cancergenome.nih.gov/publications):
 - [ ] Carry out quality assessment and normalization of the data.
 - [ ] Search for differentially expressed (DE) genes using the simple F-test implemented in the package SVA to do a two-group comparison. For this first part of the project *do not attempt* to interpret the list of DE genes, just report how many of them do you find and how the distribution of p-values looks like. Consider estimating surrogate variables with SVA to see whether the number of expression changes increases or decreases. Bear in mind that the actual DE analysis you will do in the second part will be more sophisticated since you will have to take into account aspects such as variance heterogeneity of log CPM values or the fact that normal samples were derived from the same pool of individuals as a fraction of the tumor samples. For this first part of the project, there is no need to address these issues.
 - [ ] The project template that is provided is not comprehensive and it just tries to help you in quickly learning how to work with R Markdown files, so you should try to make your supplementary material more readable and complete than the template provided.
+
+## HOMEWORK
+
+-  [x] INTRO
+	-  [x] Data
+	-  [x] Lib
+- [ ] QA AND NORM
+	- [ ] 1st normalization							--------
+	- [ ] Library size 										*
+		- [ ] Randomly										*
+		- [ ] Rational (p.e. quality)						*	Actualise the report
+	- [ ] Distribution of expression by samples				*
+	- [ ] Distribution of expression by genes		--------
+	- [ ] Filter genes
+	- [ ] 2nd normalization
+	- [ ] MA plots
+- [ ] BATCH EFFECT
+	- [ ] Hierachical clsutering
+		- [ ] By PC
+		- [ ] By TSS
+	- [ ] MDS
+- [ ] Differential gene expression
+	- [ ] SVA
