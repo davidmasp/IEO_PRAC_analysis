@@ -171,3 +171,22 @@ mod0 <- model.matrix(~tissue_source_site, data = colData(pracse))
 
 sv <- sva(logCPM, mod, mod0)
 sv
+
+
+
+
+
+
+##########JOAN_BEGIN
+
+##########JOAN_END
+
+
+##########ADRIA_BEGIN
+
+#########ADRIA_END
+
+
+#########DAVID_BEGIN
+
+#########DAVID_END
