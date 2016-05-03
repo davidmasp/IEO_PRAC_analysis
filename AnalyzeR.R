@@ -173,9 +173,29 @@ sv <- sva(logCPM, mod, mod0)
 sv
 
 
+<<<<<<< HEAD
 ### Library Sizes
 
 ord <- order(dge$sample$lib.size/1e6)
 barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+=======
+
+
+
+
+##########JOAN_BEGIN
+
+##########JOAN_END
+
+
+##########ADRIA_BEGIN
+
+#########ADRIA_END
+
+
+#########DAVID_BEGIN
+
+#########DAVID_END
+>>>>>>> 5c83fb5b057b8a11943ca4d3a57b2b66c1788314
