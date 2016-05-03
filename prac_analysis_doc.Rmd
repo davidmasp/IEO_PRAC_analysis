@@ -98,3 +98,22 @@ assays(pracse)$logCPM <- cpm(dge, log=TRUE, prior.count=3.5)
 assays(pracse)$logCPM[1:5, 1:5]
 ```
 
+
+## Subsetting the Data
+
+In order to reduce the sample size and to reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action and later on we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
+
+```{r subset, collapse=TRUE}
+# Subset the paired samples
+n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
+
+pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode
+                 %in% n_occur$Var1[n_occur$Freq > 1] & 
+                 !is.na(colData(pracse)$bcr_patient_barcode)]
+
+pracse.filt.dupl
+table(colData(pracse.filt.dupl)$type)
+
+# Subset the non-paired 
+
+```

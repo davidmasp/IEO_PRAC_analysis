@@ -25,6 +25,10 @@ metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
 
 mcols(colData(pracse), use.names=TRUE)
 
+### bcr_patient_barcode
+
+
+
 
 ### elements of the data
 
@@ -82,7 +86,13 @@ qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
 dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
 names(dge)
 summary(pracse$type)
-head(dge$samples)
+head(dge$samples$lib.size)
+
+mean(dge$samples$lib.size)
+dge.filtred <- dge[,dge$samples$lib.size > mean(dge$samples$lib.size) ]
+
+dge.filtred 
+mean(dge.filtred$samples$lib.size)
 
 logCPM <- cpm(dge, log = TRUE, prior.count = 3.25)
 
@@ -92,6 +102,74 @@ plotSmear(dge, lowess = TRUE)
 abline(h = 0, col = "blue", lwd = 2)
 
 dgenorm <- calcNormFactors(dge)
+
+dgenormfilt <- dgenorm[, !rownames(dgenorm$samples) %in% "NA19172"]
+
+
+#########DAVID_BEGIN
+class(duplicated(colData(pracse)$bcr_patient_barcode))
+length(duplicated(colData(pracse)$bcr_patient_barcode))
+class(unique(colData(pracse)$bcr_patient_barcode))
+class(colData(pracse)$bcr_patient_barcode)
+
+pracse.filt <- pracse[, duplicated(colData(pracse)$bcr_patient_barcode)]
+tumor.list <- pracse.filt$colData(pracse)$type == "tumor" 
+
+duplicated(colData(pracse.filt)$bcr_patient_barcode)
+length(colData(pracse.filt)$bcr_patient_barcode)
+
+dup.list <- colData(pracse)$bcr_patient_barcode[duplicated(colData(pracse)$bcr_patient_barcode)]
+
+pracse.filt.paired <- pracse[, colData(pracse)$bcr_patient_barcode %in% dup.list]
+
+duplicated(colData(pracse.filt.paired)$bcr_patient_barcode)
+
+pracse.filt.paired
+
+ALL_RECORDS <- df[df$ID==df$ID[duplicated(df$ID)],]
+pracse.filt.cases.dup <- pracse[,duplicated(colData(pracse)$bcr_patient_barcode)]
+
+duplicated(colData(pracse.filt.cases.dup)$bcr_patient_barcode)
+unique(colData(pracse.filt.cases.dup)$bcr_patient_barcode)
+
+
+pracse.filt.controls.dup <- pracse[,duplicated(colData(pracse)$bcr_patient_barcode) & colData(pracse)$type == "normal" ]
+
+unique(colData(pracse.filt.controls.dup)$bcr_patient_barcode)
+
+
+barcode <- colData(pracse)$bcr_patient_barcode
+
+pracse.filt.unique <- pracse[, !duplicated(barcode) | (!duplicated(barcode) & colData(pracse)$type == "normal") ]
+pracse.filt.unique
+
+dup.list <- barcode[duplicated(barcode)]
+length(dup.list)
+pracse.filt.paired <- pracse[,barcode
+                             %in% dup.list & !is.na(barcode)]
+duplicated(colData(pracse.filt.dupl)$bcr_patient_barcode)
+
+unique <- unique(colData(pracse)$bcr_patient_barcode)
+tumor_unique <- pracse[ , colData(pracse)$bcr_patient_barcode %in%  unique]
+tumor_unique
+
+
+n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
+
+pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & !is.na(colData(pracse)$bcr_patient_barcode)]
+
+pracse.filt.dupl
+
+dup.list.tumor <- colData(pracse)$bcr_patient_barcode[]
+
+pracse.filt.unique <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode) ]
+
+pracse.filt.unique
+
+table(colData(pracse.filt.unique)$type)
+
+
+#########DAVID_END
 
 plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
 legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
