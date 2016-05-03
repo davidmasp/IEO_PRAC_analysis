@@ -128,3 +128,17 @@ assays(pracse)$logCPM[1:5, 1:5]
 ```
 
 #### Filtering by library size
+Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples.
+
+```{r lib_size}
+
+dge.filtred <- dge[,(dge$sampl$es$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+
+ord <- order(dge.filtred$samples$lib.size/1e6)
+
+barplot((dge.filtred$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+```
+We obtain the following dataset: normal 25 out of 52, tumor 112 out of 502.
