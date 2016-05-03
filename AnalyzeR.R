@@ -171,6 +171,13 @@ table(colData(pracse.filt.unique)$type)
 
 #########DAVID_END
 
+#########ADRIA_BEGIN
+# TO merge two datasets!
+cbind() #in case we want to merge the columns
+rbind() #in case we want to merge the rows
+
+#########ADRIA_END
+
 plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
 legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
 
