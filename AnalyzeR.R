@@ -18,7 +18,6 @@ library("ggplot2")
 ## 0.2 READING DATA
 
 pracse <- readRDS("data/sePRAD.rds")
-pracse
 
 # check if it is the new data
 metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
@@ -78,8 +77,8 @@ sample.info.df <- as.data.frame(sample.info)
 
 ## Ploting some descriptives from samples
 
-qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
-qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
+#qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
+#qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
 
 ### NORMALITZATION PIPELINE
 
@@ -96,10 +95,10 @@ mean(dge.filtred$samples$lib.size)
 
 logCPM <- cpm(dge, log = TRUE, prior.count = 3.25)
 
-multidensity(as.list(as.data.frame(logCPM)), xlab = "log2 CPM", legend = NULL, main = "Count density vs expression level")
+#multidensity(as.list(as.data.frame(logCPM)), xlab = "log2 CPM", legend = NULL, main = "Count density vs expression level")
 
-plotSmear(dge, lowess = TRUE)
-abline(h = 0, col = "blue", lwd = 2)
+#plotSmear(dge, lowess = TRUE)
+#abline(h = 0, col = "blue", lwd = 2)
 
 dgenorm <- calcNormFactors(dge)
 
@@ -171,8 +170,8 @@ table(colData(pracse.filt.unique)$type)
 
 #########DAVID_END
 
-plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
-legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
+#plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
+#legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
 
 
 
@@ -192,15 +191,15 @@ sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
 names(batch) <- colnames(pracse)
 outcome <- as.character(pracse$type)
 names(outcome) <- colnames(pracse)
-sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+#sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
   ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
-  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
-  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
-  x
-}, batch, outcome)  ## these are the second and third arguments in the function
+  #attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  #attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  #x
+#}, batch, outcome)  ## these are the second and third arguments in the function
 
-plot(sampleDendrogram)
-legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+#plot(sampleDendrogram)
+#legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
 
 ## Result Negative
 
@@ -224,19 +223,19 @@ ConvertNamesToColor <- function(x){
 
 batch <- ConvertNamesToColor(TSS)
 
-sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
+#sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
 names(batch) <- colnames(pracse)
 outcome <- as.character(pracse$type)
 names(outcome) <- colnames(pracse)
-sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+#sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
   ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
-  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
-  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
-  x
-}, batch, outcome)  ## these are the second and third arguments in the function
+  #attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  #attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  #x
+#}, batch, outcome)  ## these are the second and third arguments in the function
 
-plot(sampleDendrogram)
-legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+#plot(sampleDendrogram)
+#legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
 
 ## NOT SURE -> go to sva
 
@@ -254,9 +253,9 @@ sv
 
 
 ord <- order(dge$sample$lib.size/1e6)
-barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+#barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
-legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+#legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 
 
@@ -264,14 +263,14 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ##########JOAN_BEGIN
 	
-plot(density(dge$samples$lib.size/1e6))
+#plot(density(dge$samples$lib.size/1e6))
 
 dge.filtred <- dge[,(dge$samples$lib.size/1e6) > 50 ]
 
 ord <- order(dge.filtred$samples$lib.size/1e6)
-barplot(dge.filtred$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
-        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
-legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+#barplot(dge.filtred$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        #xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+#legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 # normal 25 of 52, tumor 112 of 502
 	
 ##########JOAN_END
