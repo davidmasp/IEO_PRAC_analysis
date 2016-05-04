@@ -240,4 +240,34 @@ prac.dge.unique.filtlib <- prac.dge.unique.filtlib[mask, ]
 dim(prac.dge.unique.filtlib)
 
 ```
-
+##MA-plots
+###Tumor MA-plot
+```{r maPlotsTumor, fig.align="center",fig.height=40, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+par(mfrow=c(22, 6), mar=c(4, 5, 3, 1))
+setmp <- prac.se.sub[, prac.se.sub$type == "tumor"]
+dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "tumor"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
+###Normal MA-plot
+```{r maPlotsNormal, fig.align="center", fig.height=40, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+par(mfrow=c(22, 6), mar=c(4, 5, 3, 1))
+setmp <- prac.se.sub[, prac.se.sub$type == "normal"]
+dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "normal"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
