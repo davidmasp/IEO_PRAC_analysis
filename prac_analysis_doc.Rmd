@@ -198,7 +198,7 @@ ggplot(libsize) +
 ggplot(libsize) +
   geom_histogram(
     aes(x=libsize, fill=type, y = (..count..)/sum(..count..)), alpha=0.5, binwidth=3
-  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw()
+  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw() 
 
 
 
