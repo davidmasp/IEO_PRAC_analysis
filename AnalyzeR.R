@@ -281,7 +281,30 @@ ord <- order(dge.filtred$samples$lib.size/1e6)
         #xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
 #legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 # normal 25 of 52, tumor 112 of 502
-	
+
+```{r lib_dupl}
+# library size, non-paired samples
+dge_dupl <- DGEList(counts = assays(pracse.filt.dupl)$counts, genes = mcols(pracse.filt.dupl), group = pracse.filt.dupl$type)
+ord <- order(dge_dupl$samples$lib.size/1e6)
+plot(density(dge_dupl$samples$lib.size/1e6))
+barplot((dge_dupl$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse.filt.dupl$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# filtering
+dge.filtered_dupl <- dge_dupl[,(dge_dupl$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered_dupl$samples$group)
+
+ord_dupl <- order(dge.filtered_dupl$samples$lib.size/1e6)
+plot(density(dge.filtered_dupl$samples$lib.size/1e6))
+barplot((dge.filtered_dupl$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered_dupl$sample$group[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
+When filtering by paried data and also for library size (sequencing depth), we only have 24 normal out of 52 and 26 tumor samples out of 502. It is clearly not enough.
+
+After what we have seen, I suggest to only apply only one restraint/filter, if not, the dataset is too decreased.
+
 ##########JOAN_END
 
 ##########ADRIA_BEGIN
