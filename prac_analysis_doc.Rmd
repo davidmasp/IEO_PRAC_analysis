@@ -162,6 +162,7 @@ ord <- order(prac.dge.unique$samples$lib.size/1e6)
 barplot((prac.dge.unique$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(prac.se$type[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
 ```
 
 
@@ -172,15 +173,42 @@ In the plot, we cannot distinguish the different samples due the large number of
 # library size, non-paired samples
 prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 50 ] # 50e06 as threshold value
 table(prac.dge.unique.filtlib$samples$group)
+prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 ```
 
 ```{r figure library size, echo=FALSE, fig.align='center', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
+
 ord.unique <- order(prac.dge.unique.filtlib$samples$lib.size/1e6)
 plot(density(prac.dge.unique.filtlib$samples$lib.size/1e6),main = "Density Plot of pruned samples by lib size")
+
+
+
+
+
+libsize <- data.frame(libsize = prac.dge.unique.filtlib$sample$lib.size/1e6, type = prac.se.sub$type, samples = rownames(prac.dge.unique.filtlib$samples) )
+
+summary(libsize)
+
+
+ggplot(libsize) +
+  geom_density(aes(x=libsize, fill=type), alpha=0.5) +
+  ylab("density\n") + xlab("\nMillions of Reads") +
+  theme_bw()
+
+ggplot(libsize) +
+  geom_histogram(
+    aes(x=libsize, fill=type, y = (..count..)/sum(..count..)), alpha=0.5, binwidth=3
+  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw()
+
+
 
 ```
 
 ```{r barplot libsize samples filtred 2, echo=FALSE, fig.align='center',fig.cap="Barplot of the final selected samples with its library size."}
+
+
+ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_bar(stat = "identity") + theme(axis.text.x=element_blank(), axis.title.x=element_blank())
+
 barplot((prac.dge.unique.filtlib$sample$lib.size/1e06)[ord.unique], las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(prac.dge.unique.filtlib$sample$group[ord.unique] == "tumor") + 1])
 
