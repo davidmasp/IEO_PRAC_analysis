@@ -437,6 +437,7 @@ dim(dge.final)
 dge.filtered_uniq <- dge.filtered_uniq[mask, ]
 dim(dge.filtered_uniq)
 
-
-
 #########
+
+dge.filtered_uniq <- calcNormFactors(dge.filtered_uniq)
+assays(pracse.final)$logCPM <- cpm(dge.filtered_uniq, log=TRUE, prior.count=0.5)
