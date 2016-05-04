@@ -441,3 +441,34 @@ dim(dge.filtered_uniq)
 
 dge.filtered_uniq <- calcNormFactors(dge.filtered_uniq)
 assays(pracse.final)$logCPM <- cpm(dge.filtered_uniq, log=TRUE, prior.count=0.5)
+
+############ouuudeeearr
+
+```{r maPlotsTumor, fig.height=36, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+par(mfrow=c(22, 3), mar=c(4, 5, 3, 1))
+setmp <- pracse.final[, pracse.final$type == "tumor"]
+dgetmp <- dge.filtered_uniq[, pracse.final$type == "tumor"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
+```{r maPlotsNormal, fig.height=18, fig.width=6, dpi=100, echo=FALSE, fig.cap="Figure S5: MA-plots of the normal samples."}
+par(mfrow=c(9, 3), mar=c(4, 5, 3, 1))
+setmp <- pracse.final[, pracse.final$type == "normal"]
+dgetmp <- dge.filtered_uniq[, pracse.final$type == "normal"]
+for (i in 1:ncol(setmp)) {
+  A <- rowMeans(assays(setmp)$logCPM)
+  M <- assays(setmp)$logCPM[, i] - A
+  samplename <- substr(as.character(setmp$bcr_patient_barcode[i]), 1, 12)
+  smoothScatter(A, M, main=samplename, las=1)
+  abline(h=0, col="blue", lwd=2)
+  lo <- lowess(M ~ A)
+  lines(lo$x, lo$y, col="red", lwd=2)
+}
+```
