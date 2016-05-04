@@ -147,7 +147,7 @@ Now we subset our dataset by library size, which is a measure of sequencing deep
 ```{r lib_size}
 # library size, all samples
 ord <- order(dge$samples$lib.size/1e6)
-plot(density(dge$samples$lib.size/1e6))
+#plot(density(dge$samples$lib.size/1e6))
 barplot((dge$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
@@ -157,7 +157,7 @@ dge.filtered <- dge[,(dge$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitr
 table(dge.filtered$samples$group)
 
 ord <- order(dge.filtered$samples$lib.size/1e6)
-plot(density(dge.filtered$samples$lib.size/1e6))
+#plot(density(dge.filtered$samples$lib.size/1e6))
 barplot((dge.filtered$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(dge.filtered$sample$group[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
