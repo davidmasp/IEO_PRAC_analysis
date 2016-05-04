@@ -472,3 +472,45 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
+
+
+
+
+
+
+#### DAVID -- BATCH
+
+tss <- substr(colnames(pracse), 6, 7)
+table(tss)
+center <- substr(colnames(pracse), 27, 28)
+table(center)
+plate <- substr(colnames(pracse), 22, 25)
+table(plate)
+portionanalyte <- substr(colnames(pracse), 18, 20)
+table(portionanalyte)
+samplevial <- substr(colnames(pracse), 14, 16)
+table(samplevial)
+
+
+logCPM <- cpm(dge, log=TRUE, prior.count=3)
+d <- as.dist(1-cor(logCPM, method="spearman"))
+sampleClustering <- hclust(d)
+batch <- as.integer(factor(tss))
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(pracse)
+outcome <- paste(substr(colnames(pracse), 9, 12), as.character(pracse$type), pracsep="-")
+names(outcome) <- colnames(pracse)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                    function(x, batch, labels) {
+                          if (is.leaf(x)) {
+                              attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                              attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                          }
+                   x }, batch, outcome)
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+
+
+
+#### END DAVID -- BATCH
+>>>>>>> 2e928e1d4bde7cea11e1d92bf61f9f00c700aca3
