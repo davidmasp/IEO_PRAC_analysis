@@ -317,6 +317,59 @@ pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var
 pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode) | (colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & colData(pracse)$type == "normal" & !is.na(colData(pracse)$bcr_patient_barcode))]
 
 table(pracse.filt.unique$type)
+
+# ----------------------------------------------Other tryings, may 4 --------------------------
+
+library("SummarizedExperiment")
+library("edgeR")
+library("geneplotter")
+library("ggplot2")
+
+pracse <- readRDS("data/sePRAD.rds")
+
+pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode 
+                             %in% n_occur$Var1[n_occur$Freq == 1] & 
+                               !is.na(colData(pracse)$bcr_patient_barcode) |
+                               (colData(pracse)$bcr_patient_barcode %in% 
+                                  n_occur$Var1[n_occur$Freq > 1] & 
+                                  colData(pracse)$type == "normal" & 
+                                  !is.na(colData(pracse)$bcr_patient_barcode))]
+
+dge_uniq <- DGEList(counts = assays(pracse.filt.unique)$counts, genes = mcols(pracse.filt.unique), group = pracse.filt.unique$type)
+ord <- order(dge_uniq$samples$lib.size/1e6)
+plot(density(dge_uniq$samples$lib.size/1e6))
+barplot((dge_uniq$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse.filt.unique$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# filtering
+dge.filtered_uniq <- dge_uniq[,(dge_uniq$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered_uniq$samples$group)
+
+ord_uniq <- order(dge.filtered_uniq$samples$lib.size/1e6)
+plot(density(dge.filtered_uniq$samples$lib.size/1e6))
+barplot((dge.filtered_uniq$sample$lib.size/1e06)[ord_uniq], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered_uniq$sample$group[ord_uniq] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# Once we have our filtered samples, we observe the distribution of density of the samples between tumor and normal. 
+
+
+
+MDS_normal <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'normal']
+MDS_tumor <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'tumor']
+
+logCPM.MDS_normal <- cpm(MDS_normal, log = TRUE, prior.count = 3.25)
+logCPM.MDS_tumor <- cpm(MDS_tumor, log = TRUE, prior.count = 3.25)
+
+par(mfrow=c(1,2))
+multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legend = NULL, main = "Normal samples")
+multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
+
+
+#plotSmear(dge, lowess = TRUE)
+#abline(h = 0, col = "blue", lwd = 2)
+
 #########ADRIA_END
 
 
