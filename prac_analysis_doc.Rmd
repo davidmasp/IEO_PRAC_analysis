@@ -1,11 +1,11 @@
 ---
-title: "Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma "
+title: 'Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma '
 author: "Joan Martí, David Mas, Adrià Auladell"
 date: "29 de abril de 2016"
 output: html_document
 ---
 
-# Introduction
+## Introduction
 
 [Prostate cancer](https://en.wikipedia.org/wiki/Prostate_cancer)
 is a disease of the prostate, a walnut-size gland in the male
@@ -51,22 +51,28 @@ library("ggplot2")
 ```{r load}
 prac.se <- readRDS("data/sePRAD.rds")
 prac.se
-
 ```
 
-Then, we observe the distribution of the dataset.
+The following nomenclature is used by the names of the variables: <name>.<type_var>.<other> :
+
+* Name: principal name refeered to the variable. 
+
+* Type_object: Summarized experiment variable, DGEList...
+
+* Other: Special conditions, like filters, pair designed parameters...
+
 ```{r dim}
 dim(colData(prac.se))
 ```
 
-Our dataset presents 554 different samples, presenting 549 clinical variables.
+Our dataset presents 554 different samples with 549 clinical variables analyzed. 
 ```{r data}
 colData(prac.se)[1:5, 1:5]
 mcols(colData(prac.se), use.names=TRUE)
 ```
-By observing the clinical attributes of the samples, from the 549 present some of them have information collected and others present NA values. Our interest is present in the variables with some value present.There are variables related directly with prostate cancer, like the gleason score, the measurement of the development of the adenocarcinoma. 
+By observing the clinical variables, from the 549 present some have information collected and others present NA values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...There are variables related directly with prostate cancer, like gleason score, the measurement of the development of the adenocarcinoma. 
 
-By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information. 
+Looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information. 
 
 ```{r table types}
 table(prac.se$type)
@@ -75,7 +81,7 @@ table(prac.se$type)
 
 The dataset presents 554 samples, with 52 obtained for healthy individuals and 502 from patients presenting a tumor. 
 
-By looking at the row data, in this case genes of the sample, we observe the following:
+Row data, in this case information of the genes sequenced, we observe the following:
 
 ```{r}
 rowRanges(prac.se)
@@ -86,11 +92,11 @@ For each gene we have present the chromosome, the range of position, the strand,
 
 ## Subsetting the Data
 
-In order to reduce the sample size and to reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action and later on we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
+In order to reduce possible batch effects and reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
 
-* Paired Subsetting. In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tunmour. However, it also drives some disadvantages as we have been taugh in class.
+**Paired Subsetting** - In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tunmour. However, it also drives some disadvantages as we have been taugh in class.
 
-    As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group. 
+*As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group.* 
 
 ```{r subset}
 # Subset the paired samples
@@ -102,18 +108,15 @@ n_occur <- data.frame(table(colData(prac.se)$bcr_patient_barcode))
 prac.se.dupl <- prac.se[,colData(prac.se)$bcr_patient_barcode
                  %in% n_occur$Var1[n_occur$Freq > 1] & 
                  !is.na(colData(prac.se)$bcr_patient_barcode)]
-
 ## See the results.
 table(colData(prac.se.dupl)$type)
 ```
  
+**Non-Paired Subsetting** - With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
 
-  
-* Non-Paired Subsetting - With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
+*The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples.*
 
-    The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples. 
-
-    In the resuting table we can see that all the normal samples remain meanwhile we have filter out 67 tumor samples that contained `NA`values in the bcr barcode field or that they were extracted from the same individuals that provided the normal samples. 
+*In the resuting table we can see that all the normal samples remain meanwhile we have filter out 67 tumor samples that contained `NA`values in the bcr barcode field or that they were extracted from the same individuals that provided the normal samples.*
     
 ```{r nonpaired subset}
 # Subset the non-paired 
@@ -129,8 +132,7 @@ table(colData(prac.se.unique)$type)
 ```
   
 
-
-## Normalizing
+## Quality data control
 
 Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
 Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
@@ -193,7 +195,7 @@ prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 ```
 
 
-## Diferential Gene Expression Analysis
+#### Sample expression distribution
 
 Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
 
@@ -211,7 +213,9 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 ```
 Seeing the graphs, we cannot establish differences between the tumoral/normal levels of expression.
 
-Ending the sample study, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for values below 1 the CPM values are non significant. 
+#### Gene expression distribution
+
+Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for values below 1 the CPM values are non significant. 
 
 ```{r avgexp gene, fig.align='center', fig.cap='Histogram presenting gene frequency expression for different logCPM values'}
 assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=0.5)
@@ -223,6 +227,8 @@ hist(avgexp, xlab="log2 CPM", main="", las=1)
 abline(v=1, col="red", lwd=2)
 
 ```
+
+#### Filtering by gene expression levels
 
 As shown in the histogram, there are enough values below 1 to filter. In order to do that, we create a mask able to erase them from our dataset. 
 
