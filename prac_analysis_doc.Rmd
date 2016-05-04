@@ -241,3 +241,56 @@ dim(prac.dge.unique.filtlib)
 
 ```
 
+
+
+
+<!--- DAVID START --->
+
+
+## Batch Effect
+
+```{r getting the batch labels, collapse=TRUE}
+tss <- substr(colnames(prac.se.sub), 6, 7)
+table(tss)
+center <- substr(colnames(prac.se.sub), 27, 28)
+table(center)
+plate <- substr(colnames(prac.se.sub), 22, 25)
+table(plate)
+portionanalyte <- substr(colnames(prac.se.sub), 18, 20)
+table(portionanalyte)
+samplevial <- substr(colnames(prac.se.sub), 14, 16)
+table(samplevial)
+```
+
+
+```{r hirechical clustering, fig.align='center', fig.width=10, fig.cap='Hirechical clustering of the prac.se.sub dataset', fig.height=8}
+logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
+d <- as.dist(1-cor(logCPM, method="spearman"))
+sampleClustering <- hclust(d)
+batch <- as.integer(factor(tss))
+head(matrix(c(batch,tss),byrow=TRUE,nrow = 2))
+
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(prac.se.sub)
+outcome <- paste(substr(colnames(prac.se.sub), 9, 12), as.character(prac.se.sub$type), sep="-")
+names(outcome) <- colnames(prac.se.sub)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                               function(x, batch, labels) {
+                                 if (is.leaf(x)) {
+                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                                 }
+                                 x
+                               }, batch, outcome)
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+
+
+plotMDS(prac.dge.unique.filtlib, labels=outcome, col=batch)
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)), inset=0.05)
+
+```
+
+<!--- DAVID END --->
+
