@@ -18,7 +18,6 @@ library("ggplot2")
 ## 0.2 READING DATA
 
 pracse <- readRDS("data/sePRAD.rds")
-pracse
 
 # check if it is the new data
 metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
@@ -78,8 +77,8 @@ sample.info.df <- as.data.frame(sample.info)
 
 ## Ploting some descriptives from samples
 
-qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
-qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
+#qplot(race, data=sample.info.df, geom="bar", fill=ethnicity)
+#qplot(gleason_score, data=sample.info.df, geom="bar", fill=ethnicity)
 
 ### NORMALITZATION PIPELINE
 
@@ -96,10 +95,10 @@ mean(dge.filtred$samples$lib.size)
 
 logCPM <- cpm(dge, log = TRUE, prior.count = 3.25)
 
-multidensity(as.list(as.data.frame(logCPM)), xlab = "log2 CPM", legend = NULL, main = "Count density vs expression level")
+#multidensity(as.list(as.data.frame(logCPM)), xlab = "log2 CPM", legend = NULL, main = "Count density vs expression level")
 
-plotSmear(dge, lowess = TRUE)
-abline(h = 0, col = "blue", lwd = 2)
+#plotSmear(dge, lowess = TRUE)
+#abline(h = 0, col = "blue", lwd = 2)
 
 dgenorm <- calcNormFactors(dge)
 
@@ -176,10 +175,11 @@ table(colData(pracse.filt.unique)$type)
 cbind() #in case we want to merge the columns
 rbind() #in case we want to merge the rows
 
+#plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
+#legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
+
 #########ADRIA_END
 
-plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
-legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
 
 
 
@@ -199,15 +199,15 @@ sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
 names(batch) <- colnames(pracse)
 outcome <- as.character(pracse$type)
 names(outcome) <- colnames(pracse)
-sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+#sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
   ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
-  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
-  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
-  x
-}, batch, outcome)  ## these are the second and third arguments in the function
+  #attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  #attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  #x
+#}, batch, outcome)  ## these are the second and third arguments in the function
 
-plot(sampleDendrogram)
-legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+#plot(sampleDendrogram)
+#legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
 
 ## Result Negative
 
@@ -219,6 +219,7 @@ pc <- TSS
 table(data.frame(TYPE = pracse$type, TSS = pc))
 
 d <- as.dist(1 - cor(logCPM, method = "spearman")) 
+
 sampleClustering <- hclust(d)
 
 ConvertNamesToColor <- function(x){
@@ -231,19 +232,19 @@ ConvertNamesToColor <- function(x){
 
 batch <- ConvertNamesToColor(TSS)
 
-sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
+#sampleDendrogram <- as.dendrogram(sampleClustering, hang = 0.1)
 names(batch) <- colnames(pracse)
 outcome <- as.character(pracse$type)
 names(outcome) <- colnames(pracse)
-sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
+#sampleDendrogram <- dendrapply(sampleDendrogram, function(x, batch, labels) {
   ## for every node in the dendrogram if it is a leaf node if (is.leaf(x)) {
-  attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
-  attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
-  x
-}, batch, outcome)  ## these are the second and third arguments in the function
+  #attr(x, "nodePar") <- list(lab.col = as.vector(batch[attr(x, "label")])) ## c
+  #attr(x, "label") <- as.vector(labels[attr(x, "label")]) ## label by outcome }
+  #x
+#}, batch, outcome)  ## these are the second and third arguments in the function
 
-plot(sampleDendrogram)
-legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
+#plot(sampleDendrogram)
+#legend("topright", paste("Batch", sort(unique(batch))), fill = sort(unique(batch)))
 
 ## NOT SURE -> go to sva
 
@@ -261,9 +262,9 @@ sv
 
 
 ord <- order(dge$sample$lib.size/1e6)
-barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+#barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
-legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+#legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 
 
@@ -271,16 +272,39 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ##########JOAN_BEGIN
 	
-plot(density(dge$samples$lib.size/1e6))
+#plot(density(dge$samples$lib.size/1e6))
 
 dge.filtred <- dge[,(dge$samples$lib.size/1e6) > 50 ]
 
 ord <- order(dge.filtred$samples$lib.size/1e6)
-barplot(dge.filtred$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
-        xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
-legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+#barplot(dge.filtred$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
+        #xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+#legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 # normal 25 of 52, tumor 112 of 502
-	
+
+```{r lib_dupl}
+# library size, non-paired samples
+dge_dupl <- DGEList(counts = assays(pracse.filt.dupl)$counts, genes = mcols(pracse.filt.dupl), group = pracse.filt.dupl$type)
+ord <- order(dge_dupl$samples$lib.size/1e6)
+plot(density(dge_dupl$samples$lib.size/1e6))
+barplot((dge_dupl$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse.filt.dupl$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# filtering
+dge.filtered_dupl <- dge_dupl[,(dge_dupl$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered_dupl$samples$group)
+
+ord_dupl <- order(dge.filtered_dupl$samples$lib.size/1e6)
+plot(density(dge.filtered_dupl$samples$lib.size/1e6))
+barplot((dge.filtered_dupl$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered_dupl$sample$group[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
+When filtering by paried data and also for library size (sequencing depth), we only have 24 normal out of 52 and 26 tumor samples out of 502. It is clearly not enough.
+
+After what we have seen, I suggest to only apply only one restraint/filter, if not, the dataset is too decreased.
+
 ##########JOAN_END
 
 ##########ADRIA_BEGIN
@@ -316,6 +340,59 @@ pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode %in% n_occur$Var
 pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq == 1] & !is.na(colData(pracse)$bcr_patient_barcode) | (colData(pracse)$bcr_patient_barcode %in% n_occur$Var1[n_occur$Freq > 1] & colData(pracse)$type == "normal" & !is.na(colData(pracse)$bcr_patient_barcode))]
 
 table(pracse.filt.unique$type)
+
+# ----------------------------------------------Other tryings, may 4 --------------------------
+
+library("SummarizedExperiment")
+library("edgeR")
+library("geneplotter")
+library("ggplot2")
+
+pracse <- readRDS("data/sePRAD.rds")
+
+pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode 
+                             %in% n_occur$Var1[n_occur$Freq == 1] & 
+                               !is.na(colData(pracse)$bcr_patient_barcode) |
+                               (colData(pracse)$bcr_patient_barcode %in% 
+                                  n_occur$Var1[n_occur$Freq > 1] & 
+                                  colData(pracse)$type == "normal" & 
+                                  !is.na(colData(pracse)$bcr_patient_barcode))]
+
+dge_uniq <- DGEList(counts = assays(pracse.filt.unique)$counts, genes = mcols(pracse.filt.unique), group = pracse.filt.unique$type)
+ord <- order(dge_uniq$samples$lib.size/1e6)
+plot(density(dge_uniq$samples$lib.size/1e6))
+barplot((dge_uniq$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(pracse.filt.unique$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# filtering
+dge.filtered_uniq <- dge_uniq[,(dge_uniq$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered_uniq$samples$group)
+
+ord_uniq <- order(dge.filtered_uniq$samples$lib.size/1e6)
+plot(density(dge.filtered_uniq$samples$lib.size/1e6))
+barplot((dge.filtered_uniq$sample$lib.size/1e06)[ord_uniq], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered_uniq$sample$group[ord_uniq] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# Once we have our filtered samples, we observe the distribution of density of the samples between tumor and normal. 
+
+
+
+MDS_normal <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'normal']
+MDS_tumor <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'tumor']
+
+logCPM.MDS_normal <- cpm(MDS_normal, log = TRUE, prior.count = 3.25)
+logCPM.MDS_tumor <- cpm(MDS_tumor, log = TRUE, prior.count = 3.25)
+
+par(mfrow=c(1,2))
+multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legend = NULL, main = "Normal samples")
+multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
+
+
+#plotSmear(dge, lowess = TRUE)
+#abline(h = 0, col = "blue", lwd = 2)
+
 #########ADRIA_END
 
 

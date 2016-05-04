@@ -149,18 +149,46 @@ Now we subset our dataset by library size, which is a measure of sequencing deep
 ord <- order(dge$samples$lib.size/1e6)
 #plot(density(dge$samples$lib.size/1e6))
 barplot((dge$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+=======
+dge_uniq <- DGEList(counts = assays(pracse.filt.unique)$counts, genes = mcols(pracse.filt.unique), group = pracse.filt.unique$type)
+ord <- order(dge_uniq$samples$lib.size/1e6)
+barplot((dge_uniq$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+>>>>>>> ba168e4b07edc979fd388d5c6ae9813109d437f7
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
 
-# filtering
-dge.filtered <- dge[,(dge$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
-table(dge.filtered$samples$group)
 
-ord <- order(dge.filtered$samples$lib.size/1e6)
-#plot(density(dge.filtered$samples$lib.size/1e6))
-barplot((dge.filtered$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
-        xlab="Samples", col=c("blue", "red")[(dge.filtered$sample$group[ord] == "tumor") + 1])
+When observing the data, we cannot distinguish the different samples due the large number of samples. We will filter in a high treshold of sequencing depth to recude the number of samples erasing the ones with bad sequencing quality. 
+
+
+```{r lib_uniq}
+# library size, non-paired samples
+dge.filtered_uniq <- dge_uniq[,(dge_uniq$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered_uniq$samples$group)
+
+ord_uniq <- order(dge.filtered_uniq$samples$lib.size/1e6)
+plot(density(dge.filtered_uniq$samples$lib.size/1e6))
+barplot((dge.filtered_uniq$sample$lib.size/1e06)[ord_uniq], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered_uniq$sample$group[ord_uniq] == "tumor") + 1])
+
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+```
+After filtering, we obtain a dataset of 25 normal samples and 81 tumor. 
+
+
+Once we have our filtered samples, we observe the distribution of density of the samples between tumor and normal expression. 
+
+```{r MDS}
+MDS_normal <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'normal']
+MDS_tumor <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'tumor']
+
+logCPM.MDS_normal <- cpm(MDS_normal, log = TRUE, prior.count = 3.25)
+logCPM.MDS_tumor <- cpm(MDS_tumor, log = TRUE, prior.count = 3.25)
+
+par(mfrow=c(1,2))
+multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legend = NULL, main = "Normal samples")
+multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
 
 ```
-We obtain the following dataset: normal 25 out of 52, tumor 112 out of 502.
+
