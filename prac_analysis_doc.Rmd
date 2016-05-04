@@ -185,11 +185,17 @@ barplot((dge.filtered_uniq$sample$lib.size/1e06)[ord_uniq], las=1, ylab="Million
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
 
-After filtering, we obtain a dataset of 25 normal samples and 81 tumor. 
+After filtering, we obtain a dataset of 25 normal samples and 81 tumor. We introduce it again in the pracse dataset to obtain the final filtered version.
+
+```{r final dataset}
+
+pracse.final <- pracse.filt.unique[,rownames(dge.filtered_uniq$samples)]
+```
+
 
 ## Diferential Gene Expression Analysis
 
-Once we have our filtered samples, we observe the distribution of density of the samples between tumor and normal expression. 
+Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
 
 ```{r Multydensity, fig.align='center', fig.cap='multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE}
 MDS_normal <- dge.filtered_uniq[,dge.filtered_uniq$samples$group == 'normal']
@@ -201,6 +207,37 @@ logCPM.MDS_tumor <- cpm(MDS_tumor, log = TRUE, prior.count = 3.25)
 par(mfrow=c(1,2))
 multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legend = NULL, main = "Normal samples")
 multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
+
+```
+Seeing the graphs, we cannot establish differences between the tumoral/normal levels of expression.
+
+Ending the sample study, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for values below 1 the CPM values are non significant. 
+
+```{r avgexp gene, fig.align='center', fig.cap='Histogram presenting gene frequency expression for different logCPM values'}
+assays(pracse.final)$logCPM <- cpm(dge.filtered_uniq, log=TRUE, prior.count=0.5)
+
+avgexp <- rowMeans(assays(pracse.final)$logCPM)
+
+hist(avgexp, xlab="log2 CPM", main="", las=1)
+
+abline(v=1, col="red", lwd=2)
+
+```
+
+As shown in the histogram, there are enough values below 1 to filter. In order to do that, we create a mask able to erase them from our dataset. 
+
+```{r gene filt}
+mask <- avgexp > 1
+dim(pracse.final)
+
+pracse.final <- pracse.final[mask, ]
+dim(pracse.final)
+
+dim(dge.filtered_uniq )
+
+
+dge.filtered_uniq <- dge.filtered_uniq[mask, ]
+dim(dge.filtered_uniq)
 
 ```
 
