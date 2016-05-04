@@ -170,20 +170,16 @@ table(colData(pracse.filt.unique)$type)
 
 #########DAVID_END
 
-<<<<<<< HEAD
-#plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
-#legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
-=======
 #########ADRIA_BEGIN
 # TO merge two datasets!
 cbind() #in case we want to merge the columns
 rbind() #in case we want to merge the rows
 
+#plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
+#legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
+
 #########ADRIA_END
 
-plotMDS(dge, col = c("red", "blue")[as.integer(dgenorm$samples$group)], cex = 0.7)
-legend("topleft", c("female", "male"), fill = c("red", "blue"), inset = 0.05, cex = 0.7)
->>>>>>> 8bd3940713737f9aa7f456067148a4107792a5e3
 
 
 
@@ -223,6 +219,7 @@ pc <- TSS
 table(data.frame(TYPE = pracse$type, TSS = pc))
 
 d <- as.dist(1 - cor(logCPM, method = "spearman")) 
+
 sampleClustering <- hclust(d)
 
 ConvertNamesToColor <- function(x){
