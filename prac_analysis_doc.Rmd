@@ -66,7 +66,7 @@ mcols(colData(pracse), use.names=TRUE)
 ```
 By observing the clinical attributes of the samples, from the 549 present some of them have information collected and others present NA values. Our interest is present in the variables with some value present.There are variables related directly with prostate cancer, like the gleason score, the measurement of the development of the adenocarcinoma. 
 
-By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition )code to obtain more information. 
+By looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a succint explanation of the variable and the last one the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information. 
 
 ```{r table types}
 table(pracse$type)
@@ -88,17 +88,29 @@ For each gene we have present the chromosome, the range of position, the strand,
 
 In order to reduce the sample size and to reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action and later on we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
 
-```{r subset, collapse=TRUE}
+* Paired Subsetting. In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tunmour. However, it also drives some disadvantages as we have been taugh in class.
+
+
+```{r subset}
 # Subset the paired samples
+## we build a table from the bcr barcode occurences in our dataset
 n_occur <- data.frame(table(colData(pracse)$bcr_patient_barcode))
 
+## we filter out the na patients (having a na in the barcode)
+## and the ones that occur only 1 time (they are unique)
 pracse.filt.dupl <- pracse[,colData(pracse)$bcr_patient_barcode
                  %in% n_occur$Var1[n_occur$Freq > 1] & 
                  !is.na(colData(pracse)$bcr_patient_barcode)]
 
-pracse.filt.dupl
+## See the results.
 table(colData(pracse.filt.dupl)$type)
+```
+  As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group. 
+  
+* Non-Paired Subsetting - With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
+  The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples. 
 
+```{r nonpaired subset}
 # Subset the non-paired 
 pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode 
                              %in% n_occur$Var1[n_occur$Freq == 1] & 
@@ -108,14 +120,16 @@ pracse.filt.unique <- pracse[, colData(pracse)$bcr_patient_barcode
                                 colData(pracse)$type == "normal" & 
                                 !is.na(colData(pracse)$bcr_patient_barcode))]
 table(colData(pracse.filt.unique)$type)
+
 ```
+  In the resuting table we can see that all the normal samples remain meanwhile we have filter out 67 tumor samples that contained `NA`values in the bcr barcode field or that they were extracted from the same individuals that provided the normal samples. 
 
 ## Normalizing
 
 Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
 Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
 
-```{r dge}
+```{r dge, warning= FALSE}
 dge <- DGEList(counts = assays(pracse)$counts, genes = mcols(pracse), group = pracse$type)
 head(dge$samples)
 ```
@@ -131,13 +145,21 @@ assays(pracse)$logCPM[1:5, 1:5]
 Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples.
 
 ```{r lib_size}
-
-dge.filtred <- dge[,(dge$sampl$es$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
-
-ord <- order(dge.filtred$samples$lib.size/1e6)
-
-barplot((dge.filtred$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+# library size, all samples
+ord <- order(dge$samples$lib.size/1e6)
+plot(density(dge$samples$lib.size/1e6))
+barplot((dge$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
+legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+
+# filtering
+dge.filtered <- dge[,(dge$samples$lib.size/1e6) > 50 ] # take 50e06 as an arbitrary threshold value
+table(dge.filtered$samples$group)
+
+ord <- order(dge.filtered$samples$lib.size/1e6)
+plot(density(dge.filtered$samples$lib.size/1e6))
+barplot((dge.filtered$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
+        xlab="Samples", col=c("blue", "red")[(dge.filtered$sample$group[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ```
