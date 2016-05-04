@@ -498,7 +498,7 @@ sampleClustering <- hclust(d)
 batch <- as.integer(factor(tss))
 sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
 names(batch) <- colnames(pracse)
-outcome <- paste(substr(colnames(pracse), 9, 12), as.character(pracse$type), pracsep="-")
+outcome <- paste(substr(colnames(pracse), 9, 12), as.character(pracse$type), sep="-")
 names(outcome) <- colnames(pracse)
 sampleDendrogram <- dendrapply(sampleDendrogram,
                     function(x, batch, labels) {
