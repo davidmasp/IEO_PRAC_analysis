@@ -1,9 +1,13 @@
 .Rproj.user
 .Rhistory
 .RData
-data
+data/
 *.Rproj
 *~
+.AnalyzeR.R.swo
+.AnalyzeR.R.swp
+.RDataTmp
+prostate_cancer_TCGA_cell.pdf
 figures/
 *.svg
 *.html

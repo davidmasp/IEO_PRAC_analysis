@@ -419,3 +419,24 @@ assays(pracse.filt.unique)$logCPM[1:5, 1:5]
 dge.filtred <- assays(pracse)$logCPM[,(dge$samples$lib.size/1e6) > 50 ]
 #########DAVID_END
 
+#########THINGS
+library("lattice", "annotate", "AnnotationDBL", "XML")
+avgexp <- rowMeans(assays(pracse.final)$logCPM)
+
+mask <- avgexp > 1
+dim(pracse.final)
+
+
+pracse.final <- pracse.final[mask, ]
+dim(pracse.final)
+
+
+dim(dge.final)
+
+
+dge.filtered_uniq <- dge.filtered_uniq[mask, ]
+dim(dge.filtered_uniq)
+
+
+
+#########
