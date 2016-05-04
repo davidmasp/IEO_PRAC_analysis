@@ -470,13 +470,12 @@ names(batch) <- colnames(pracse)
 outcome <- paste(substr(colnames(pracse), 9, 12), as.character(pracse$type), pracsep="-")
 names(outcome) <- colnames(pracse)
 sampleDendrogram <- dendrapply(sampleDendrogram,
-                               function(x, batch, labels) {
-                                 if (is.leaf(x)) {
-                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
-                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
-                                 }
-                                 x
-                               }, batch, outcome)
+                    function(x, batch, labels) {
+                          if (is.leaf(x)) {
+                              attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                              attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                          }
+                   x }, batch, outcome)
 plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 
