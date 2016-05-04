@@ -145,15 +145,12 @@ assays(pracse)$logCPM[1:5, 1:5]
 Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples.
 
 ```{r lib_size}
-# library size, all samples
-ord <- order(dge$samples$lib.size/1e6)
-#plot(density(dge$samples$lib.size/1e6))
-barplot((dge$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
-=======
+
+
 dge_uniq <- DGEList(counts = assays(pracse.filt.unique)$counts, genes = mcols(pracse.filt.unique), group = pracse.filt.unique$type)
 ord <- order(dge_uniq$samples$lib.size/1e6)
 barplot((dge_uniq$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
->>>>>>> ba168e4b07edc979fd388d5c6ae9813109d437f7
+
         xlab="Samples", col=c("blue", "red")[(pracse$type[ord] == "tumor") + 1])
 legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
