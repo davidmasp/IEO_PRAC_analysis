@@ -337,8 +337,8 @@ logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
 d <- as.dist(1-cor(logCPM, method="spearman"))
 sampleClustering <- hclust(d)
 batch <- as.integer(factor(tss))
-
-
+colors <- palette()
+palette(c(colors,"darkorange1","darkmagenta","darkolivegreen","red3","seagreen","pink1","yellow3","sienna1"))
 sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
 names(batch) <- colnames(prac.se.sub)
 outcome <- paste(substr(colnames(prac.se.sub), 9, 12), as.character(prac.se.sub$type), sep="-")
@@ -351,6 +351,7 @@ sampleDendrogram <- dendrapply(sampleDendrogram,
                                  }
                                  x
                                }, batch, outcome)
+
 plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 
@@ -365,3 +366,14 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 <!--- DAVID END --->
 
+
+
+<!--- DAVID START --->
+```{r}
+prac.dge.unique.pruned <- prac.dge.unique.filtlib[, !rownames(prac.dge.unique.filtlib$samples) %in% c("TCGA.HC.7737.11A.02R.2118.07","TCGA.HC.7747.11A.01R.2118.07","TCGA.HC.8258.11A.01R.2263.07")]
+
+
+
+```
+
+<!--- DAVID END --->
