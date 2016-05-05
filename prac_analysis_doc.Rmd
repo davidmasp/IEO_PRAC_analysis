@@ -46,6 +46,7 @@ library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
 library("ggplot2")
+library("sva")
 ```
 
 ```{r load}
@@ -227,7 +228,7 @@ prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 
 Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
 
-```{r Multydensity, fig.align='center', fig.cap='multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE}
+```{r Multydensity, fig.align='center', fig.cap='multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
 MDS_normal <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'normal']
 MDS_tumor <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'tumor']
 
@@ -295,7 +296,7 @@ for (i in 1:ncol(setmp)) {
 }
 ```
 ###Normal MA-plot
-```{r maPlotsNormal, fig.align="center", fig.height= 15, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
 par(mfrow=c(5, 6), mar=c(4, 5, 3, 1))
 setmp <- prac.se.sub[, prac.se.sub$type == "normal"]
 dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "normal"]
