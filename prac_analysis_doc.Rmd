@@ -392,3 +392,18 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 ```
 <!--- DAVID END --->
+
+
+
+
+
+
+## Conclusion
+
+
+
+## Session information
+
+```{r}
+sessionInfo()
+```
