@@ -391,6 +391,46 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 
 ```
+
+
+## Differential Gene Expression
+
+```{r diferential gene expr1}
+mod <- model.matrix(~ prac.se.pruned$type, colData(prac.se.pruned))
+mod0 <- model.matrix(~ 1, colData(prac.se.pruned))
+pv <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0)
+sum(p.adjust(pv, method="fdr") < 0.01)
+```
+
+```{r pdist, echo=FALSE, out.width="400px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples."}
+
+hist(pv, main="", las=1)
+
+```
+
+
+
+```{r}
+sv <- sva(assays(prac.se.pruned)$logCPM, mod, mod0)
+
+sv$n
+```
+
+```{r}
+modsv <- cbind(mod, sv$sv)
+mod0sv <- cbind(mod0, sv$sv)
+pvsv <- f.pvalue(assays(prac.se.pruned)$logCPM, modsv, mod0sv)
+sum(p.adjust(pvsv, method="fdr") < 0.01)
+```
+
+```{r psvdist, echo=FALSE, out.width="400px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA."}
+# pdf("shit2.pdf")
+hist(pvsv, main="", las=1)
+# dev.off()
+```
+
+
+
 <!--- DAVID END --->
 
 
