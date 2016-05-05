@@ -375,11 +375,26 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 
 <!--- DAVID START --->
-```{r}
-prac.dge.unique.pruned <- prac.dge.unique.filtlib[, !rownames(prac.dge.unique.filtlib$samples) %in% c("TCGA.HC.7737.11A.02R.2118.07","TCGA.HC.7747.11A.01R.2118.07","TCGA.HC.8258.11A.01R.2263.07")]
 
+### Filtering after MDS ands MA plots
+```{r pruning the data set}
+prac.dge.unique.pruned <- prac.dge.unique.filtlib[, !rownames(prac.dge.unique.filtlib$samples) %in% c("TCGA.HC.7737.11A.02R.2118.07","TCGA.HC.7747.11A.01R.2118.07","TCGA.HC.8258.11A.01R.2263.07")]
+table(prac.dge.unique.pruned$samples$group)
+prac.se.pruned <- prac.se.sub[,rownames(prac.dge.unique.pruned$samples)]
+```
+
+
+
+```{r MDS after prunning, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.pruned dataset', fig.height=8}
+tss <- substr(colnames(prac.se.pruned), 6, 7)
+batch <- as.integer(factor(tss))
+outcome <- paste(substr(colnames(prac.se.pruned), 9, 12), as.character(prac.se.pruned$type), sep="-")
+names(outcome) <- colnames(prac.se.pruned)
+
+plotMDS(prac.dge.unique.pruned, labels=outcome, col=batch)
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)), inset=0.05)
 
 
 ```
-
 <!--- DAVID END --->
