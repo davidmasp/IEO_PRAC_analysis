@@ -330,7 +330,13 @@ table(portionanalyte)
 samplevial <- substr(colnames(prac.se.sub), 14, 16)
 table(samplevial)
 ```
+<!--- ADRI START --->
 
+```{r table TSS/TYPE}
+table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
+```
+
+<!--- ADRI END --->
 
 ```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='Hirechical clustering of the prac.se.sub dataset', fig.height=8}
 logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
