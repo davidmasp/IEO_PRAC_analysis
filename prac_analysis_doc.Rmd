@@ -150,7 +150,7 @@ assays(prac.se)$logCPM <- cpm(prac.dge, log=TRUE, prior.count=3.5)
 assays(prac.se)$logCPM[1:5, 1:5]
 ```
 
-#### Filtering by library size
+### Filtering by library size
 Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE`filtred element. 
 
 ```{r normalitzation of the filtred dataset, warning= FALSE}
@@ -166,23 +166,20 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ```
 
-
 In the plot, we cannot distinguish the different samples due the large number of samples. We will filter in a high treshold of sequencing depth to recude the number of samples erasing the ones with less sequencing quality. 
 
 
 ```{r lib.unique}
 # library size, non-paired samples
-prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 50 ] # 50e06 as threshold value
+prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 50 ] # 50e06 threshold value
 table(prac.dge.unique.filtlib$samples$group)
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 ```
 
-```{r figure library size, echo=FALSE, fig.align='center', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
+```{r figure library size, echo=FALSE, fig.align='center',fig.lp= 'fig:', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
 
 ord.unique <- order(prac.dge.unique.filtlib$samples$lib.size/1e6)
-plot(density(prac.dge.unique.filtlib$samples$lib.size/1e6),main = "Density Plot of pruned samples by lib size")
-
-
+# plot(density(prac.dge.unique.filtlib$samples$lib.size/1e6),main = "Density Plot of pruned samples by lib size") Same info as the last one. Not necessary, isn't it?
 
 
 
@@ -196,13 +193,10 @@ ggplot(libsize) +
   ylab("density\n") + xlab("\nMillions of Reads") +
   theme_bw()
 
-ggplot(libsize) +
-  geom_histogram(
-    aes(x=libsize, fill=type, y = (..count..)/sum(..count..)), alpha=0.5, binwidth=3
-  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw() 
-
-
-
+# ggplot(libsize) +
+#  geom_histogram(
+#    aes(x=libsize, fill=type, y = (..count..)/sum(..count..)), alpha=0.5, binwidth=3
+#  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw() 
 ```
 
 ```{r barplot libsize samples filtred 2, echo=FALSE, fig.align='center',fig.cap="Barplot of the final selected samples with its library size."}
@@ -210,21 +204,15 @@ ggplot(libsize) +
 
 ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_bar(stat = "identity") + theme(axis.text.x=element_blank(), axis.title.x=element_blank())
 
-barplot((prac.dge.unique.filtlib$sample$lib.size/1e06)[ord.unique], las=1, ylab="Millions of reads",
-        xlab="Samples", col=c("blue", "red")[(prac.dge.unique.filtlib$sample$group[ord.unique] == "tumor") + 1])
+#barplot((prac.dge.unique.filtlib$sample$lib.size/1e06)[ord.unique], las=1, ylab="Millions of reads",
+#        xlab="Samples", col=c("blue", "red")[(prac.dge.unique.filtlib$sample$group[ord.unique] == "tumor") + 1])
 
-legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
+#legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
 
 After filtering, we obtain a dataset of 25 normal samples and 81 tumor. We introduce it again in the prac.se dataset to obtain the final filtered version.
 
-```{r final dataset}
-
-prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
-```
-
-
-#### Sample expression distribution
+### Sample expression distribution
 
 Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
 
@@ -242,7 +230,7 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 ```
 Seeing the graphs, we cannot establish differences between the tumoral/normal levels of expression.
 
-#### Gene expression distribution
+### Gene expression distribution
 
 Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for values below 1 the CPM values are non significant. 
 
@@ -257,7 +245,7 @@ abline(v=1, col="red", lwd=2)
 
 ```
 
-#### Filtering by gene expression levels
+### Filtering by gene expression levels
 
 As shown in the histogram, there are enough values below 1 to filter. In order to do that, we create a mask able to erase them from our dataset. 
 
@@ -278,9 +266,12 @@ dim(prac.dge.unique.filtlib)
 
 
 <!--- JOAN START --->
+## Normalization
 
-##MA-plots
-###Tumor MA-plot
+### MA-plots
+
+#### Tumor MA-plot
+
 ```{r maPlotsTumor, fig.align="center", fig.height= 35, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
 par(mfrow=c(14, 6), mar=c(4, 5, 3, 1))
 setmp <- prac.se.sub[, prac.se.sub$type == "tumor"]
@@ -295,7 +286,8 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
-###Normal MA-plot
+#### Normal MA-plot
+
 ```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
 par(mfrow=c(5, 6), mar=c(4, 5, 3, 1))
 setmp <- prac.se.sub[, prac.se.sub$type == "normal"]
