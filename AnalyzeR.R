@@ -251,15 +251,19 @@ names(outcome) <- colnames(pracse)
 
 library("sva")
 
-mod <- model.matrix(~ type + tissue_source_site, data = colData(pracse)) 
+mod <- model.matrix(~ tissue_source_site, data = colData(prac.se.pruned)) 
 head(mod)
-mod0 <- model.matrix(~tissue_source_site, data = colData(pracse))
+mod0 <- model.matrix(~1, data = colData(prac.se.pruned))
 
-sv <- sva(logCPM, mod, mod0)
-sv
+sv <- sva(assays(prac.se.pruned)$logCPM, mod, mod0)
+names(sv)
 
 
-
+pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0) 
+sum(p.adjust(pValues, method = "BH") < 0.05)
+pdf("shit3.pdf")
+hist(pValues)
+dev.off()
 
 ord <- order(dge$sample$lib.size/1e6)
 #barplot(dge$sample$lib.size[ord]/1e6, las=1, ylab="Millions of reads",
