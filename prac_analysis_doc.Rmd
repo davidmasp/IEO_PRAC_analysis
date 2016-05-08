@@ -455,7 +455,7 @@ hist(pvsv, main="", las=1)
 
 ### Checking for batch effect from TSS
 
-As it have not been 100% clear at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
+As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
 
 ```{r sva to check batch effect, fig.align='center'}
 # introduce the extracted data in the se obj
