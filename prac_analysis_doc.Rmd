@@ -95,7 +95,7 @@ For each gene we have present the chromosome, the range of position, the strand,
 
 In order to reduce possible batch effects and reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
 
-**Paired Subsetting** - In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tunmour. However, it also drives some disadvantages as we have been taugh in class.
+**Paired Subsetting** - In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumour. However, it also drives some disadvantages as we have been taugh in class.
 
 *As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group.* 
 
@@ -136,7 +136,7 @@ table(colData(prac.se.unique)$type)
 ## Quality data control
 
 Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
-Digital Gene Expression data class (DGE) has benn implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
+Digital Gene Expression data class (DGE) has been implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
 
 ```{r dge, warning= FALSE}
 prac.dge <- DGEList(counts = assays(prac.se)$counts, genes = mcols(prac.se), group = prac.se$type)
@@ -211,12 +211,13 @@ ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_b
 ```
 
 After filtering, we obtain a dataset of 25 normal samples and 81 tumor. We introduce it again in the prac.se dataset to obtain the final filtered version.
+Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. Despite having a good quality, it might not be adequate for normalising the data. In future displays we might deside to take it out.
 
 ### Sample expression distribution
 
 Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
 
-```{r Multydensity, fig.align='center', fig.cap='multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
+```{r Multydensity, fig.align='center', fig.cap='Multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
 MDS_normal <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'normal']
 MDS_tumor <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'tumor']
 
@@ -228,6 +229,7 @@ multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legen
 multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
 
 ```
+
 Seeing the graphs, we cannot establish differences between the tumoral/normal levels of expression.
 
 ### Gene expression distribution
@@ -268,7 +270,7 @@ dim(prac.dge.unique.filtlib)
 <!--- JOAN START --->
 ## Normalization
 
-First of all, we calculate the normalized factors between the samples and we add it to the prac.se.sub dataset.
+First of all, we calculate the normalized factors between the samples and we add it to the prac.se.sub dataset for better acces. 
 
 ```{r calcNOrm}
 prac.dge.unique.filtlib <- calcNormFactors(prac.dge.unique.filtlib)
@@ -277,7 +279,7 @@ assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count
 
 ### MA-plots
 
-#### Tumor MA-plot
+<center><h4>Tumor samples MA-plot</h4></center>
 
 ```{r maPlotsTumor, fig.align="center", fig.height= 35, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
 par(mfrow=c(14, 6), mar=c(4, 5, 3, 1))
@@ -293,7 +295,7 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
-#### Normal MA-plot
+<center><h4>Normal samples MA-plot</h4></center>
 
 ```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
 par(mfrow=c(5, 6), mar=c(4, 5, 3, 1))
@@ -309,6 +311,8 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
+As can be percived, there are some samples which its mean normalisation line (red line), does not fit with the expected line (blue line at intercepit = 0). As these MA-plots are after the normalisation value, we might consider to take it out in further steps.
+
 <!--- JOAN END --->
 
 
@@ -316,6 +320,8 @@ for (i in 1:ncol(setmp)) {
 
 
 ## Batch Effect
+
+The batch effect occurs when there is any non-biological variable that accounts for the variability between samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
 
 ```{r getting the batch labels, collapse=TRUE}
 tss <- substr(colnames(prac.se.sub), 6, 7)
