@@ -47,6 +47,7 @@ library("edgeR")
 library("geneplotter")
 library("ggplot2")
 library("sva")
+old.par <- par(mar = c(0, 0, 0, 0))
 ```
 
 ```{r load}
@@ -177,27 +178,23 @@ table(prac.dge.unique.filtlib$samples$group)
 <!--- Adri START --->
 
 Since we still have a lot of samples, we look at the distribution of the Tissue Soucre Site for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
-```{r filt}
 
+```{r filter}
+# not filtering by TSS
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 
+# filter by TSS block
 tss <- substr(colnames(prac.se.sub), 6, 7)
-
 tss_df <- data.frame(TYPE=prac.se.sub$type, TSS=tss)
-
-
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 selection  <- c('CH', 'EJ', 'G9', 'HC')
-
 prac.dge.unique.filtlib <- prac.dge.unique.filtlib[,tss_df$TSS %in% selection]
-
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
-
 table(prac.dge.unique.filtlib$samples$group)
 
 ```
 
-<!--- Adri END --->
+ <!--- Adri END --->
 
 ```{r figure library size, echo=FALSE, fig.align='center',fig.lp= 'fig:', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
 
@@ -305,9 +302,16 @@ assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count
 <center><h4>Tumor samples MA-plot</h4></center>
 
 ```{r maPlotsTumor, fig.align="center", fig.height= 35, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
-par(mfrow=c(14, 6), mar=c(4, 5, 3, 1))
+
 setmp <- prac.se.sub[, prac.se.sub$type == "tumor"]
 dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "tumor"]
+
+samples.number <- length(rownames(colData(setmp)))
+if (samples.number %% 6 == 0) { 
+  nr <- samples.number / 6
+} else {nr <- samples.number %/% 6 + 1}
+par(mfrow=c(nr, 6), mar=c(4, 5, 3, 1))
+
 for (i in 1:ncol(setmp)) {
   A <- rowMeans(assays(setmp)$logCPM)
   M <- assays(setmp)$logCPM[, i] - A
@@ -318,12 +322,20 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
+
 <center><h4>Normal samples MA-plot</h4></center>
 
 ```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
-par(mfrow=c(5, 6), mar=c(4, 5, 3, 1))
+
 setmp <- prac.se.sub[, prac.se.sub$type == "normal"]
 dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "normal"]
+
+samples.number <- length(rownames(colData(setmp)))
+if (samples.number %% 6 == 0) { 
+  nr <- samples.number / 6
+} else {nr <- samples.number %/% 6 + 1}
+par(mfrow=c(nr, 6), mar=c(4, 5, 3, 1))
+
 for (i in 1:ncol(setmp)) {
   A <- rowMeans(assays(setmp)$logCPM)
   M <- assays(setmp)$logCPM[, i] - A
@@ -368,6 +380,7 @@ table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 <!--- ADRI END --->
 
 ```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='Hirechical clustering of the prac.se.sub dataset', fig.height=8}
+par(old.par)
 logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
 d <- as.dist(1-cor(logCPM, method="spearman"))
 sampleClustering <- hclust(d)
@@ -394,9 +407,18 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 
 
 ```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+par(mfrow=c(1, 1), mar=c(0,0,0,0))
 plotMDS(prac.dge.unique.filtlib, labels=outcome, col=batch)
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
+```
+
+
+```{r mds2, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+type <- as.integer(factor(prac.se.sub$type))
+plotMDS(prac.dge.unique.filtlib, pch = 19, col=type)
+legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$type))),
+       fill=sort(unique(type)), inset=0.05)
 ```
 
 As we can see, there are some wierd values. 7737, 8258 and 7747 samples (all from normal tissues) map very separatly from the other samples from the same TSS and of the overall samples.
@@ -411,8 +433,20 @@ As we can see, there are some wierd values. 7737, 8258 and 7747 samples (all fro
 
 As some strange results have been found, regarding normal samples, one viable option for the analysis is to remove those samples.
 
+```{r function to prune, echo= FALSE}
+GetID <- function(number, se){
+  id <- grep(number,rownames(colData(se)))
+  return(rownames(colData(prac.se.sub))[id])
+}
+
+```
+
 ```{r pruning the data set}
-prac.dge.unique.pruned <- prac.dge.unique.filtlib[, !rownames(prac.dge.unique.filtlib$samples) %in% c("TCGA.HC.7737.11A.02R.2118.07","TCGA.HC.7747.11A.01R.2118.07","TCGA.HC.8258.11A.01R.2263.07")]
+number.id <- c("7737","7745","7740","7738","7211","7747","8258") #from MDS plot
+pruning.vec <- sapply(number.id, GetID, prac.se.sub)
+
+prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
+                   !rownames(prac.dge.unique.filtlib$samples) %in% pruning.vec]
 table(prac.dge.unique.pruned$samples$group)
 prac.se.pruned <- prac.se.sub[,rownames(prac.dge.unique.pruned$samples)]
 ```
@@ -424,7 +458,9 @@ tss <- substr(colnames(prac.se.pruned), 6, 7)
 batch <- as.integer(factor(tss))
 outcome <- paste(substr(colnames(prac.se.pruned), 9, 12), as.character(prac.se.pruned$type), sep="-")
 names(outcome) <- colnames(prac.se.pruned)
+```
 
+```{r mds3, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
 plotMDS(prac.dge.unique.pruned, labels=outcome, col=batch)
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
@@ -432,12 +468,22 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 ```
 
+```{r mds4, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+
+type <- as.integer(factor(prac.se.pruned$type))
+plotMDS(prac.dge.unique.pruned, pch = 19, col=type)
+legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$type))),
+       fill=sort(unique(type)), inset=0.05)
+```
+
+
 As we can see, the overall clustering of the samples is a bit better than before. Those 3 normal samples were disturbing the clustering by type (norma tissue vs tumor tissue).  
 
 
 ## Differential Gene Expression
 
 After having corrected by those disturbing samples, the differential gene expression can be analysed.
+
 
 ```{r diferential gene expr1}
 mod <- model.matrix(~ prac.se.pruned$type, colData(prac.se.pruned))
@@ -479,13 +525,16 @@ hist(pvsv, main="", las=1)
 
 As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
 
-```{r sva to check batch effect, fig.align='center'}
+```{r sva to check batch effect}
 # introduce the extracted data in the se obj
 colData(prac.se.pruned)$tissue_source_site <- tss
 mod <- model.matrix(~ type + as.factor(tissue_source_site), data = colData(prac.se.pruned))
 mod0 <- model.matrix(~ as.factor(tissue_source_site), data = colData(prac.se.pruned))
 pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0) 
 sum(p.adjust(pValues, method = "BH") < 0.05)
+```
+
+```{r pvales plot, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using TSS as null model.' }
 hist(pValues)
 ```
 <!--- DAVID END --->
