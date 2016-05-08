@@ -323,6 +323,8 @@ As can be percived, there are some samples which its mean normalisation line (re
 
 The batch effect occurs when there is any non-biological variable that accounts for the variability between samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
 
+First of all, check for batch effect in TSS variable (Tissue Source Site).
+
 ```{r getting the batch labels, collapse=TRUE}
 tss <- substr(colnames(prac.se.sub), 6, 7)
 table(tss)
@@ -375,13 +377,18 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
 ```
 
+As we can see, there are some wierd values. 7737, 8258 and 7747 samples (all from normal tissues) map very separatly from the other samples from the same TSS and of the overall samples.
+
 <!--- DAVID END --->
 
 
 
-<!--- DAVID START --->
+<!--- DAVID START ---> 
 
 ### Filtering after MDS ands MA plots
+
+As some strange results have been found, regarding normal samples, one viable option for the analysis is to remove those samples.
+
 ```{r pruning the data set}
 prac.dge.unique.pruned <- prac.dge.unique.filtlib[, !rownames(prac.dge.unique.filtlib$samples) %in% c("TCGA.HC.7737.11A.02R.2118.07","TCGA.HC.7747.11A.01R.2118.07","TCGA.HC.8258.11A.01R.2263.07")]
 table(prac.dge.unique.pruned$samples$group)
@@ -403,8 +410,12 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 ```
 
+As we can see, the overall clustering of the samples is a bit better than before. Those 3 normal samples were disturbing the clustering by type (norma tissue vs tumor tissue).  
+
 
 ## Differential Gene Expression
+
+After having corrected by those disturbing samples, the differential gene expression can be analysed.
 
 ```{r diferential gene expr1}
 mod <- model.matrix(~ prac.se.pruned$type, colData(prac.se.pruned))
