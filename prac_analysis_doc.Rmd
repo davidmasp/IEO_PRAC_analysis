@@ -500,13 +500,13 @@ hist(pv, main="", las=1)
 
 
 
-```{r}
+```{r sva 1}
 sv <- sva(assays(prac.se.pruned)$logCPM, mod, mod0)
 
 sv$n
 ```
 
-```{r}
+```{r sva2}
 modsv <- cbind(mod, sv$sv)
 mod0sv <- cbind(mod0, sv$sv)
 pvsv <- f.pvalue(assays(prac.se.pruned)$logCPM, modsv, mod0sv)
