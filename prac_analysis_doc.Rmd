@@ -171,10 +171,33 @@ In the plot, we cannot distinguish the different samples due the large number of
 
 ```{r lib.unique}
 # library size, non-paired samples
-prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 50 ] # 50e06 threshold value
+prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 40 ] # 50e06 threshold value
 table(prac.dge.unique.filtlib$samples$group)
-prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 ```
+<!--- Adri START --->
+
+Since we still have a lot of samples, we look at the distribution of the Tissue Soucre Site for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
+```{r filt}
+
+prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
+
+tss <- substr(colnames(prac.se.sub), 6, 7)
+
+tss_df <- data.frame(TYPE=prac.se.sub$type, TSS=tss)
+
+
+table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
+selection  <- c('CH', 'EJ', 'G9', 'HC')
+
+prac.dge.unique.filtlib <- prac.dge.unique.filtlib[,tss_df$TSS %in% selection]
+
+prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
+
+table(prac.dge.unique.filtlib$samples$group)
+
+```
+
+<!--- Adri END --->
 
 ```{r figure library size, echo=FALSE, fig.align='center',fig.lp= 'fig:', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
 
@@ -314,7 +337,6 @@ for (i in 1:ncol(setmp)) {
 As can be percived, there are some samples which its mean normalisation line (red line), does not fit with the expected line (blue line at intercepit = 0). As these MA-plots are after the normalisation value, we might consider to take it out in further steps.
 
 <!--- JOAN END --->
-
 
 <!--- DAVID START --->
 
