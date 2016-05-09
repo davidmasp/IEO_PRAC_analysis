@@ -543,7 +543,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 ```
 
-```{r mds4, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+```{r mds4, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 12: MDS of the prac.se.sub dataset', fig.height=8}
 
 type <- as.integer(factor(prac.se.pruned$type))
 plotMDS(prac.dge.unique.pruned, pch = 19, col=type)
@@ -552,7 +552,7 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$t
 ```
 
 
-As we can see, the overall clustering of the samples is a bit better than before. Those 7 normal samples were disturbing the clustering by type (normal tissue vs tumor tissue).  
+As we can see in fig. 11 and 12, the overall clustering of the samples is a bit better than before. Those 7 normal samples were disturbing the clustering by type (normal tissue vs tumor tissue).  
 
 
 ## Differential Gene Expression
@@ -567,14 +567,14 @@ pv <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0)
 sum(p.adjust(pv, method="fdr") < 0.01)
 ```
 
-```{r pdist, echo=FALSE, out.width="600px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples.", fig.align='center'}
+```{r pdist, echo=FALSE, out.width="600px", fig.cap="Fig. 13: Distribution of raw p-values for an F-test on every gene between tumor and normal samples.", fig.align='center'}
 
 
 hist(pv, main="", xlab= 'p-value', las=1)
 
 ```
 
-The histogram presents a peak in the 0.0-0.1 region, indicating a high presence of DE genes. The distribution of the other values is quite uniform and low in comparison with the 0.1-0.0 values. We apply the SVA modification to observe the changes in the distribution: 
+The histogram in fig. 13 presents a peak in the 0.0-0.1 region, indicating a high presence of DE genes. The distribution of the other values is quite uniform and low in comparison with the 0.1-0.0 values. We apply the SVA modification to observe the changes in the distribution: 
 
 
 ```{r sva 1}
@@ -590,21 +590,19 @@ pvsv <- f.pvalue(assays(prac.se.pruned)$logCPM, modsv, mod0sv)
 sum(p.adjust(pvsv, method="fdr") < 0.01)
 ```
 
-```{r psvdist, echo=FALSE, out.width="600px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.", fig.align='center'}
-# pdf("shit2.pdf")
+```{r psvdist, echo=FALSE, out.width="600px", fig.cap="Fig. 14: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.", fig.align='center'}
 hist(pvsv, main="", xlab= 'p-value', las=1)
-# dev.off()
 ```
 
-The total of DE genes has increased a 27% with respect to the initial number. The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 ocurrences to 300). The uniformity of the distribution is mantained. 
+The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 ocurrences to 300). The uniformity of the distribution is mantained. 
 
 ### Checking for batch effect from TSS
 
 As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
 
-#### Tss
+#### TSS
 ```{r sva tss}
-# introduce the extracted data in the se obj
+# Introduce the extracted data in the se obj
 colData(prac.se.pruned)$tissue_source_site <- tss
 table(data.frame(TYPE=prac.se.pruned$type, TSS = tss))
 mod <- model.matrix(~ type + as.factor(tissue_source_site), data = colData(prac.se.pruned))
@@ -613,9 +611,12 @@ pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0)
 sum(p.adjust(pValues, method = "BH") < 0.01)
 ```
 
-```{r pvales plot tss, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using TSS as null model.' }
+```{r pvales plot tss, echo=FALSE, fig.align='center', fig.cap= 'Fig. 15: p-values of the differential expression analysis using TSS as null model.' }
 hist(pValues, xlab= 'p-value')
 ```
+As can be seen in fig. 15, the histogram shows a distribution similar to fig. 14 (high proportion of genes with p-values < 0.01 with respect to all the others).
+
+However, it seems that the number of genes fullfilling the p-values restriction are few in fig. 15 (5546) than in fig. 14 (7145).
 
 #### Plate
 ```{r sva plate }
@@ -639,7 +640,7 @@ In case the test is performed, a high dependance between sample type and sample/
 <!--- DAVID END --->
 
 
-## Conclusion
+## Conclusions
 
 
 <!--- ADRI START --->
