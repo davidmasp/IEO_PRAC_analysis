@@ -641,6 +641,10 @@ In case the test is performed, a high dependance between sample type and sample/
 
 ## Conclusion
 
+<!--- DAVID START --->
+
+<!--- DAVID END--->
+
 
 <!--- ADRI START --->
 - By measuring surrogate variable analysis of plate and tss attributes, we observe a decrease in the quantity of DE genes. This implies that the attributes are not presenting non-biological variability in the study presented by the authors. 
