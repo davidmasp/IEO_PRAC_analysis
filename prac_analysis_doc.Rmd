@@ -419,9 +419,13 @@ Despite there are some samples with line tails diverging from the extected value
 
 ## Batch Effect
 
-The batch effect occurs when there is any non-biological variable that accounts for the variability between samples. Usually is related to handling, storing and processing the samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
+The batch effect occurs when there is a non-biological variable that accounts for the variability between samples. Usually this is related to handling, storing and processing the samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
 
-First of all, the batch labels need to be obtaned from the ```se``` object. From it, we obtain the Tissue Source Site (TSS), the center in which the samples where processed, the plate which is sample belonged, and also its portion of analyte and vial.
+First of all, the batch labels need to be obtained from the sample codes of the `SE` object as the coldata column refering to it contains some NAs. The Tissue Source Site (TSS) is the center in which the samples where processed and the tissue where they were extracted. The correlation between TSS codes and centers can be found [here](https://tcga-data.nci.nih.gov/datareports/codeTablesReport.htm).
+
+Our selected samples were collected and analysed in the University of Pittsburgh, the Roswell Park, the International Genomics Consortium and the company Indivumed.
+
+We also extract from the sample code the plate, its portion of analyte and sample_vial.
 
 ```{r getting the batch labels, collapse=TRUE}
 tss <- substr(colnames(prac.se.sub), 6, 7)
@@ -437,7 +441,7 @@ table(samplevial)
 ```
 <!--- ADRI START --->
 
-By looking at the table between type and tss, we will observe if the data chosen presents batch effect. We have corrected this possibility at the first selections by taking the biggets batches. 
+By looking at the table between type and tss, we will observe if the data chosen presents batch effect. We have corrected this possibility at the first selections by taking only the biggets batches. 
 
 ```{r table TSS/TYPE}
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
@@ -447,7 +451,7 @@ table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 
 A good way to see if there is batch effect on the samples is to study the data clustering.
 
-In the following dendogram, samples are being clustered by TSS factor.
+In the following dendogram, samples are being clustered by Gene Expression levels and colored by TSS.
 
 ```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 8: Hirechical clustering of the prac.se.sub dataset', fig.height=8}
   
@@ -476,6 +480,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 
 ```
 When in a dendogram some samles cluster together, it means that they are closer to each other, than the rest of the sample. If we expect no batch effect, the batch labels should be more or less randomly clustered together.
+
 As we can see from the dendogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
 
 * There are more red and blue samples, thus, it is more likely that they cluster together.
@@ -494,7 +499,9 @@ plotMDS(prac.dge.unique.filtlib, pch = 19, col=type)
 legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$type))),
        fill=sort(unique(type)), inset=0.05)
 ```
-MDS-plots help to see also how data cluster together projecting the variability of each sample, in a 2D plot (similar to PCA-plots).
+
+MDS-plots help to see also how data cluster together projecting the variability of each sample, in a Multiple Dimension Scaling plots.
+
 As we  can see in fig. 9 and 10, there is a clustering of normal samples, belonging to batch HC (blue at left-inferior corner). For the sake of keeping the dataset as homogenous as possible, it might be interessting to do not use those samples. Maybe, that mini-cluster of samples is partially responsable of the overall disposition of samples (which differentates poorly between normal and cancer tissues).
 
 
@@ -552,7 +559,7 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$t
 ```
 
 
-As we can see, the overall clustering of the samples is a bit better than before. Those 7 normal samples were disturbing the clustering by type (normal tissue vs tumor tissue).  
+As we can see, after filter those samples off the distribution gains centrality and uniformity generating a more reliable data set. 
 
 
 ## Differential Gene Expression
@@ -574,8 +581,9 @@ hist(pv, main="", xlab= 'p-value', las=1)
 
 ```
 
-The histogram presents a peak in the 0.0-0.1 region, indicating a high presence of DE genes. The distribution of the other values is quite uniform and low in comparison with the 0.1-0.0 values. We apply the SVA modification to observe the changes in the distribution: 
+The histogram presents a peak in the 0.0-0.1 region, indicating a high presence of DE genes. The distribution of the other values is quite uniform and low in comparison with the 0.1-0.0 values. 
 
+In order to focus on the DE analysis we use only the SV affecting our gene expression variability. Using this adjustment we can see how the number increases significantly. This may be related to a unkown source of variability that we haven't been able to detect or to the intrinsec variability of individuals. 
 
 ```{r sva 1}
 sv <- sva(assays(prac.se.pruned)$logCPM, mod, mod0)
@@ -600,9 +608,12 @@ The total of DE genes has increased a 27% with respect to the initial number. Th
 
 ### Checking for batch effect from TSS
 
-As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
+As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists actual batch effect by using the TSS as a null model when building the `mod.matrix`. We will also perform the same analysis with the plate attribute of the samples, also to recheck for some batch effect. 
 
-#### Tss
+#### TSS
+The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p values will be uniform, meaning that there is not a peak in the significant genes. 
+
+In the following figure we can observe that this is not true and the p-value distribution is mantained. Moreover, the decrease of DE genes between the uniform null model (5610) and the TSS null model (5546) is very small.
 ```{r sva tss}
 # introduce the extracted data in the se obj
 colData(prac.se.pruned)$tissue_source_site <- tss
@@ -618,6 +629,8 @@ hist(pValues, xlab= 'p-value')
 ```
 
 #### Plate
+Here we perform the same analysis and we see that the number aso decrease also by a small extend. This would impliy that there not exists significant batch effect by this variable. 
+
 ```{r sva plate }
 # introduce the extracted data in the se obj
 plate <- substr(colnames(prac.se.pruned), 22, 25)
@@ -631,30 +644,42 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 ```{r pvales plot p, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using plate as null model.' }
 hist(pValues, xlab= 'p-value')
 ```
-#### Samplevial
-Trying to test this may be a waste of time, as we know beforehand that sample code makes implicit if the samples come from healty individuals or diseased ones.
-
-In case the test is performed, a high dependance between sample type and sample/vial code will be found, as if they were highly related. In fact, they refer to exactly the same information.
 
 <!--- DAVID END --->
 
 
 ## Conclusion
 
+
 <!--- DAVID START --->
+- In our data summary we can see a lot of missing values for clinical traits that we should check and consider in the following analysis. However, gene information seems to be quite robust.  
+
+- We have subset our data set using a non-paired analysis design to avoid assesing the extend of differential expression for non-independent samples. In order to do that we have used complementary criteria exluding the tumor samples that were duplicated as normal. 
+- After that subset to define the analysis approach we have also include another filter layer on top by selecting the individuals with larger library size values.
+
+- We have detected some problematic normal samples in the MDS plot from an unique batch. They have been filtered out to avoid further problems. 
+
+- The main source of variation seems to be driven by the sample type (tumor or normal) as seen in the DE analysis. 
+
+- When adjusting this DE analysis by the detected Surrogate Variants the number of DE genes increases from 5800 up to 7000. This may indicate there is still some sort of heterogeneity we cannot detect or may be just the individual variability of the gene expression.  
+
+- We cannot detect any significant Batch Effect after checking for the **TSS** and the **plate** attributes. For the TSS we have checked using a dendogram plot, a MDS and a SVA considering the TSS variablity as the null model. For the Plate variables we have only performed an SVA that suggests there is no Batch Effect. 
+
+- When using SVA to check Batch Effect of plate and tss attributes, we observe a decrease in the quantity of DE genes. Although this migth imply that indeed exists this batch effect, the change is not significant and it not affect the p-value distribution. Therefore, although the variability of some genes may be explained by plate or TSS, this genes are a few hundreds that won't really affect the conclusions of this analysis. 
+
 
 <!--- DAVID END--->
 
 
 <!--- ADRI START --->
-- By measuring surrogate variable analysis of plate and tss attributes, we observe a decrease in the quantity of DE genes. This implies that the attributes are not presenting non-biological variability in the study presented by the authors. 
 
-- Wide studies like The Cancer Genome Atlas imply a really difficult process of filtering and assesing the data to obtain relevant and real results. Even with that treatment, we can always have a lot of variability making difficult the extraction of real or relevant conclusions. 
 
-- There are present 7145 genes with a Differental Expression with a FDR of 1% (having as null model with a matrix of intercept term ~ 1).
+- There are present 7145 genes with a Differental Expression with a FDR of 1% (having as null model with a matrix of intercept term ~ 1 and adjusting by the detected SVs).
 
-- 
+ 
 <!--- ADRI END --->
+- Wide projects like The Cancer Genome Atlas imply a really difficult process of filtering and assesing the data to obtain relevant and real results. Even with that treatment, we can always have a lot of variability making difficult the extraction of real or relevant conclusions. 
+
 ## Session information
 
 ```{r}
