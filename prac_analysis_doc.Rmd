@@ -99,18 +99,19 @@ Our dataset presents 554 different samples with 549 clinical variables analyzed.
 In order to acces the column data from our `SE`object we can use its own implemented function, `colData()`.
 
 ```{r data}
-names(colData(prac.se))
+head(names(colData(prac.se)))
 colData(prac.se)[1:5, 1:5]
 mcols(colData(prac.se), use.names=TRUE)
 ```
 
 By observing the clinical variables, from the 549 present some have information collected and others present NA values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...There are variables related directly with prostate cancer, like gleason score, the measurement of the development of the adenocarcinoma.
 
-```{r exploring some variables, fig.align='center'}
+```{r exploring some variables, fig.align='center', echo=FALSE, message=FALSE}
 sampleinfo.df <- as.data.frame(colData(prac.se))
-par(mfrow=c(1,2))
-ggplot(sampleinfo.df, aes(x=vital_status, fill =gleason_score)) + geom_bar()
-ggplot(sampleinfo.df, aes(x=race, fill =gleason_score)) + geom_bar()
+require(gridExtra)
+plot1 <- ggplot(sampleinfo.df, aes(x=vital_status, fill =gleason_score)) + geom_bar()
+plot2 <- ggplot(sampleinfo.df, aes(x=race, fill =gleason_score)) + geom_bar() + theme(axis.text.x = element_text(angle = 25, hjust = 1))
+grid.arrange(plot1, plot2, ncol=2)
 ```
 
 Looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a explanation of the variable and the last one contains the  [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information in the [CDE website](https://www.nlm.nih.gov/cde). 
@@ -137,9 +138,9 @@ rowRanges(prac.se)
 For each gene we have present the chromosome, the range of position, the strand, its symbol, the length of the transcript and the GC content. 
 ```{r gc content hist, fig.align='center'}
 geneinfo.df <- as.data.frame(mcols(prac.se))
-par(mfrow=c(1,2))
-ggplot(geneinfo.df, aes(x=txlen)) + geom_histogram(bins = 50)
-ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
+plot1 <- ggplot(geneinfo.df, aes(x=txlen)) + geom_histogram(bins = 50)
+plot2 <- ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
+grid.arrange(plot1, plot2, ncol=2)
 ```
 
 #### Metadata
