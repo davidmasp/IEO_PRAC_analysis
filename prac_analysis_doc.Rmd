@@ -167,7 +167,7 @@ legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 
 ```
 
-In the plot, we cannot distinguish the different samples due the large number of samples. We will filter in a high treshold of sequencing depth to recude the number of samples erasing the ones with less sequencing quality. 
+In the fig. 1 , we cannot distinguish the different samples due the large number of samples. We will filter in a high treshold of sequencing depth to recude the number of samples erasing the ones with less sequencing quality. 
 
 
 ```{r lib.unique}
@@ -230,7 +230,7 @@ ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_b
 #legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
 
-After filtering, we obtain a dataset of 48 normal samples and 122 tumor (fig 3 and 4). We introduce it again in the prac.se dataset to obtain the final filtered version.
+After filtering, we obtain a dataset of 48 normal samples and 122 tumor (fig. 2 and 3). We introduce it again in the prac.se dataset to obtain the final filtered version.
 Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. The converage is unusually high but since it is theorically a good attribute, we decided to keep it. 
 
 ### Sample expression distribution
@@ -250,13 +250,14 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 
 ```
 
-Seeing the graphs, we cannot establish differences between the tumoral/normal logCPM distribution.
+Analysing the density graphs from fig. 4, we cannot establish differences between the tumoral/normal logCPM distribution.
 
 ### Gene expression distribution
 
 Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for these values the CPM the expression level is very low, we cannot establish real conclusions for that genes (spontaneus transcription, non-specific of tissue transcription...).
 
-```{r avgexp gene, fig.align='center', fig.cap='Fig 5: Histogram presenting gene frequency expression for different logCPM values'}
+
+```{r avgexp gene, fig.align='center', fig.cap='Fig. 5: Histogram presenting gene frequency expression for different logCPM values'}
 assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=0.5)
 
 avgexp <- rowMeans(assays(prac.se.sub)$logCPM)
@@ -266,10 +267,11 @@ hist(avgexp, xlab="log2 CPM", main="", las=1)
 abline(v=1, col="red", lwd=2)
 
 ```
+As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minumum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the Grey Zone (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
 
 ### Filtering by gene expression levels
 
-As shown in the histogram, there are enough values below 1 to filter. In order to do that, we create a mask able to erase them from our dataset. 
+In order to eliminate those values from our, a mask is creating, using as a factor of exclusiong avergae of expression higher than 1. 
 
 ```{r gene filt}
 mask <- avgexp > 1
@@ -347,8 +349,8 @@ for (i in 1:ncol(setmp)) {
   lines(lo$x, lo$y, col="red", lwd=2)
 }
 ```
-As can be percived, there are some samples which its mean normalisation line (red line), does not fit with the expected line (blue line at intercepit = 0). As these MA-plots are after the normalisation value, we might consider to take it out in further steps.
-
+As can be percived in fig. 6 and 7, the tendency line representing the mean of normalised values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0.
+Despite there are some samples with line tails diverging from the extected values, it is not a big deal, usually.
 <!--- JOAN END --->
 
 <!--- DAVID START --->
@@ -413,9 +415,10 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 
 ```
 When in a dendogram some samles cluster together, it means that they are closer to each other, than the rest of the sample. If we expect no batch effect, the batch labels should be more or less randomly clustered together.
-As we can see from the dendogram, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
-- There are more red and blue samples, thus, it is more likely that they cluster together.
-- Red and blue samples are similiar between them, and different between the other samples, hence, clustering together. 
+As we can see from the dendogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
+
+* There are more red and blue samples, thus, it is more likely that they cluster together.
+* Red and blue samples are similiar between them, and different between the other samples, hence, clustering together. 
 
 ```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.sub dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
@@ -424,15 +427,15 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
 ```
 
-
 ```{r mds2, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 10: MDS of the prac.se.sub dataset', fig.height=8}
 type <- as.integer(factor(prac.se.sub$type))
 plotMDS(prac.dge.unique.filtlib, pch = 19, col=type)
 legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$type))),
        fill=sort(unique(type)), inset=0.05)
 ```
+MDS-plots help to see also how data cluster together projecting the variability of each sample, in a 2D plot (similar to PCA-plots).
+As we  can see in fig. 9 and 10, there is a clustering of normal samples, belonging to batch HC (blue at left-inferior corner). For the sake of keeping the dataset as homogenous as possible, it might be interessting to do not use those samples. Maybe, that mini-cluster of samples is partially responsable of the overall disposition of samples (which differentates poorly between normal and cancer tissues).
 
-As we can see, there are some wierd values. 7737, 8258 and 7747 samples (all from normal tissues) map very separatly from the other samples from the same TSS and of the overall samples.
 
 <!--- DAVID END --->
 
@@ -442,7 +445,7 @@ As we can see, there are some wierd values. 7737, 8258 and 7747 samples (all fro
 
 ### Filtering after MDS ands MA plots
 
-As some strange results have been found, regarding normal samples, one viable option for the analysis is to remove those samples.
+As some unexpected results have been found, regarding normal samples, one viable option for the analysis is to remove those samples.
 
 ```{r function to prune, echo= FALSE}
 GetID <- function(number, se){
