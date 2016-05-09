@@ -135,7 +135,7 @@ ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
 #### Metadata
 From the metadata we can check that we have the current version of the data. 
 ```{r metadata}
-metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
+metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
 ```
 
 ## Subsetting the Data
@@ -625,7 +625,15 @@ hist(pValues, xlab= 'p-value')
 ## Conclusion
 
 
+<!--- ADRI START --->
+- By measuring surrogate variable analysis of plate and tss attributes, we observe a decrease in the quantity of DE genes. This implies that the attributes are not presenting non-biological variability in the study presented by the authors. 
 
+- Wide studies like The Cancer Genome Atlas imply a really difficult process of filtering and assesing the data to obtain relevant and real results. Even with that treatment, we can always have a lot of variability making difficult the extraction of real or relevant conclusions. 
+
+- There are present 7145 genes with a Differental Expression with a FDR of 1% (having as null model with a matrix of intercept term ~ 1).
+
+- 
+<!--- ADRI END --->
 ## Session information
 
 ```{r}
