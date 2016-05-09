@@ -177,9 +177,9 @@ table(colData(prac.se.dupl)$type)
 
 With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
 
-*The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples.*
+* The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples.
 
-*In the resuting table we can see that all the normal samples remain meanwhile we have filter out 67 tumor samples that contained `NA`values in the bcr barcode field or that they were extracted from the same individuals that provided the normal samples.*
+* In the resuting table we can see that all the normal samples remain meanwhile we have filter out 67 tumor samples that contained `NA`values in the bcr barcode field or that they were extracted from the same individuals that provided the normal samples.
     
 ```{r nonpaired subset}
 # Subset the non-paired 
@@ -641,6 +641,10 @@ In case the test is performed, a high dependance between sample type and sample/
 
 
 ## Conclusions
+
+<!--- DAVID START --->
+
+<!--- DAVID END--->
 
 
 <!--- ADRI START --->
