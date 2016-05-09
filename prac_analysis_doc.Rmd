@@ -96,16 +96,26 @@ Our dataset presents 554 different samples with 549 clinical variables analyzed.
 
 #### Column Data
 
+In order to acces the column data from our `SE`object we can use its own implemented function, `colData()`.
 
 ```{r data}
+names(colData(prac.se))
 colData(prac.se)[1:5, 1:5]
 mcols(colData(prac.se), use.names=TRUE)
 ```
 
-By observing the clinical variables, from the 549 present some have information collected and others present NA values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...There are variables related directly with prostate cancer, like gleason score, the measurement of the development of the adenocarcinoma. 
+By observing the clinical variables, from the 549 present some have information collected and others present NA values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...There are variables related directly with prostate cancer, like gleason score, the measurement of the development of the adenocarcinoma.
+
+```{r exploring some variables, fig.align='center'}
+sampleinfo.df <- as.data.frame(colData(prac.se))
+par(mfrow=c(1,2))
+ggplot(sampleinfo.df, aes(x=vital_status, fill =gleason_score)) + geom_bar()
+ggplot(sampleinfo.df, aes(x=race, fill =gleason_score)) + geom_bar()
+```
 
 Looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abreviated, the second a explanation of the variable and the last one contains the  [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information in the [CDE website](https://www.nlm.nih.gov/cde). 
 
+As an example we can see in the figures, there are clinical variables and sample variables giving information about the sampels. 
 
 #### Tumor / Normal Samples
 ```{r table types}
@@ -135,16 +145,18 @@ ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
 #### Metadata
 From the metadata we can check that we have the current version of the data. 
 ```{r metadata}
-metadata(pracse)$objectCreationDate #the result should be [1] "2016-04-25"
+metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
 ```
 
 ## Subsetting the Data
 
 In order to reduce possible batch effects and reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
 
-**Paired Subsetting** - In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumour. However, it also drives some disadvantages as we have been taugh in class.
+### **Paired Subsetting** 
 
-*As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group.* 
+In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumour. However, it also drives some disadvantages as we have been taugh in class.
+
+* As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group.* 
 
 ```{r subset}
 # Subset the paired samples
@@ -160,7 +172,9 @@ prac.se.dupl <- prac.se[,colData(prac.se)$bcr_patient_barcode
 table(colData(prac.se.dupl)$type)
 ```
  
-**Non-Paired Subsetting** - With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
+### **Non-Paired Subsetting** 
+
+With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
 
 *The replicated samples are 2 samples extracted from the same individual in 2 different conditions (tumor and normal). We want to distinguish general variation that is associated to one or the other subset and introducing 2 samples for the same individual could include batch effect in our samples.*
 
