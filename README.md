@@ -44,42 +44,42 @@ Get the article from [here](http://cancergenome.nih.gov/publications):
 ##TO DO
 
 - [x] Choose a RNA-seq data set among the ones offered in the data sets folder.
-- [ ] Read introductory material about the corresponding type of tumor you are going to analyze. Try to understand the major tumorigenic mechanisms that participate in the growth and proliferation of such a tumor type. This essentially means to gather information about what are the **most relevant genes** to this cancertype.
+- [x] Read introductory material about the corresponding type of tumor you are going to analyze. Try to understand the major tumorigenic mechanisms that participate in the growth and proliferation of such a tumor type. This essentially means to gather information about what are the **most relevant genes** to this cancertype.
     - The goal of the project is not to reproduce previous findings about this cancer type, although you may choose to do so, but rather to find some simple question related to this cancer type that you can answer focusing on the contrast between tumor and normal samples, or on some other simple contrast of interest using the analysis techinques we have seen in class.
     - In this respect, you can consider analyzing some of the available clinical variables such as the **tumor stage encoded** in `ajcc_pathologic_tumor_stage` in the sample info.
     - Each clinical variable has a metadata with a so-called 'CDE' identifier which you can use to fetch futher information about at https://cdebrowser.nci.nih.gov.
-- [ ] Try to figure out factors that generate variability unrelated to the outcome of interest. By means of the diagnostics we have seen the lecture on batch identification, try to ensure that you do not have a major confounding with the outcome of interest.
+- [x] Try to figure out factors that generate variability unrelated to the outcome of interest. By means of the diagnostics we have seen the lecture on batch identification, try to ensure that you do not have a major confounding with the outcome of interest.
     - [x] Check if  Prospective Collection drives batch effect.
         - Hirechical Cluster - **NOT EFFECT AT ALL**
     - [x] Check if TSS drives Batch Effect
         - Hirechical Cluster Result - **NOT SURE**
         - SV analysis - **NO EFFECT AT ALL**
-- [ ] To speed up some parts of the analysis, you may choose to work with a subset of the samples by **filtering** them out.
+- [x] To speed up some parts of the analysis, you may choose to work with a subset of the samples by **filtering** them out.
     - perform a MDS and check if there are some undesired clustering
     - Filter them out
-- [ ] Carry out quality assessment and normalization of the data.
+- [x] Carry out quality assessment and normalization of the data.
 - [ ] Search for differentially expressed (DE) genes using the simple F-test implemented in the package SVA to do a two-group comparison. For this first part of the project *do not attempt* to interpret the list of DE genes, just report how many of them do you find and how the distribution of p-values looks like. Consider estimating surrogate variables with SVA to see whether the number of expression changes increases or decreases. Bear in mind that the actual DE analysis you will do in the second part will be more sophisticated since you will have to take into account aspects such as variance heterogeneity of log CPM values or the fact that normal samples were derived from the same pool of individuals as a fraction of the tumor samples. For this first part of the project, there is no need to address these issues.
-- [ ] The project template that is provided is not comprehensive and it just tries to help you in quickly learning how to work with R Markdown files, so you should try to make your supplementary material more readable and complete than the template provided.
+- [x] The project template that is provided is not comprehensive and it just tries to help you in quickly learning how to work with R Markdown files, so you should try to make your supplementary material more readable and complete than the template provided.
 
 ## HOMEWORK
 
 -  [x] INTRO
 	-  [x] Data
 	-  [x] Lib
-- [ ] QA AND NORM
-	- [ ] 1st normalization							--------
-	- [ ] Library size 										*
+- [x] QA AND NORM
+	- [x] 1st normalization							--------
+	- [x] Library size 										*
 		- [ ] Randomly										*
-		- [ ] Rational (p.e. quality)						*	Actualise the report
-	- [ ] Distribution of expression by samples				*
-	- [ ] Distribution of expression by genes		--------
-	- [ ] Filter genes
-	- [ ] 2nd normalization
-	- [ ] MA plots
-- [ ] BATCH EFFECT
-	- [ ] Hierachical clsutering
-		- [ ] By PC
-		- [ ] By TSS
-	- [ ] MDS
-- [ ] Differential gene expression
-	- [ ] SVA
+		- [x] Rational (p.e. quality)						*	Actualise the report
+	- [x] Distribution of expression by samples				*
+	- [x] Distribution of expression by genes		--------
+	- [x] Filter genes
+	- [x] 2nd normalization
+	- [x] MA plots
+- [x] BATCH EFFECT
+	- [x] Hierachical clsutering
+		- [x] By PC
+		- [x] By TSS
+	- [x] MDS
+- [x] Differential gene expression
+	- [x] SVA
