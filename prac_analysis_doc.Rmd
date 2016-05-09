@@ -374,7 +374,8 @@ table(samplevial)
 ```
 <!--- ADRI START --->
 
-Once the batch data is obtained, analysis of TSS can be performed.
+By looking at the table between type and tss, we will observe if the data chosen presents batch effect. We have corrected this possibility at the first selections by taking the biggets batches. 
+
 ```{r table TSS/TYPE}
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 ```
@@ -492,7 +493,7 @@ As we can see, the overall clustering of the samples is a bit better than before
 
 ## Differential Gene Expression
 
-After having corrected by those disturbing samples, the differential gene expression can be analysed.
+After having corrected by those disturbing samples, the differential gene expression can be analysed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1).
 
 
 ```{r diferential gene expr1}
@@ -504,10 +505,12 @@ sum(p.adjust(pv, method="fdr") < 0.01)
 
 ```{r pdist, echo=FALSE, out.width="600px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples.", fig.align='center'}
 
-hist(pv, main="", las=1)
+
+hist(pv, main="", xlab= 'p-value', las=1)
 
 ```
 
+The histogram presents a peak in the 0.0-0.1 region, indicating a high presence of DE genes. The distribution of the other values is quite uniform and low in comparison with the 0.1-0.0 values. We apply the SVA modification to observe the changes in the distribution: 
 
 
 ```{r sva 1}
@@ -515,6 +518,7 @@ sv <- sva(assays(prac.se.pruned)$logCPM, mod, mod0)
 
 sv$n
 ```
+
 
 ```{r sva2}
 modsv <- cbind(mod, sv$sv)
@@ -525,35 +529,63 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 
 ```{r psvdist, echo=FALSE, out.width="600px", fig.cap="Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.", fig.align='center'}
 # pdf("shit2.pdf")
-hist(pvsv, main="", las=1)
+hist(pvsv, main="", xlab= 'p-value', las=1)
 # dev.off()
 ```
 
-
+The total of DE genes has increased a 27% with respect to the initial number. The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 ocurrences to 300). The uniformity of the distribution is mantained. 
 
 ### Checking for batch effect from TSS
 
 As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists batch effect by using the TSS as a null model when building the `mod.matrix`.
 
-```{r sva to check batch effect}
+#### Tss
+```{r sva tss}
 # introduce the extracted data in the se obj
 colData(prac.se.pruned)$tissue_source_site <- tss
 mod <- model.matrix(~ type + as.factor(tissue_source_site), data = colData(prac.se.pruned))
 mod0 <- model.matrix(~ as.factor(tissue_source_site), data = colData(prac.se.pruned))
 pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0) 
-sum(p.adjust(pValues, method = "BH") < 0.05)
+sum(p.adjust(pValues, method = "BH") < 0.01)
 ```
 
-```{r pvales plot, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using TSS as null model.' }
-hist(pValues)
+```{r pvales plot tss, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using TSS as null model.' }
+hist(pValues, xlab= 'p-value')
 ```
+
+#### Plate
+```{r sva plate }
+# introduce the extracted data in the se obj
+plate <- substr(colnames(prac.se.pruned), 22, 25)
+colData(prac.se.pruned)$plate <- plate
+mod <- model.matrix(~ type + as.factor(plate), data = colData(prac.se.pruned))
+mod0 <- model.matrix(~ as.factor(plate), data = colData(prac.se.pruned))
+pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0) 
+sum(p.adjust(pValues, method = "BH") < 0.01)
+```
+
+```{r pvales plot p, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using plate as null model.' }
+hist(pValues, xlab= 'p-value')
+```
+
+#### Samplevial
+```{r sva samplevial }
+table(data.frame(TYPE=prac.se.pruned$type, TSS=samplevial))
+
+# introduce the extracted data in the se obj
+# samplevial <- substr(colnames(prac.se.pruned), 14, 16)
+# colData(prac.se.pruned)$samplevial <- samplevial
+# mod <- model.matrix(~ type + as.factor(samplevial), data = colData(prac.se.pruned))
+# mod0 <- model.matrix(~ as.factor(samplevial), data = colData(prac.se.pruned))
+# pValues <- f.pvalue(assays(prac.se.pruned)$logCPM, mod, mod0) 
+# sum(p.adjust(pValues, method = "BH") < 0.01)
+```
+!!!!!!!!!!!!!!!
+```{r pvales plot s, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using plate as null model.' }
+hist(pValues, xlab= 'p-value')
+```
+
 <!--- DAVID END --->
-
-
-
-
-
-
 
 
 ## Conclusion
