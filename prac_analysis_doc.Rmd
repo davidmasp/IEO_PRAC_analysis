@@ -616,8 +616,10 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 ```{r pvales plot p, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using plate as null model.' }
 hist(pValues, xlab= 'p-value')
 ```
+#### Samplevial
+Trying to test this may be a waste of time, as we know beforehand that sample code makes implicit if the samples come from healty individuals or diseased ones.
 
-
+In case the test is performed, a high dependance between sample type and sample/vial code will be found, as if they were highly related. In fact, they refer to exactly the same information.
 
 <!--- DAVID END --->
 
