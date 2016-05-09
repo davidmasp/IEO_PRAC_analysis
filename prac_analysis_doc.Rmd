@@ -158,7 +158,7 @@ Now we subset our dataset by library size, which is a measure of sequencing deep
 prac.dge.unique <- DGEList(counts = assays(prac.se.unique)$counts, genes = mcols(prac.se.unique), group = prac.se.unique$type)
 ```
 
-```{r library size all after filter unique, echo=FALSE, fig.align='center', fig.cap='Library Size per sample in the unique dataset'}
+```{r library size all after filter unique, echo=FALSE, fig.align='center', fig.cap='Fig. 1: Library Size per sample in the  non-paired design dataset. '}
 
 ord <- order(prac.dge.unique$samples$lib.size/1e6)
 barplot((prac.dge.unique$sample$lib.size/1e06)[ord], las=1, ylab="Millions of reads",
@@ -177,7 +177,9 @@ table(prac.dge.unique.filtlib$samples$group)
 ```
 <!--- Adri START --->
 
-Since we still have a lot of samples, we look at the distribution of the Tissue Soucre Site for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
+
+Since we still have a lot of samples, we look at the distribution of the Tissue Soucre Site (TSS) for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
+
 
 ```{r filter}
 # not filtering by TSS
@@ -187,21 +189,23 @@ prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 tss <- substr(colnames(prac.se.sub), 6, 7)
 tss_df <- data.frame(TYPE=prac.se.sub$type, TSS=tss)
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
+```
+
+
+We can see some TSS presenting only tumor samples with a low number. These type of samples can be a potential batch factor, so we choose a selection of balanced samples (for example CH, EJ, G9 and HC).
+
+```{r selec}
 selection  <- c('CH', 'EJ', 'G9', 'HC')
 prac.dge.unique.filtlib <- prac.dge.unique.filtlib[,tss_df$TSS %in% selection]
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 table(prac.dge.unique.filtlib$samples$group)
-
 ```
 
  <!--- Adri END --->
 
-```{r figure library size, echo=FALSE, fig.align='center',fig.lp= 'fig:', fig.cap='Density distribution for the sample density using already filtred data by sequencing depth.'}
+```{r figure library size, echo=FALSE, fig.align='center', fig.cap='Fig. 2: Density sample distribution using already filtred data by sequencing depth.'}
 
 ord.unique <- order(prac.dge.unique.filtlib$samples$lib.size/1e6)
-# plot(density(prac.dge.unique.filtlib$samples$lib.size/1e6),main = "Density Plot of pruned samples by lib size") Same info as the last one. Not necessary, isn't it?
-
-
 
 libsize <- data.frame(libsize = prac.dge.unique.filtlib$sample$lib.size/1e6, type = prac.se.sub$type, samples = rownames(prac.dge.unique.filtlib$samples) )
 
@@ -210,16 +214,12 @@ summary(libsize)
 
 ggplot(libsize) +
   geom_density(aes(x=libsize, fill=type), alpha=0.5) +
-  ylab("density\n") + xlab("\nMillions of Reads") +
+  ylab("Density\n") + xlab("\nMillions of Reads") +
   theme_bw()
 
-# ggplot(libsize) +
-#  geom_histogram(
-#    aes(x=libsize, fill=type, y = (..count..)/sum(..count..)), alpha=0.5, binwidth=3
-#  ) + xlab("\nMillions of Reads") + ylab("% of Samples\n") + theme_bw() 
 ```
 
-```{r barplot libsize samples filtred 2, echo=FALSE, fig.align='center',fig.cap="Barplot of the final selected samples with its library size."}
+```{r barplot libsize samples filtred 2, echo=FALSE, fig.align='center',fig.cap="Fig. 3: Barplot of the final selected samples with its library size."}
 
 
 ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_bar(stat = "identity") + theme(axis.text.x=element_blank(), axis.title.x=element_blank())
@@ -230,14 +230,14 @@ ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_b
 #legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
 
-After filtering, we obtain a dataset of 25 normal samples and 81 tumor. We introduce it again in the prac.se dataset to obtain the final filtered version.
-Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. Despite having a good quality, it might not be adequate for normalising the data. In future displays we might deside to take it out.
+After filtering, we obtain a dataset of 48 normal samples and 122 tumor (fig 3 and 4). We introduce it again in the prac.se dataset to obtain the final filtered version.
+Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. The converage is unusually high but since it is theorically a good attribute, we decided to keep it. 
 
 ### Sample expression distribution
 
-Once we have our filtered dataset, we observe the density distribution of the tumor and normal samples separatedly. 
+Once we have our filtered dataset, we observe the density logCPM distribution of the tumor and normal samples separatedly. It will give us an impression of the possible problems of the sampling, since we expect to have a similar distribution of the samples between tumor / normal. 
 
-```{r Multydensity, fig.align='center', fig.cap='Multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
+```{r Multydensity, fig.align='center', fig.cap='Fig 4: Multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
 MDS_normal <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'normal']
 MDS_tumor <- prac.dge.unique.filtlib[,prac.dge.unique.filtlib$samples$group == 'tumor']
 
@@ -250,13 +250,13 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 
 ```
 
-Seeing the graphs, we cannot establish differences between the tumoral/normal levels of expression.
+Seeing the graphs, we cannot establish differences between the tumoral/normal logCPM distribution.
 
 ### Gene expression distribution
 
-Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for values below 1 the CPM values are non significant. 
+Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for these values the CPM the expression level is very low, we cannot establish real conclusions for that genes (spontaneus transcription, non-specific of tissue transcription...).
 
-```{r avgexp gene, fig.align='center', fig.cap='Histogram presenting gene frequency expression for different logCPM values'}
+```{r avgexp gene, fig.align='center', fig.cap='Fig 5: Histogram presenting gene frequency expression for different logCPM values'}
 assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=0.5)
 
 avgexp <- rowMeans(assays(prac.se.sub)$logCPM)
@@ -290,18 +290,19 @@ dim(prac.dge.unique.filtlib)
 <!--- JOAN START --->
 ## Normalization
 
-First of all, we calculate the normalized factors between the samples and we add it to the prac.se.sub dataset for better acces. 
+First of all, we calculate the normalized factors between sample and we introduce it to prac.se.sub dataset. 
 
 ```{r calcNOrm}
 prac.dge.unique.filtlib <- calcNormFactors(prac.dge.unique.filtlib)
 assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=0.5)
 ```
 
+From this values, we create an MA plot of each sample to observe the distribution of expression. Unusual samples will be filtered of the dataset later on. 
 ### MA-plots
 
 <center><h4>Tumor samples MA-plot</h4></center>
 
-```{r maPlotsTumor, fig.align="center", fig.height= 35, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+```{r maPlotsTumor, fig.align="center", fig.height= 35, fig.width=12, dpi=100, echo=FALSE, fig.cap="Fig. 6: MA-plots of the tumor samples."}
 
 setmp <- prac.se.sub[, prac.se.sub$type == "tumor"]
 dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "tumor"]
@@ -325,7 +326,7 @@ for (i in 1:ncol(setmp)) {
 
 <center><h4>Normal samples MA-plot</h4></center>
 
-```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Figure S4: MA-plots of the tumor samples."}
+```{r maPlotsNormal, fig.align="center", fig.height= 12.5, fig.width=12, dpi=100, echo=FALSE, fig.cap="Fig. 7: MA-plots of the tumor samples."}
 
 setmp <- prac.se.sub[, prac.se.sub$type == "normal"]
 dgetmp <- prac.dge.unique.filtlib[, prac.dge.unique.filtlib$type == "normal"]
@@ -379,7 +380,7 @@ table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 
 <!--- ADRI END --->
 
-```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='Hirechical clustering of the prac.se.sub dataset', fig.height=8}
+```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='FIg. 8: Hirechical clustering of the prac.se.sub dataset', fig.height=8}
 par(old.par)
 logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
 d <- as.dist(1-cor(logCPM, method="spearman"))
@@ -406,7 +407,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 ```
 
 
-```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.sub dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
 plotMDS(prac.dge.unique.filtlib, labels=outcome, col=batch)
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
@@ -414,7 +415,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 ```
 
 
-```{r mds2, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+```{r mds2, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 10: MDS of the prac.se.sub dataset', fig.height=8}
 type <- as.integer(factor(prac.se.sub$type))
 plotMDS(prac.dge.unique.filtlib, pch = 19, col=type)
 legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$type))),
@@ -451,16 +452,16 @@ table(prac.dge.unique.pruned$samples$group)
 prac.se.pruned <- prac.se.sub[,rownames(prac.dge.unique.pruned$samples)]
 ```
 
+After pruning, we observe again the distribution of the samples (Fig.11). 
 
-
-```{r MDS after prunning, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.pruned dataset', fig.height=8}
+```{r MDS after prunning, echo=FALSE}
 tss <- substr(colnames(prac.se.pruned), 6, 7)
 batch <- as.integer(factor(tss))
 outcome <- paste(substr(colnames(prac.se.pruned), 9, 12), as.character(prac.se.pruned$type), sep="-")
 names(outcome) <- colnames(prac.se.pruned)
 ```
 
-```{r mds3, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
+```{r mds3, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 11: MDS of the prac.se.sub dataset', fig.height=8}
 plotMDS(prac.dge.unique.pruned, labels=outcome, col=batch)
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
@@ -477,7 +478,7 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$t
 ```
 
 
-As we can see, the overall clustering of the samples is a bit better than before. Those 3 normal samples were disturbing the clustering by type (norma tissue vs tumor tissue).  
+As we can see, the overall clustering of the samples is a bit better than before. Those 7 normal samples were disturbing the clustering by type (normal tissue vs tumor tissue).  
 
 
 ## Differential Gene Expression
