@@ -573,10 +573,10 @@ hist(pValues, xlab= 'p-value')
 
 #### Samplevial
 ```{r sva samplevial }
+samplevial <- substr(colnames(prac.se.pruned), 14, 16)
 table(data.frame(TYPE=prac.se.pruned$type, TSS=samplevial))
 
 # introduce the extracted data in the se obj
-# samplevial <- substr(colnames(prac.se.pruned), 14, 16)
 # colData(prac.se.pruned)$samplevial <- samplevial
 # mod <- model.matrix(~ type + as.factor(samplevial), data = colData(prac.se.pruned))
 # mod0 <- model.matrix(~ as.factor(samplevial), data = colData(prac.se.pruned))
@@ -587,6 +587,7 @@ table(data.frame(TYPE=prac.se.pruned$type, TSS=samplevial))
 ```{r pvales plot s, echo=FALSE, fig.align='center', fig.cap= 'p-values of the differential expression analysis using plate as null model.' }
 hist(pValues, xlab= 'p-value')
 ```
+
 
 <!--- DAVID END --->
 
