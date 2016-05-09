@@ -355,9 +355,9 @@ As can be percived, there are some samples which its mean normalisation line (re
 
 ## Batch Effect
 
-The batch effect occurs when there is any non-biological variable that accounts for the variability between samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
+The batch effect occurs when there is any non-biological variable that accounts for the variability between samples. Usually is related to handling, storing and processing the samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
 
-First of all, check for batch effect in TSS variable (Tissue Source Site).
+First of all, the batch labels need to be obtaned from the ```se``` object. From it, we obtain the Tissue Source Site (TSS), the center in which the samples where processed, the plate which is sample belonged, and also its portion of analyte and vial.
 
 ```{r getting the batch labels, collapse=TRUE}
 tss <- substr(colnames(prac.se.sub), 6, 7)
@@ -373,12 +373,16 @@ table(samplevial)
 ```
 <!--- ADRI START --->
 
+Once the batch data is obtained, analysis of TSS can be performed.
 ```{r table TSS/TYPE}
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 ```
 
 <!--- ADRI END --->
 
+A good way to see if there is batch effect on the samples is to study the data clustering.
+
+In the following dendogram, samples are being clustered by TSS factor.
 ```{r hirechical clustering, fig.align='center', fig.width=14, dpi=100, fig.cap='Hirechical clustering of the prac.se.sub dataset', fig.height=8}
 par(old.par)
 logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=3)
@@ -404,7 +408,10 @@ plot(sampleDendrogram, main="Hierarchical clustering of samples")
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
 
 ```
-
+When in a dendogram some samles cluster together, it means that they are closer to each other, than the rest of the sample. If we expect no batch effect, the batch labels should be more or less randomly clustered together.
+As we can see from the dendogram, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
+- There are more red and blue samples, thus, it is more likely that they cluster together.
+- Red and blue samples are similiar between them, and different between the other samples, hence, clustering together. 
 
 ```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='MDS of the prac.se.sub dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
