@@ -136,7 +136,7 @@ rowRanges(prac.se)
 ```
 
 For each gene we have present the chromosome, the range of position, the strand, its symbol, the length of the transcript and the GC content. 
-```{r gc content hist, fig.align='center'}
+```{r gc content hist, fig.align='center', echo=FALSE}
 geneinfo.df <- as.data.frame(mcols(prac.se))
 plot1 <- ggplot(geneinfo.df, aes(x=txlen)) + geom_histogram(bins = 50)
 plot2 <- ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
