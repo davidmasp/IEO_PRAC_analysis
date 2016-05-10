@@ -12,6 +12,7 @@ cache: TRUE
 autodep: TRUE
 fig.align: 'center'
 comment: ""
+bibliography: prac.bib
 ---
 
 
@@ -47,7 +48,7 @@ The Cancer Genome Atlas already studied this dataset for a wide characterization
     
 * 25% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19%.
 
-You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025).
+You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025) @Abeshouse2015 .
 
 # Data import
 
@@ -76,7 +77,7 @@ old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI
 ## Data Reading
 After installing and loading the packages, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds). This dataset is provided by our professor [Robert Castelo](mailto:robert.castelo@upf.edu). 
 
-The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package loaded above. 
+The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package @SE loaded above. 
 
 ```{r reading}
 prac.se <- readRDS("data/sePRAD.rds")
@@ -221,7 +222,7 @@ table(colData(prac.se.unique)$type)
 
 # Quality data control
 
-Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a `DGEList` Object. 
+Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR @Robinson2010 is used, creating a `DGEList` Object. 
 Digital Gene Expression data class (DGE) has been implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
 
 
@@ -583,7 +584,7 @@ As we can see in fig. 11 and 12, after filter those samples out, the distributio
 
 # Differential Gene Expression
 
-After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1).
+After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1). This analysis was performed using the `SVA`package @Leek2012 based on @Leek2007 .
 
 
 ```{r diferential gene expr1}
