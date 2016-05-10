@@ -937,12 +937,17 @@ sessionInfo()
 ```
 
 ```
-R version 3.2.4 (2016-03-10)
-Platform: x86_64-apple-darwin13.4.0 (64-bit)
-Running under: OS X 10.11.4 (El Capitan)
+R version 3.2.3 (2015-12-10)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 16.04 LTS
 
 locale:
-[1] es_ES.UTF-8/es_ES.UTF-8/es_ES.UTF-8/C/es_ES.UTF-8/es_ES.UTF-8
+ [1] LC_CTYPE=ca_ES.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=ca_ES.UTF-8        LC_COLLATE=ca_ES.UTF-8    
+ [5] LC_MONETARY=ca_ES.UTF-8    LC_MESSAGES=ca_ES.UTF-8   
+ [7] LC_PAPER=ca_ES.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=ca_ES.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
@@ -951,7 +956,7 @@ attached base packages:
 other attached packages:
  [1] gridExtra_2.2.1            sva_3.18.0                
  [3] genefilter_1.52.1          mgcv_1.8-12               
- [5] nlme_3.1-125               ggplot2_2.1.0             
+ [5] nlme_3.1-127               ggplot2_2.1.0             
  [7] geneplotter_1.48.0         annotate_1.48.0           
  [9] XML_3.98-1.4               AnnotationDbi_1.32.3      
 [11] lattice_0.20-33            edgeR_3.12.1              
@@ -963,12 +968,12 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.4        formatR_1.3        RColorBrewer_1.1-2
- [4] plyr_1.8.3         XVector_0.10.0     tools_3.2.4       
- [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.8.3    
-[10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-4      
-[13] DBI_0.3.1          yaml_2.1.13        stringr_1.0.0     
-[16] grid_3.2.4         survival_2.38-3    rmarkdown_0.9.5   
-[19] magrittr_1.5       codetools_0.2-14   splines_3.2.4     
+ [4] plyr_1.8.3         XVector_0.10.0     tools_3.2.3       
+ [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.9      
+[10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-6      
+[13] DBI_0.4            yaml_2.1.13        stringr_1.0.0     
+[16] grid_3.2.3         survival_2.39-2    rmarkdown_0.9.6   
+[19] magrittr_1.5       codetools_0.2-14   splines_3.2.3     
 [22] scales_0.4.0       htmltools_0.3.5    xtable_1.8-2      
 [25] colorspace_1.2-6   labeling_0.3       KernSmooth_2.23-15
 [28] stringi_1.0-1      munsell_0.4.3     
