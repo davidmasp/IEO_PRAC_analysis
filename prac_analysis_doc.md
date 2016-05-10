@@ -968,21 +968,12 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.4        formatR_1.3        RColorBrewer_1.1-2
-<<<<<<< HEAD
  [4] plyr_1.8.3         XVector_0.10.0     tools_3.3.0       
  [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.9      
 [10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-6      
 [13] DBI_0.3.1          yaml_2.1.13        stringr_1.0.0     
 [16] grid_3.3.0         survival_2.39-2    rmarkdown_0.9.6   
 [19] magrittr_1.5       codetools_0.2-14   splines_3.3.0     
-=======
- [4] plyr_1.8.3         XVector_0.10.0     tools_3.2.3       
- [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.9      
-[10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-6      
-[13] DBI_0.4            yaml_2.1.13        stringr_1.0.0     
-[16] grid_3.2.3         survival_2.39-2    rmarkdown_0.9.6   
-[19] magrittr_1.5       codetools_0.2-14   splines_3.2.3     
->>>>>>> 1b4048eb995564451787e951332abbb4e1c1c848
 [22] scales_0.4.0       htmltools_0.3.5    xtable_1.8-2      
 [25] colorspace_1.2-6   labeling_0.3       KernSmooth_2.23-15
 [28] stringi_1.0-1      munsell_0.4.3     
