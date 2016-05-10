@@ -147,12 +147,12 @@ table(prac.se$type)
 
 ```
 
-The dataset presents 554 samples. There are 52 labeled as normal samples and 504 labeled as tumor samples. The first ones are not from healthy individuals but from affected ones. This mean that normal samples do not have tumor phenotype but the same individual background than the tumor samples. In fact, most of the normal samples (up to 50) have a paired sample (2 samples from the same individual) on the tumor side of the table. We can check this information using the BCR patient barcode that identifies individuals. 
+The dataset presents 554 samples. There are 52 labeled as normal samples and 504 labeled as tumor samples. The first ones are not from healthy individuals but from affected ones. This mean that normal samples do not have tumor phenotype but the same individual background than the tumor samples. In fact, most of the normal samples (up to 50) have a paired tumoral sample (2 samples from the same individual). We can check this information using the BCR patient barcode that identifies individuals. 
 
 
 ### Row Data
 
-We can get information about the genes using the following. 
+We can get information about the genes using the following code: 
 
 ```{r row data}
 rowRanges(prac.se)
@@ -174,7 +174,7 @@ metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
 
 # Subsetting the Data
 
-In order to reduce possible batch effects and reduce the computational costs of the analysis, we have decided to subset our data. We will use several approaches in order to perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
+In order to reduce possible batch effects and reduce the computational costs of the analysis, we have decided to subset our data. We will use several approaches in order to perform this action. Finally, we will select one of the subsets based in a explained criterion.
 
 ## Paired Subsetting 
 
@@ -238,7 +238,7 @@ assays(prac.se)$logCPM[1:5, 1:5]
 ```
 
 ## Filtering by library size
-Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE`filtred element. 
+Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE` filtred element. 
 
 ```{r normalitzation of the filtred dataset, warning= FALSE}
 prac.dge.unique <- DGEList(counts = assays(prac.se.unique)$counts, genes = mcols(prac.se.unique), group = prac.se.unique$type)
@@ -267,10 +267,10 @@ Since we still have a lot of samples, we look at the distribution of the Tissue 
 
 
 ```{r filter}
-# not filtering by TSS
+# adding to prac.se the filtering by threshold value.
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 
-# filter by TSS block
+# TSS table of the complete values
 tss <- substr(colnames(prac.se.sub), 6, 7)
 tss_df <- data.frame(TYPE=prac.se.sub$type, TSS=tss)
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
@@ -338,7 +338,7 @@ Analyzing the density graphs from fig. 4, we cannot establish differences betwee
 
 ## Gene expression distribution
 
-Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since, for these values the CPM the expression level is very low, we cannot establish real conclusions for those genes (spontaneous transcription, non-specific of tissue transcription...).
+Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1. For these values the CPM the expression level is very low and we cannot establish real conclusions for those genes.
 
 
 ```{r avgexp gene, fig.align='center', fig.cap='Fig. 5: Histogram presenting gene frequency expression for different logCPM values'}
@@ -371,7 +371,7 @@ prac.dge.unique.filtlib <- prac.dge.unique.filtlib[mask, ]
 dim(prac.dge.unique.filtlib)
 
 ```
-The mask has been correctly applied, as the dimensions of the object are not changed.
+The mask has been correctly applied, as the dimensions of the object are not changed.   The number of genes studied diminishes in a 42 %. 
 
 # Normalization
 
