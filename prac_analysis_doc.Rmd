@@ -371,14 +371,8 @@ prac.dge.unique.filtlib <- prac.dge.unique.filtlib[mask, ]
 dim(prac.dge.unique.filtlib)
 
 ```
-The mask has been correctly applied, as the dimensions of the object are not changed.
+The mask has been correctly applied, as the dimensions of the object are not changed.   The number of genes studied diminishes in a 42 %. 
 
-<<<<<<< HEAD
-The number of genes studied diminishes in a 42 %. 
-
-<!--- JOAN START --->
-=======
->>>>>>> 1c293719ec1bcb14c2399df51ed49a98f0e5350c
 # Normalization
 
 First of all, we calculate the normalized factors between sample and we introduce it to ```prac.se.sub``` dataset. 
