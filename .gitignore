@@ -13,3 +13,4 @@ figures/
 *.html
 *_cache/
 *_files/
+*.md
