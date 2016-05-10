@@ -6,7 +6,7 @@
 
 
 
-## Introduction
+# Introduction
 
 [Prostate cancer](https://en.wikipedia.org/wiki/Prostate_cancer)
 is a disease of the prostate, a walnut-size gland in the male
@@ -29,9 +29,9 @@ The Cancer Genome Atlas already studied this dataset for a wide characterization
 
 You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025).
 
-## Data import
+# Data import
 
-### Package Installation and Import
+## Package Installation and Import
 First, we install the packages using BiocInstaller:
 
 
@@ -55,7 +55,7 @@ library("sva")
 old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI 
 ```
 
-### Data Reading
+## Data Reading
 After installing and loading the packages, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds). This dataset is provided by our professor [Robert Castelo](mailto:robert.castelo@upf.edu). 
 
 The data is contained in a rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package loaded above. 
@@ -81,7 +81,7 @@ colData names(549): type bcr_patient_uuid ...
   lymph_nodes_aortic_pos_by_ihc lymph_nodes_aortic_pos_total
 ```
 
-### Nomenclature
+## Nomenclature
 
 In the this and following reports we are going to try naming variables and objects using a nomenclature. We believe this nomenclature follows the Google's R Style Guidelines. As recomended by this guidelines, different parts of the variable name are separated by points. 
 
@@ -101,11 +101,11 @@ prac.se.unique
 ```
 We also try to mantain our code chunks below 80 chrs.
 
-### Exploring the DataSet
+## Exploring the DataSet
 
 As defined in the `SummarizedExperiment` documentation there are 3 data types in a SE. The **Column data** contains info about the samples used in the experiment and it is refered as column data because represent the columns of the original expression table. Then we have the **metadata** that brings us information about the assays that were performed. Finally we got the **row data** that contains the gene information. This is called row data because in the expression table genes are in the rows. 
 
-#### Data Size
+### Data Size
 
 ```r
 dim(colData(prac.se))
@@ -118,7 +118,7 @@ dim(colData(prac.se))
 Our dataset presents 554 different samples with 549 clinical variables analyzed. 
 
 
-#### Column Data
+### Column Data
 
 In order to acces the column data from our `SE`object we can use its own implemented function, `colData()`.
 
@@ -204,7 +204,7 @@ Looking at the metadata, we observe the common structure followed in the dataset
 
 As an example we can see in the figures, there are clinical variables and sample variables giving information about the sampels. 
 
-#### Tumor / Normal Samples
+### Tumor / Normal Samples
 
 ```r
 table(prac.se$type)
@@ -219,7 +219,7 @@ normal  tumor
 The dataset presents 554 samples. There are 52 labeled as normal samples and 504 labeled as tumor samples. The first ones are not from healthy individuals but from affected ones. This mean that normal samples do not have tumor phenotype but the same individual background than the tumor samples. In fact, most of the normal samples (up to 50) have a paired sample (2 samples from the same individual) in the tumor side of the table. We can check this information using the BCR patient barcode that identifies individuals. 
 
 
-#### Row Data
+### Row Data
 
 We can get information about the genes using the following. 
 
@@ -263,7 +263,7 @@ GRanges object with 20115 ranges and 3 metadata columns:
 For each gene we have present the chromosome, the range of position, the strand, its symbol, the length of the transcript and the GC content. 
 <img src="prac_analysis_doc_files/figure-html/gc content hist-1.png" title="" alt="" style="display: block; margin: auto;" />
 
-#### Metadata
+### Metadata
 From the metadata we can check that we have the current version of the data. 
 
 ```r
@@ -274,11 +274,11 @@ metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
 [1] "2016-04-25"
 ```
 
-## Subsetting the Data
+# Subsetting the Data
 
 In order to reduce possible batch effects and reduce the computational costs of the analysis we have decided to subset our data. We will use several approaches in order to do perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
 
-### **Paired Subsetting** 
+## **Paired Subsetting** 
 
 In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumour. However, it also drives some disadvantages as we have been taugh in class.
 
@@ -305,7 +305,7 @@ normal  tumor
     50     50 
 ```
  
-### **Non-Paired Subsetting** 
+## **Non-Paired Subsetting** 
 
 With this strategy we want to discard all the paired data in order to obtain only unique individuals. Our aim is to only get the normal samples of the replicated individuals. As the initial filter strategy get rid of most of the normal samples and kept the tumor ones we had to adapt it and generate a more complex filter as you can see below. 
 
@@ -333,7 +333,7 @@ normal  tumor
 ```
   
 
-## Quality data control
+# Quality data control
 
 Having understood completely our dataset, to perform efficiently quality assesment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a 'DGEList Object'. 
 Digital Gene Expression data class (DGE) has been implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
@@ -383,7 +383,7 @@ assays(prac.se)$logCPM[1:5, 1:5]
 12                     5.682520
 ```
 
-### Filtering by library size
+## Filtering by library size
 Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE`filtred element. 
 
 
@@ -479,7 +479,7 @@ normal  tumor
 After filtering, we obtain a dataset of 48 normal samples and 122 tumor (fig. 2 and 3). We introduce it again in the prac.se dataset to obtain the final filtered version.
 Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. The converage is unusually high but since it is theorically a good attribute, we decided to keep it. 
 
-### Sample expression distribution
+## Sample expression distribution
 
 Once we have our filtered dataset, we observe the density logCPM distribution of the tumor and normal samples separatedly. It will give us an impression of the possible problems of the sampling, since we expect to have a similar distribution of the samples between tumor / normal. 
 
@@ -490,7 +490,7 @@ Once we have our filtered dataset, we observe the density logCPM distribution of
 
 Analysing the density graphs from fig. 4, we cannot establish differences between the tumoral/normal logCPM distribution.
 
-### Gene expression distribution
+## Gene expression distribution
 
 Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since for these values the CPM the expression level is very low, we cannot establish real conclusions for that genes (spontaneus transcription, non-specific of tissue transcription...).
 
@@ -512,7 +512,7 @@ abline(v=1, col="red", lwd=2)
 </div><p class="caption">Fig. 5: Histogram presenting gene frequency expression for different logCPM values</p>
 As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minumum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the Grey Zone (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
 
-### Filtering by gene expression levels
+## Filtering by gene expression levels
 
 In order to eliminate those values from our, a mask is creating, using as a factor of exclusiong avergae of expression higher than 1. 
 
@@ -554,7 +554,7 @@ dim(prac.dge.unique.filtlib)
 
 
 <!--- JOAN START --->
-## Normalization
+# Normalization
 
 First of all, we calculate the normalized factors between sample and we introduce it to prac.se.sub dataset. 
 
@@ -565,7 +565,7 @@ assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count
 ```
 
 From this values, we create an MA plot of each sample to observe the distribution of expression. Unusual samples will be filtered of the dataset later on. 
-### MA-plots
+## MA-plots
 
 <center><h4>Tumor samples MA-plot</h4></center>
 
@@ -587,7 +587,7 @@ Despite there are some samples with line tails diverging from the extected value
 <!--- DAVID START --->
 
 
-## Batch Effect
+# Batch Effect
 
 The batch effect occurs when there is a non-biological variable that accounts for the variability between samples. Usually this is related to handling, storing and processing the samples. This source of sample variability might obscure the analysis of variation and comparison between samples.
 
@@ -707,7 +707,7 @@ As we  can see in fig. 9 and 10, there is a clustering of normal samples, belong
 
 <!--- DAVID START ---> 
 
-### Filtering after MDS ands MA plots
+## Filtering after MDS ands MA plots
 
 As some unexpected results have been found, regarding normal samples, one viable option for the analysis is to remove those samples.
 
@@ -753,7 +753,7 @@ As we can see in fig. 11 and 12, after filter those samples out, the distributio
 
 
 
-## Differential Gene Expression
+# Differential Gene Expression
 
 After having corrected by those disturbing samples, the differential gene expression can be analysed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1).
 
@@ -819,11 +819,11 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 
 The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 ocurrences to 300). The uniformity of the distribution is mantained. 
 
-### Checking for batch effect from TSS
+## Checking for batch effect from TSS
 
 As it have not been 100% clear if there is batch effect at the previous step we will use again the sva package to stimate if there exists actual batch effect by using the TSS as a null model when building the `mod.matrix`. We will also perform the same analysis with the plate attribute of the samples, also to recheck for some batch effect. 
 
-#### TSS
+### TSS
 
 The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p values will be uniform, meaning that there is not a peak in the significant genes. 
 
@@ -861,7 +861,7 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 As can be seen in fig. 15, the histogram shows a distribution similar to fig. 14 (high proportion of genes with p-values < 0.01 with respect to all the others).
 
 
-#### Plate
+### Plate
 Here we perform the same analysis and we see that the number aso decrease also by a small extend. This would impliy that there not exists significant batch effect by this variable. 
 
 
@@ -887,7 +887,7 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 <!--- DAVID END --->
 
 
-## Conclusions
+# Conclusions
 
 
 <!--- DAVID START --->
@@ -919,7 +919,7 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 <!--- ADRI END --->
 - Wide projects like The Cancer Genome Atlas imply a really difficult process of filtering and assesing the data to obtain relevant and real results. Even with that treatment, we can always have a lot of variability making difficult the extraction of real or relevant conclusions. 
 
-## Session information
+# Session information
 
 
 ```r
