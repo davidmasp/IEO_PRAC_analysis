@@ -125,7 +125,7 @@ colData(prac.se)[1:5, 1:5]
 mcols(colData(prac.se), use.names=TRUE)
 ```
 
-By observing the clinical variables, from the 549 present, some have information collected and others present `NA` values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
+By observing the clinical variables, from the 549 present, some have information collected and others present `NA` values. Our interest is in the informative variables. Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
 
 There are variables related directly with prostate cancer, like Gleason score, the measurement of the development of the adenocarcinoma.
 
@@ -261,7 +261,6 @@ In the fig. 1 , we cannot distinguish the different samples due to a large numbe
 prac.dge.unique.filtlib <- prac.dge.unique[,(prac.dge.unique$samples$lib.size/1e6) > 40 ] # 50e06 threshold value
 table(prac.dge.unique.filtlib$samples$group)
 ```
-<!--- Adri START --->
 
 
 Since we still have a lot of samples, we look at the distribution of the Tissue Source Site (TSS) for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
@@ -287,7 +286,6 @@ prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 table(prac.dge.unique.filtlib$samples$group)
 ```
 
- <!--- Adri END --->
 
 ```{r figure library size, echo=FALSE, fig.align='center', fig.cap='Fig. 2: Density sample distribution using already filtred data by sequencing depth.'}
 
@@ -316,7 +314,7 @@ ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) + geom_b
 #legend("topleft", c("tumor", "normal"), fill=c("red", "blue"), inset=0.01)
 ```
 
-After filtering, we obtain a dataset of 48 normal samples and 122 tumor samples (fig. 2 and 3). We introduce it again in the prac.se dataset to obtain the final filtered version.
+After filtering, we obtain a dataset of 48 normal samples and 122 tumor samples (fig. 2 and 3). We introduce it again in the ```prac.se``` dataset to obtain the final filtered version.
 Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. The coverage is unusually high but since it is theoretically a good attribute, we decided to keep it. 
 
 ## Sample expression distribution
@@ -353,7 +351,7 @@ hist(avgexp, xlab="log2 CPM", main="", las=1)
 abline(v=1, col="red", lwd=2)
 
 ```
-As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minimum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the Grey Zone (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
+As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minimum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the so-called "grey zone" (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
 
 ## Filtering by gene expression levels
 
@@ -373,12 +371,11 @@ prac.dge.unique.filtlib <- prac.dge.unique.filtlib[mask, ]
 dim(prac.dge.unique.filtlib)
 
 ```
+The mask has been correctly applied, as the dimensions of the object are not changed.
 
-
-<!--- JOAN START --->
 # Normalization
 
-First of all, we calculate the normalized factors between sample and we introduce it to prac.se.sub dataset. 
+First of all, we calculate the normalized factors between sample and we introduce it to ```prac.se.sub``` dataset. 
 
 ```{r calcNOrm}
 prac.dge.unique.filtlib <- calcNormFactors(prac.dge.unique.filtlib)
@@ -437,11 +434,10 @@ for (i in 1:ncol(setmp)) {
 }
 ```
 
-As can be perceived in fig. 6 and 7, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0.
-Despite there are some samples with line tails diverging from the expected values, it is not a big deal, usually.
-<!--- JOAN END --->
+As can be perceived in fig. 6 and 7, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
 
-<!--- DAVID START --->
+Despite there are some samples with line tails diverging from the expected values, it is not a big deal, usually.
+
 
 
 # Batch Effect
@@ -467,7 +463,6 @@ table(portionanalyte)
 samplevial <- substr(colnames(prac.se.sub), 14, 16)
 table(samplevial)
 ```
-<!--- ADRI START --->
 
 By looking at the table between type and tss, we will observe if the data chosen presents batch effect. We have corrected this possibility at the first selections by taking only the biggets batches. 
 
@@ -475,7 +470,6 @@ By looking at the table between type and tss, we will observe if the data chosen
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
 ```
 
-<!--- ADRI END --->
 
 A good way to see if there is batch effect on the samples is to study the data clustering.
 
@@ -509,7 +503,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 ```
 When in a dendrogram some samples cluster together, it means that they are closer to each other than the rest of the sample. If we expect no batch effect, the batch labels should be more or less randomly clustered together.
 
-As we can see from the dendrogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
+As we can see from the dendrogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This observation can be observed as a result of 2 causes, which are non-mutualy exclusive:
 
 * There are more red and blue samples, thus, it is more likely that they cluster together.
 * Red and blue samples are similar between them, and different between the other samples, hence, clustering together. 
@@ -533,11 +527,6 @@ MDS-plots help to see also how data cluster together projecting the variability 
 As we  can see in fig. 9 and 10, there is a clustering of normal samples, belonging to batch HC (blue at left-bottom corner). For the sake of keeping the dataset as homogenous as possible, it might be interesting to do not use those samples. Maybe, that mini-cluster of samples is partially responsible for the overall disposition of samples (which differentiates poorly between normal and cancer tissues).
 
 
-<!--- DAVID END --->
-
-
-
-<!--- DAVID START ---> 
 
 ## Filtering after MDS and MA plots
 
@@ -588,7 +577,7 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$t
 
 
 
-As we can see in fig. 11 and 12, after filter those samples out, the distribution gains centrality and uniformity generating a more reliable data set. 
+As we can see in fig. 11 and 12, after filter those samples out, the distribution gains centrality and uniformity generating a more reliable data set. In addition, it seems that there is a better clustering by sample type than before.
 
 
 
@@ -635,7 +624,9 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 hist(pvsv, main="", xlab= 'p-value', las=1)
 ```
 
-The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 occurrences to 300). The uniformity of the distribution is maintained. 
+The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 occurrences to 300). The uniformity of the distribution is maintained.
+
+The beforementioned increase of DE genes is explained due to the change of the model (correcting by an "expected-averaged-batch effect"), which fits better to the data, thus, enabling more genes to pass our significance threshold.
 
 ## Checking for batch effect from TSS
 
@@ -643,9 +634,9 @@ As it has not been 100% clear if there is batch effect at the previous step we w
 
 ### TSS
 
-The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p values will be uniform, meaning that there is not a peak in the significant genes. 
+The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p-values will be uniform, meaning that there is not a peak in the significant genes. 
 
-In the following figure, we can observe that this is not true and the p-value distribution is maintained. Moreover, the decrease of DE genes between the uniform null model (5610) and the TSS null model (5546) is very small.
+In the following figure, we can observe that this is not true and the p-value distribution is maintained. Moreover, the decrease of DE genes between the uniform null model (5610) and the TSS null model (5546) is very small, which hold the hypothesis that there is no significant batch effect derived from TSS.
     
 
 ```{r sva tss}
@@ -666,7 +657,7 @@ As can be seen in fig. 15, the histogram shows a distribution similar to fig. 14
 
 
 ### Plate
-Here we perform the same analysis and we see that the number also decrease also by a small extent. This would imply that there not exists significant batch effect by this variable. 
+Here we perform the same analysis and we see that the number also decrease also by a small extent. This would imply that there no significant batch effect by this variable. 
 
 ```{r sva plate }
 # introduce the extracted data in the se obj
@@ -682,13 +673,10 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 hist(pValues, xlab= 'p-value')
 ```
 
-<!--- DAVID END --->
-
 
 # Conclusions
 
 
-<!--- DAVID START --->
 - In our data exploration, we could see a lot of missing values for clinical traits that we should check and consider in the following analysis. However, gene information seems to be quite robust.  
 
 - We have subset our data set using a non-paired analysis design to avoid assessing the extent of differential expression for non-independent samples. In order to do that, we have used complementary criteria excluding the tumor samples that were duplicated as normal.
@@ -706,16 +694,9 @@ hist(pValues, xlab= 'p-value')
 - When using SVA to check Batch Effect of plate and TSS attributes, we observe a decrease in the quantity of DE genes. Although this might imply that indeed exists this batch effect, the change is not significant and it does not affect the p-value distribution. Therefore, although the variability of some genes may be explained by plate or TSS, these genes are a few hundred that won't really affect the conclusions of this analysis. 
 
 
-<!--- DAVID END--->
-
-
-<!--- ADRI START --->
-
-
 - There are present 7145 genes with a Differential Expression with an FDR of 1% (having as null model with a matrix of intercept term ~ 1 and adjusting by the detected SVs).
 
  
-<!--- ADRI END --->
 - Wide projects like The Cancer Genome Atlas imply a really difficult process of filtering and assessing the data to obtain relevant and real results. Even with that treatment, we can always have much variability making difficult the extraction of real or relevant conclusions. 
 
 # Session information
