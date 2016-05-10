@@ -83,11 +83,11 @@ colData names(549): type bcr_patient_uuid ...
 
 ## Nomenclature
 
-In this and following reports, we are going to try naming variables and objects using a nomenclature. We believe this nomenclature follows the Google's R Style Guidelines. As recommended by this guidelines, different parts of the variable name are separated by points. 
+In this and following reports, we are going to try naming variables and objects using a nomenclature. We believe this nomenclature follows the [Google's R Style Guidelines](https://google.github.io/styleguide/Rguide.xml). As recommended by this guidelines, different parts of the variable name are separated by points. 
 
-* The first part of the variable defines what it contains in a clear as possible. 
-* The second part defines the `class` of the object. This is missed when the object have a common class (such as character vectors) or it is a temporary variable. 
-* The third pard defines the filters applied to the original object. 
+* The first part of the variable defines what it contains in a clear as possible way. 
+* The second part defines the `class` of the object. This is missed when the object have a common class (such as a character vectors) or it is a temporary variable. 
+* The third part defines the filters applied to the original object. 
 
 Based on this nomenclature, below you can find variables like `<name>.<type_var>.<other>`:
 
@@ -99,11 +99,11 @@ prac.se.unique
 # where a third labeled is applied in order to note that the data have 
 # been filtred. 
 ```
-We also try to mantain our code chunks below 80 chrs.
+We also try to maintain our code chunks below 80 chrs.
 
 ## Exploring the DataSet
 
-As defined in the `SummarizedExperiment` documentation there are 3 data types in an SE. The **Column data** contains info about the samples used in the experiment and it is referred as column data because represent the columns of the original expression table. Then we have the **metadata** that brings us information about the assays that were performed. Finally, we got the **row data** that contains the gene information. This is called row data because in the expression table genes are in the rows. 
+As defined in the `SummarizedExperiment` documentation there are 3 data types in an SE. The **column data** contains info about the samples used in the experiment and it is referred as column data because represent the columns of the original expression table. Then we have the **metadata** that brings us information about the assays that were performed. Finally, we got the **row data** that contains the gene information. This is called row data because in the expression table genes are in the rows. 
 
 ### Data Size
 
@@ -196,7 +196,7 @@ lymph_nodes_aortic_pos_by_ihc         3151831
 lymph_nodes_aortic_pos_total          3151827
 ```
 
-By observing the clinical variables, from the 549 present, some have information collected and others present NA values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
+By observing the clinical variables, from the 549 present, some have information collected and others present `NA` values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
 
 There are variables related directly with prostate cancer, like Gleason score, the measurement of the development of the adenocarcinoma.
 
@@ -204,7 +204,7 @@ There are variables related directly with prostate cancer, like Gleason score, t
 
 Looking at the metadata, we observe the common structure followed in the datasets of the TCGA project. The first column is the clinical variable abbreviated, the second an explanation of the variable and the last one contains the [CDEID](https://www.nlm.nih.gov/cde/glossary.html#cdedefinition ) code to obtain more information in the [CDE website](https://www.nlm.nih.gov/cde). 
 
-As an example we can see in the figures, there are clinical variables and sample variables giving information about the samples.  
+As an example, we can see in the figures the representation of some column data.  
 
 ### Tumor / Normal Samples
 
@@ -282,7 +282,7 @@ In order to reduce possible batch effects and reduce the computational costs of 
 
 ## Paired Subsetting 
 
-In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumor. However, it also drives some disadvantages as we have been taught in class.
+In the paired subsetting we try to get only the patients (based on the bcr barcode) that have a normal sample and a tumor one. This approach is suitable to distinguish exactly the gene expression changes that drive the tumor. However, it also drives some disadvantages in trying to extent the DE variability in further analyses.
 
 * As seen in the resulting numbers, we have filter out 454 patients that were not paired. We have the same number of normal samples and tumor samples (50) because for each individual we have 2 samples, each one in a different group.
 
@@ -517,7 +517,7 @@ As can be observed from fig. 5, there are values for logCPM inferior to 1 (which
 
 ## Filtering by gene expression levels
 
-In order to eliminate those values from our, a mask is creating, using as a factor of exclusion average of expression higher than 1. 
+In order to eliminate those values from our dataset, we filter it using as a factor of exclusion average of expression higher than 1. 
 
 
 ```r
@@ -568,6 +568,7 @@ assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count
 ```
 
 From this values, we create an MA plot of each sample to observe the distribution of expression. Unusual samples will be filtered of the dataset later on. 
+
 ## MA-plots
 
 <center><h4>Tumor samples MA-plot</h4></center>
@@ -599,7 +600,7 @@ First of all, the batch labels need to be obtained from the sample codes of the 
 
 Our selected samples were collected and analyzed at the University of Pittsburgh, the Roswell Park, the International Genomics Consortium and the company Indivumed.
 
-We also extract from the sample code the plate, its portion of analyte and sample_vial.
+We also extract from the sample code: the plate, its portion of analyte and sample vial.
 
 
 
@@ -888,8 +889,8 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 ```
 
 <div class="figure" style="text-align: center">
-<img src="prac_analysis_doc_files/figure-html/pvales plot p-1.png" alt="p-values of the differential expression analysis using plate as null model."  />
-<p class="caption">p-values of the differential expression analysis using plate as null model.</p>
+<img src="prac_analysis_doc_files/figure-html/pvales plot p-1.png" alt="Fig. 16: p-values of the differential expression analysis using plate as null model."  />
+<p class="caption">Fig. 16: p-values of the differential expression analysis using plate as null model.</p>
 </div>
 
 <!--- DAVID END --->
@@ -901,7 +902,8 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 <!--- DAVID START --->
 - In our data exploration, we could see a lot of missing values for clinical traits that we should check and consider in the following analysis. However, gene information seems to be quite robust.  
 
-- We have subset our data set using a non-paired analysis design to avoid assessing the extent of differential expression for non-independent samples. In order to do that, we have used complementary criteria excluding the tumor samples that were duplicated as normal. 
+- We have subset our data set using a non-paired analysis design to avoid assessing the extent of differential expression for non-independent samples. In order to do that, we have used complementary criteria excluding the tumor samples that were duplicated as normal.
+
 - After that subset to define the analysis approach, we have also included another filter layer on top by selecting the individuals with larger library size values.
 
 - We have detected some problematic normal samples in the MDS plot from a unique batch. They have been filtered out to avoid further problems. 
