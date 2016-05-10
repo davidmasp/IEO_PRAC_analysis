@@ -11,3 +11,5 @@ prostate_cancer_TCGA_cell.pdf
 figures/
 *.svg
 *.html
+*_cache/
+*_files/
