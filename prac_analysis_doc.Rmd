@@ -48,7 +48,7 @@ The Cancer Genome Atlas already studied this dataset for a wide characterization
     
 * 25% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19%.
 
-You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025) @Abeshouse2015 .
+You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025) ( @Abeshouse2015 ).
 
 # Data import
 
@@ -77,7 +77,7 @@ old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI
 ## Data Reading
 After installing and loading the packages, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds). This dataset is provided by our professor [Robert Castelo](mailto:robert.castelo@upf.edu). 
 
-The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package @SE loaded above. 
+The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package ( @SE ) loaded above. 
 
 ```{r reading}
 prac.se <- readRDS("data/sePRAD.rds")
@@ -222,7 +222,7 @@ table(colData(prac.se.unique)$type)
 
 # Quality data control
 
-Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR @Robinson2010 is used, creating a `DGEList` Object. 
+Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR ( @Robinson2010 ) is used, creating a `DGEList` Object. 
 Digital Gene Expression data class (DGE) has been implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
 
 
@@ -578,13 +578,13 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.sub$t
 
 
 
-As we can see in fig. 11 and 12, after filter those samples out, the distribution gains centrality and uniformity generating a more reliable data set. In addition, it seems that there is a better clustering by sample type than before.
+As we can see in fig. 11 and 12, after filter those samples out, the distribution gains centrality and uniformity generating a more reliable data set. 
 
 
 
 # Differential Gene Expression
 
-After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1). This analysis was performed using the `SVA`package @Leek2012 based on @Leek2007 .
+After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1). This analysis was performed using the `SVA`package ( @Leek2012 ) based on @Leek2007 .
 
 
 ```{r diferential gene expr1}
@@ -627,7 +627,7 @@ hist(pvsv, main="", xlab= 'p-value', las=1)
 
 The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 occurrences to 300). The uniformity of the distribution is maintained.
 
-The beforementioned increase of DE genes is explained due to the change of the model (correcting by an "expected-averaged-batch effect"), which fits better to the data, thus, enabling more genes to pass our significance threshold.
+The beforementioned increase of DE genes is explained due to the adjustment of the model (correcting by an "expected-averaged-batch effect"), which fits better to the data, thus, enabling more genes to pass our significance threshold.
 
 ## Checking for batch effect from TSS
 
