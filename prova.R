@@ -48,8 +48,18 @@ pruning.vec <- sapply(number.id, GetID, prac.se.sub)
 
 prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
                                                   !rownames(prac.dge.unique.filtlib$samples) %in% pruning.vec]
-prac.dge.unique.pruned$counts
 
-#genes, samples,counts
 
-###########################################################3
+##### ALL NA's at Gleason Score are NORMAL SAMPLES ########
+gleason.score <- (colData(prac.se.sub)$gleason_score)
+gleason.score.na <- gleason.score[is.na(gleason.score)]
+
+normal <- (colData(prac.se.sub)$type[colData(prac.se.sub)$type == 'normal'])
+
+tumor <- (colData(prac.se.sub)$type[colData(prac.se.sub)$type == 'tumor'])
+
+names(gleason.score.na) %in% names(normal)
+
+names(gleason.score.na) %in% names(tumor)
+
+###########################################################
