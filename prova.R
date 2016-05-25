@@ -39,11 +39,17 @@ prac.dge.unique.filtlib <- prac.dge.unique.filtlib[,tss_df$TSS %in% selection]
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 
 
+GetID <- function(number, se){
+  id <- grep(number,rownames(colData(se)))
+  return(rownames(colData(prac.se.sub))[id])
+}
+number.id <- c("7737","7745","7740","7738","7211","7747","8258") #from MDS plot
+pruning.vec <- sapply(number.id, GetID, prac.se.sub)
 
+prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
+                                                  !rownames(prac.dge.unique.filtlib$samples) %in% pruning.vec]
+prac.dge.unique.pruned$counts
 
+#genes, samples,counts
 
-rowData(prac.se.sub)
-rowRanges(prac.se.sub)
-colData(prac.se.sub)
-assays(prac.se.sub)$counts
-metadata(prac.se.sub)
+###########################################################3
