@@ -359,3 +359,90 @@ hist(pValues, xlab= 'p-value')
 ## ------------------------------------------------------------------------
 sessionInfo()
 
+### DE analysis
+
+design <- model.matrix(~ type, data=colData(prac.se.pruned)) 
+
+head(design)
+fit <- lmFit(assays(prac.se.pruned)$logCPM, design)
+names(fit)
+fit <- eBayes(fit) 
+class(fit)
+names(fit)
+dim(prac.dge.unique.pruned)
+
+res <- decideTests(fit)
+summary(res)
+
+FDRcutoff <- 0.01
+res <- decideTests(fit, p.value=FDRcutoff) 
+summary(res)
+tt <- topTable(fit, coef=2, n=Inf) 
+class(tt)
+head(tt)
+
+library("SummarizedExperiment")
+genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.pruned))),
+                      symbol=as.character(rowRanges(prac.se.pruned)[, 1]), stringsAsFactors=FALSE)
+fit$genes <- genesmd
+tt <- topTable(fit, coef=2, n=Inf) 
+head(tt)
+chr.distro.df <- data.frame(chr = tt$chr[tt$adj.P.Val < FDRcutoff])
+chr.distro.df$chr <- sort(chr.distro.df$chr)
+ggplot(chr.distro.df, aes(x=chr, fill=chr)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
+length(DEgenes)
+
+
+# to diagnose the DE
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3) 
+abline(0, 1, lwd=2)
+
+# VOOM
+par(mfrow=c(1,1))
+v <- voom(prac.dge.unique.filtlib, design, plot=TRUE)
+
+# redo the process with the voom weight
+
+fit2 <- lmFit(v, design)
+fit2 <- eBayes(fit2)
+res2 <- decideTests(fit2, p.value=FDRcutoff)
+
+fit2$genes <- genesmd
+tt2 <- topTable(fit2, coef=2, n=Inf)
+head(tt2)
+chr.distro2.df <- data.frame(chr = tt2$chr[tt2$adj.P.Val < FDRcutoff])
+chr.distro2.df$chr <- sort(gsub("chr","",chr.distro2.df$chr))
+ggplot(chr.distro2.df, aes(x=chr, fill=chr)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
+abline(0, 1, lwd=2)
+par(mfrow=c(1,1))
+
+
+head(colData(prac.se.pruned), n=8)
+
+
+
+## The results are shit
+
+## We should get them working with covariates
+
+
+mask <- is.na(colData(prac.se.pruned)$gleason_score)
+
+colData(prac.se.pruned)$gleason_score[mask] <- "2"
+
+design <- model.matrix(~ type + gleason_score, data=colData(prac.se.pruned))
+head(design)
+dim(v)
+dim(design)
+fit3 <- lmFit(v, design)
+fit3 <- eBayes(fit3)
+
