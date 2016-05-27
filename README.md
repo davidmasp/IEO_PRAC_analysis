@@ -83,3 +83,19 @@ Get the article from [here](http://cancergenome.nih.gov/publications):
 	- [x] MDS
 - [x] Differential gene expression
 	- [x] SVA
+
+## Article Outline
+
+- [ ] Introduction
+	- [ ] PRAC
+	- [ ] Gleason Score
+	- [ ] PRAC diagnosis
+	- [ ] History of Gleason Score
+- [ ] MM
+	- [ ] Filtering
+	- [ ] Batch Effect
+	- [ ] SVA
+	- [ ] Linear Model
+	- [ ] Gene Ontology
+- [ ] Results
+- [ ] Conclusions and Discussion
