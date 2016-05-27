@@ -14,3 +14,5 @@ figures/
 *_cache/
 *_files/
 *.md
+report_tex/*
+!/report_tex/*.tex
