@@ -53,9 +53,9 @@ prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
 ##### ALL NA's at Gleason Score are NORMAL SAMPLES ########
 
 na.mask <- is.na((colData(prac.se.sub)$gleason_score))
+colData(prac.se.sub)$gleason_score <- as.character(colData(prac.se.sub)$gleason_score)
+colData(prac.se.sub)$gleason_score[na.mask] <- "2"
 colData(prac.se.sub)$gleason_score <- as.numeric(colData(prac.se.sub)$gleason_score)
-colData(prac.se.sub)$gleason_score[na.mask] <- 2
-
 
 
 # normal <- (colData(prac.se.sub)$type[colData(prac.se.sub)$type == 'normal'])
