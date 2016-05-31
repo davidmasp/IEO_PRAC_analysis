@@ -30,7 +30,7 @@ The Cancer Genome Atlas already studied this dataset for a wide characterization
     
 * 25% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19%.
 
-You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025).
+You can find the full article [here](http://dx.doi.org/10.1016/j.cell.2015.10.025) ( @Abeshouse2015 ).
 
 # Data import
 
@@ -61,7 +61,7 @@ old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI
 ## Data Reading
 After installing and loading the packages, we use them to import the [dataset](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds). This dataset is provided by our professor [Robert Castelo](mailto:robert.castelo@upf.edu). 
 
-The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package loaded above. 
+The data is contained in an rds object and when reading it by the function `readRDS` we extract the `Summarized Experiment`object that contains the data we are going to use. This class is from the `SummarizedExperiment` package ( @SE ) loaded above. 
 
 
 ```r
@@ -199,7 +199,7 @@ lymph_nodes_aortic_pos_by_ihc         3151831
 lymph_nodes_aortic_pos_total          3151827
 ```
 
-By observing the clinical variables, from the 549 present, some have information collected and others present `NA` values. Our interest is in the informative variables.Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
+By observing the clinical variables, from the 549 present, some have information collected and others present `NA` values. Our interest is in the informative variables. Some of them are useful to study the data, like bcr\_patient\_barcode, race, ethnicity, age\_at\_initial\_pathologic\_diagnosis...
 
 There are variables related directly with prostate cancer, like Gleason score, the measurement of the development of the adenocarcinoma.
 
@@ -221,12 +221,12 @@ normal  tumor
     52    502 
 ```
 
-The dataset presents 554 samples. There are 52 labeled as normal samples and 504 labeled as tumor samples. The first ones are not from healthy individuals but from affected ones. This mean that normal samples do not have tumor phenotype but the same individual background than the tumor samples. In fact, most of the normal samples (up to 50) have a paired sample (2 samples from the same individual) on the tumor side of the table. We can check this information using the BCR patient barcode that identifies individuals. 
+The dataset presents 554 samples. There are 52 labeled as normal samples and 504 labeled as tumor samples. The first ones are not from healthy individuals but from affected ones. This mean that normal samples do not have tumor phenotype but the same individual background than the tumor samples. In fact, most of the normal samples (up to 50) have a paired tumoral sample (2 samples from the same individual). We can check this information using the BCR patient barcode that identifies individuals. 
 
 
 ### Row Data
 
-We can get information about the genes using the following. 
+We can get information about the genes using the following code: 
 
 
 ```r
@@ -281,7 +281,7 @@ metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
 
 # Subsetting the Data
 
-In order to reduce possible batch effects and reduce the computational costs of the analysis, we have decided to subset our data. We will use several approaches in order to perform this action. Finally, we will apply one or other subset if we want to avoid the disadvantages of a defined strategy.
+In order to reduce possible batch effects and reduce the computational costs of the analysis, we have decided to subset our data. We will use several approaches in order to perform this action. Finally, we will select one of the subsets based in a explained criterion.
 
 ## Paired Subsetting 
 
@@ -340,7 +340,7 @@ normal  tumor
 
 # Quality data control
 
-Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR is used, creating a `DGEList` Object. 
+Having understood completely our dataset, to perform efficiently quality assessment and normalization of the data, we have to convert our values to counts per million values (CPM). In order to do that, the package edgeR ( @Robinson2010 ) is used, creating a `DGEList` Object. 
 Digital Gene Expression data class (DGE) has been implemented for storing read counts and associated information from digital gene expression or sequencing technologies. The user specifies the counts, the samples, and optional components include the genes and the groups.
 
 
@@ -390,7 +390,7 @@ assays(prac.se)$logCPM[1:5, 1:5]
 ```
 
 ## Filtering by library size
-Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE`filtred element. 
+Now we subset our dataset by library size, which is a measure of sequencing deepness or how robust are the RNA-seqs by samples. We renormalize the data with the new `SE` filtred element. 
 
 
 ```r
@@ -417,7 +417,6 @@ table(prac.dge.unique.filtlib$samples$group)
 normal  tumor 
     49    224 
 ```
-<!--- Adri START --->
 
 
 Since we still have a lot of samples, we look at the distribution of the Tissue Source Site (TSS) for selecting the batches with a good distribution of normal/tumor samples in order to obtain a robust dataset.
@@ -425,10 +424,10 @@ Since we still have a lot of samples, we look at the distribution of the Tissue 
 
 
 ```r
-# not filtering by TSS
+# adding to prac.se the filtering by threshold value.
 prac.se.sub <- prac.se.unique[,rownames(prac.dge.unique.filtlib$samples)]
 
-# filter by TSS block
+# TSS table of the complete values
 tss <- substr(colnames(prac.se.sub), 6, 7)
 tss_df <- data.frame(TYPE=prac.se.sub$type, TSS=tss)
 table(data.frame(TYPE=prac.se.sub$type, TSS=tss))
@@ -458,7 +457,6 @@ normal  tumor
     48    122 
 ```
 
- <!--- Adri END --->
 
 
 ```
@@ -482,7 +480,7 @@ normal  tumor
 <p class="caption">Fig. 3: Barplot of the final selected samples with its library size.</p>
 </div>
 
-After filtering, we obtain a dataset of 48 normal samples and 122 tumor samples (fig. 2 and 3). We introduce it again in the prac.se dataset to obtain the final filtered version.
+After filtering, we obtain a dataset of 48 normal samples and 122 tumor samples (fig. 2 and 3). We introduce it again in the ```prac.se``` dataset to obtain the final filtered version.
 Bear in mind that it seems there is an outlayer, a normal sample with an unusual or unexpected good quality. The coverage is unusually high but since it is theoretically a good attribute, we decided to keep it. 
 
 ## Sample expression distribution
@@ -498,7 +496,7 @@ Analyzing the density graphs from fig. 4, we cannot establish differences betwee
 
 ## Gene expression distribution
 
-Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1, since, for these values the CPM the expression level is very low, we cannot establish real conclusions for those genes (spontaneous transcription, non-specific of tissue transcription...).
+Ending the sample distribution analysis, we can observe the distribution of the log2CPM by gene. We will erase the genes presenting a logCPM below 1. For these values the CPM the expression level is very low and we cannot establish real conclusions for those genes.
 
 
 
@@ -516,7 +514,7 @@ abline(v=1, col="red", lwd=2)
 <img src="prac_analysis_doc_files/figure-html/avgexp gene-1.png" alt="Fig. 5: Histogram presenting gene frequency expression for different logCPM values"  />
 <p class="caption">Fig. 5: Histogram presenting gene frequency expression for different logCPM values</p>
 </div>
-As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minimum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the Grey Zone (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
+As can be observed from fig. 5, there are values for logCPM inferior to 1 (which is considered the minimum standard to consider from). Those values inferior to 1 should not be taken into account when performing the analysis, as those values fall within the so-called "grey zone" (difficulties for differencing data artifacts from the techniques and data obtained from the samples).
 
 ## Filtering by gene expression levels
 
@@ -557,12 +555,11 @@ dim(prac.dge.unique.filtlib)
 ```
 [1] 11722   170
 ```
+The mask has been correctly applied, as the dimensions of the object are not changed.   The number of genes studied diminishes in a 42 %. 
 
-
-<!--- JOAN START --->
 # Normalization
 
-First of all, we calculate the normalized factors between sample and we introduce it to prac.se.sub dataset. 
+First of all, we calculate the normalized factors between sample and we introduce it to ```prac.se.sub``` dataset. 
 
 
 ```r
@@ -588,11 +585,10 @@ From this values, we create an MA plot of each sample to observe the distributio
 <p class="caption">Fig. 7: MA-plots of the tumor samples.</p>
 </div>
 
-As can be perceived in fig. 6 and 7, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0.
-Despite there are some samples with line tails diverging from the expected values, it is not a big deal, usually.
-<!--- JOAN END --->
+As can be perceived in fig. 6 and 7, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
 
-<!--- DAVID START --->
+Despite there are some samples with line tails diverging from the expected values, it is not a big deal, usually.
+
 
 
 # Batch Effect
@@ -636,7 +632,6 @@ samplevial
 01A 01B 11A 11B 
 119   3  47   1 
 ```
-<!--- ADRI START --->
 
 By looking at the table between type and tss, we will observe if the data chosen presents batch effect. We have corrected this possibility at the first selections by taking only the biggets batches. 
 
@@ -652,7 +647,6 @@ TYPE     CH EJ G9 HC
   tumor  18 46 26 32
 ```
 
-<!--- ADRI END --->
 
 A good way to see if there is batch effect on the samples is to study the data clustering.
 
@@ -690,7 +684,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 </div>
 When in a dendrogram some samples cluster together, it means that they are closer to each other than the rest of the sample. If we expect no batch effect, the batch labels should be more or less randomly clustered together.
 
-As we can see from the dendrogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This can happen as a result of 2 causes, which are non-mutualy exclusive:
+As we can see from the dendrogram in fig. 8, some red samples (batch EJ) and blue samples (batch HC) seem to cluster together. This observation can be observed as a result of 2 causes, which are non-mutualy exclusive:
 
 * There are more red and blue samples, thus, it is more likely that they cluster together.
 * Red and blue samples are similar between them, and different between the other samples, hence, clustering together. 
@@ -710,11 +704,6 @@ MDS-plots help to see also how data cluster together projecting the variability 
 As we  can see in fig. 9 and 10, there is a clustering of normal samples, belonging to batch HC (blue at left-bottom corner). For the sake of keeping the dataset as homogenous as possible, it might be interesting to do not use those samples. Maybe, that mini-cluster of samples is partially responsible for the overall disposition of samples (which differentiates poorly between normal and cancer tissues).
 
 
-<!--- DAVID END --->
-
-
-
-<!--- DAVID START ---> 
 
 ## Filtering after MDS and MA plots
 
@@ -764,7 +753,7 @@ As we can see in fig. 11 and 12, after filter those samples out, the distributio
 
 # Differential Gene Expression
 
-After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1).
+After having corrected by those disturbing samples, the differential gene expression can be analyzed. The null model created in this case is not adjusted for any attribute (mod0 with intercept 1). This analysis was performed using the `SVA`package ( @Leek2012 ) based on @Leek2007 .
 
 
 
@@ -827,7 +816,9 @@ sum(p.adjust(pvsv, method="fdr") < 0.01)
 <p class="caption">Fig. 14: Distribution of raw p-values for an F-test on every gene between tumor and normal samples, adjusting for surrogate variables estimated with SVA.</p>
 </div>
 
-The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 occurrences to 300). The uniformity of the distribution is maintained. 
+The total of DE genes has increased a 27% with respect to the initial number (from fig. 14). The distribution of p-values has remained equal, having a decrease in the frequency of each interval (from 400 occurrences to 300). The uniformity of the distribution is maintained.
+
+The beforementioned increase of DE genes is explained due to the adjustment of the model (correcting by an "expected-averaged-batch effect"), which fits better to the data, thus, enabling more genes to pass our significance threshold.
 
 ## Checking for batch effect from TSS
 
@@ -835,9 +826,9 @@ As it has not been 100% clear if there is batch effect at the previous step we w
 
 ### TSS
 
-The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p values will be uniform, meaning that there is not a peak in the significant genes. 
+The analysis is quite similar from the one performed above, however, here we consider the TSS variation as a null model. If the variation in the gene expression was explained by the variation in the TSS the p-values will be uniform, meaning that there is not a peak in the significant genes. 
 
-In the following figure, we can observe that this is not true and the p-value distribution is maintained. Moreover, the decrease of DE genes between the uniform null model (5610) and the TSS null model (5546) is very small.
+In the following figure, we can observe that this is not true and the p-value distribution is maintained. Moreover, the decrease of DE genes between the uniform null model (5610) and the TSS null model (5546) is very small, which hold the hypothesis that there is no significant batch effect derived from TSS.
     
 
 
@@ -874,7 +865,7 @@ As can be seen in fig. 15, the histogram shows a distribution similar to fig. 14
 
 
 ### Plate
-Here we perform the same analysis and we see that the number also decrease also by a small extent. This would imply that there not exists significant batch effect by this variable. 
+Here we perform the same analysis and we see that the number also decrease also by a small extent. This would imply that there no significant batch effect by this variable. 
 
 
 ```r
@@ -896,13 +887,10 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 <p class="caption">Fig. 16: p-values of the differential expression analysis using plate as null model.</p>
 </div>
 
-<!--- DAVID END --->
-
 
 # Conclusions
 
 
-<!--- DAVID START --->
 - In our data exploration, we could see a lot of missing values for clinical traits that we should check and consider in the following analysis. However, gene information seems to be quite robust.  
 
 - We have subset our data set using a non-paired analysis design to avoid assessing the extent of differential expression for non-independent samples. In order to do that, we have used complementary criteria excluding the tumor samples that were duplicated as normal.
@@ -920,16 +908,9 @@ sum(p.adjust(pValues, method = "BH") < 0.01)
 - When using SVA to check Batch Effect of plate and TSS attributes, we observe a decrease in the quantity of DE genes. Although this might imply that indeed exists this batch effect, the change is not significant and it does not affect the p-value distribution. Therefore, although the variability of some genes may be explained by plate or TSS, these genes are a few hundred that won't really affect the conclusions of this analysis. 
 
 
-<!--- DAVID END--->
-
-
-<!--- ADRI START --->
-
-
 - There are present 7145 genes with a Differential Expression with an FDR of 1% (having as null model with a matrix of intercept term ~ 1 and adjusting by the detected SVs).
 
  
-<!--- ADRI END --->
 - Wide projects like The Cancer Genome Atlas imply a really difficult process of filtering and assessing the data to obtain relevant and real results. Even with that treatment, we can always have much variability making difficult the extraction of real or relevant conclusions. 
 
 # Session information
@@ -940,17 +921,12 @@ sessionInfo()
 ```
 
 ```
-R version 3.2.3 (2015-12-10)
-Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 16.04 LTS
+R version 3.2.4 (2016-03-10)
+Platform: x86_64-apple-darwin13.4.0 (64-bit)
+Running under: OS X 10.11.4 (El Capitan)
 
 locale:
- [1] LC_CTYPE=ca_ES.UTF-8       LC_NUMERIC=C              
- [3] LC_TIME=ca_ES.UTF-8        LC_COLLATE=ca_ES.UTF-8    
- [5] LC_MONETARY=ca_ES.UTF-8    LC_MESSAGES=ca_ES.UTF-8   
- [7] LC_PAPER=ca_ES.UTF-8       LC_NAME=C                 
- [9] LC_ADDRESS=C               LC_TELEPHONE=C            
-[11] LC_MEASUREMENT=ca_ES.UTF-8 LC_IDENTIFICATION=C       
+[1] es_ES.UTF-8/es_ES.UTF-8/es_ES.UTF-8/C/es_ES.UTF-8/es_ES.UTF-8
 
 attached base packages:
 [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
@@ -959,9 +935,9 @@ attached base packages:
 other attached packages:
  [1] gridExtra_2.2.1            sva_3.18.0                
  [3] genefilter_1.52.1          mgcv_1.8-12               
- [5] nlme_3.1-127               ggplot2_2.1.0             
+ [5] nlme_3.1-125               ggplot2_2.1.0             
  [7] geneplotter_1.48.0         annotate_1.48.0           
- [9] XML_3.98-1.1               AnnotationDbi_1.32.3      
+ [9] XML_3.98-1.4               AnnotationDbi_1.32.3      
 [11] lattice_0.20-33            edgeR_3.12.1              
 [13] limma_3.26.9               SummarizedExperiment_1.0.2
 [15] Biobase_2.30.0             GenomicRanges_1.22.4      
@@ -971,13 +947,16 @@ other attached packages:
 
 loaded via a namespace (and not attached):
  [1] Rcpp_0.12.4        formatR_1.3        RColorBrewer_1.1-2
- [4] plyr_1.8.3         XVector_0.10.0     tools_3.3.0       
- [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.9      
-[10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-6      
+ [4] plyr_1.8.3         XVector_0.10.0     tools_3.2.4       
+ [7] zlibbioc_1.16.0    digest_0.6.9       evaluate_0.8.3    
+[10] RSQLite_1.0.0      gtable_0.2.0       Matrix_1.2-4      
 [13] DBI_0.3.1          yaml_2.1.13        stringr_1.0.0     
-[16] grid_3.3.0         survival_2.39-2    rmarkdown_0.9.6   
-[19] magrittr_1.5       codetools_0.2-14   splines_3.3.0     
+[16] grid_3.2.4         survival_2.38-3    rmarkdown_0.9.5   
+[19] magrittr_1.5       codetools_0.2-14   splines_3.2.4     
 [22] scales_0.4.0       htmltools_0.3.5    xtable_1.8-2      
 [25] colorspace_1.2-6   labeling_0.3       KernSmooth_2.23-15
 [28] stringi_1.0-1      munsell_0.4.3     
 ```
+
+# References
+
