@@ -53,7 +53,14 @@ prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
 ##### ALL NA's at Gleason Score are NORMAL SAMPLES ########
 gleason.score <- (colData(prac.se.sub)$gleason_score)
 gleason.score.na <- gleason.score[is.na(gleason.score)]
+gleason.score.na
 
+replace(gleason.score.na, , "normal")
+
+gleason.score.na2 <- replace(gleason.score.na, gleason.score.na == NA, "HOLA" )
+gleason.score.na2
+
+value(normal)
 normal <- (colData(prac.se.sub)$type[colData(prac.se.sub)$type == 'normal'])
 
 tumor <- (colData(prac.se.sub)$type[colData(prac.se.sub)$type == 'tumor'])

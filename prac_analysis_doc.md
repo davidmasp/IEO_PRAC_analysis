@@ -1,3 +1,6 @@
+---
+output: pdf_document
+---
 # Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma 
 [Joan Martí](mailto:joan.marti02@estudiant.upf.edu), [David Mas](mailto:david.mas01@estudiant.upf.edu), [Adrià Auladell](mailto:adria.auladell01@estudiant.upf.edu)  
 10th May 2016  
