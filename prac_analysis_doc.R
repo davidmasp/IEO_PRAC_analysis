@@ -361,13 +361,18 @@ sessionInfo()
 
 ### DE analysis
 
+# Modifying NAs values adding gleason score 2 as 'normal'.
 na.mask <- is.na((colData(prac.se.pruned)$gleason_score))
 colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gleason_score)
 colData(prac.se.pruned)$gleason_score[na.mask] <- "2"
 colData(prac.se.pruned)$gleason_score <- as.factor(colData(prac.se.pruned)$gleason_score)
 
-gs.mask <-  (colData(prac.se.pruned)$gleason_score) == 6| (colData(prac.se.pruned)$gleason_score) == 7
+gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
+             
+#------LETS APPLY the masking -------
 
+prac.se.pruned <- prac.se.pruned[,gs.mask]
+colData(prac.se.pruned)$gleason_score <- droplevels(colData(prac.se.pruned)$gleason_score)
 design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned)) 
 
 head(design)
@@ -406,10 +411,10 @@ length(DEgenes)
 
 # to diagnose the DE
 
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+par(mfrow=c(1,1), mar=c(4, 5, 2, 2))
 hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= c(-50,50)) 
-qqline(fit$t[, 2])
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim=c(-20,20)) 
+abline(0, 1, lwd=2)
 
 # VOOM
 par(mfrow=c(1,1))
