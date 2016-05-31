@@ -364,17 +364,18 @@ sessionInfo()
 na.mask <- is.na((colData(prac.se.pruned)$gleason_score))
 colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gleason_score)
 colData(prac.se.pruned)$gleason_score[na.mask] <- "2"
-colData(prac.se.pruned)$gleason_score <- as.numeric(colData(prac.se.pruned)$gleason_score)
+colData(prac.se.pruned)$gleason_score <- as.factor(colData(prac.se.pruned)$gleason_score)
 
+gs.mask <-  (colData(prac.se.pruned)$gleason_score) == 6| (colData(prac.se.pruned)$gleason_score) == 7
 
-
-design <- model.matrix(~ type, data=colData(prac.se.pruned)) 
+design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned)) 
 
 head(design)
 fit <- lmFit(assays(prac.se.pruned)$logCPM, design)
 names(fit)
 fit <- eBayes(fit) 
 class(fit)
+
 names(fit)
 dim(prac.dge.unique.pruned)
 
@@ -485,11 +486,11 @@ sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="", pch=".", cex=3) 
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3) 
 abline(0, 1, lwd=2)
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="", pch=".", cex=3,ylim=c(-20,20)) 
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
 qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
