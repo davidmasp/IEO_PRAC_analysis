@@ -26,10 +26,10 @@ mcols(colData(prac.se), use.names=TRUE)
 
 ## ----exploring some variables, fig.align='center', echo=FALSE, message=FALSE, fig.width=12----
 sampleinfo.df <- as.data.frame(colData(prac.se))
-require(gridExtra)
+# require(gridExtra)
 plot1 <- ggplot(sampleinfo.df, aes(x=vital_status, fill =gleason_score)) + geom_bar()
 plot2 <- ggplot(sampleinfo.df, aes(x=race, fill =gleason_score)) + geom_bar() + theme(axis.text.x = element_text(angle = 25, hjust = 1))
-grid.arrange(plot1, plot2, ncol=2)
+# grid.arrange(plot1, plot2, ncol=2)
 
 ## ----table types---------------------------------------------------------
 table(prac.se$type)
@@ -42,7 +42,7 @@ rowRanges(prac.se)
 geneinfo.df <- as.data.frame(mcols(prac.se))
 plot1 <- ggplot(geneinfo.df, aes(x=txlen)) + geom_histogram(bins = 50)
 plot2 <- ggplot(geneinfo.df, aes(x=txgc)) + geom_histogram(bins = 50)
-grid.arrange(plot1, plot2, ncol=2)
+# grid.arrange(plot1, plot2, ncol=2)
 
 ## ----metadata------------------------------------------------------------
 metadata(prac.se)$objectCreationDate #the result should be [1] "2016-04-25"
@@ -361,6 +361,13 @@ sessionInfo()
 
 ### DE analysis
 
+na.mask <- is.na((colData(prac.se.pruned)$gleason_score))
+colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gleason_score)
+colData(prac.se.pruned)$gleason_score[na.mask] <- "2"
+colData(prac.se.pruned)$gleason_score <- as.numeric(colData(prac.se.pruned)$gleason_score)
+
+
+
 design <- model.matrix(~ type, data=colData(prac.se.pruned)) 
 
 head(design)
@@ -395,16 +402,17 @@ DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
 length(DEgenes)
 
 
+
 # to diagnose the DE
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3) 
-abline(0, 1, lwd=2)
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= c(-50,50)) 
+qqline(fit$t[, 2])
 
 # VOOM
 par(mfrow=c(1,1))
-v <- voom(prac.dge.unique.filtlib, design, plot=TRUE)
+v <- voom(prac.dge.unique.pruned, design, plot=TRUE)
 
 # redo the process with the voom weight
 
@@ -435,14 +443,56 @@ head(colData(prac.se.pruned), n=8)
 ## We should get them working with covariates
 
 
-mask <- is.na(colData(prac.se.pruned)$gleason_score)
-
-colData(prac.se.pruned)$gleason_score[mask] <- "2"
-
 design <- model.matrix(~ type + gleason_score, data=colData(prac.se.pruned))
 head(design)
 dim(v)
 dim(design)
+
+
 fit3 <- lmFit(v, design)
 fit3 <- eBayes(fit3)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
+abline(0, 1, lwd=2)
+par(mfrow=c(1,1))
+
+
+library(sva)
+mod0 <- model.matrix(~ 1, colData(prac.se.pruned))
+sv <- sva(v$E, mod=design, mod0=mod0)
+
+sv$n
+
+design <- cbind(design, sv$sv)
+colnames(design) <- c(colnames(design)[1:2], paste0("SV", 1:sv$n))
+
+fit4 <- lmFit(v, design)
+
+fit4 <- eBayes(fit4)
+
+res4 <- decideTests(fit4, p.value=FDRcutoff)
+
+summary(res4)
+
+
+fit4$genes <- genesmd
+tt4 <- topTable(fit4, coef=2, n=Inf) 
+head(tt4)
+
+sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="", pch=".", cex=3) 
+abline(0, 1, lwd=2)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="", pch=".", cex=3,ylim=c(-20,20)) 
+abline(0, 1, lwd=2)
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
+abline(0, 1, lwd=2)
+
+
 
