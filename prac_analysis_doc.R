@@ -415,6 +415,7 @@ par(mfrow=c(1,1), mar=c(4, 5, 2, 2))
 hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
 qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
+qqline(tt$P.Value, col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
 
 # VOOM
 par(mfrow=c(1,1))
