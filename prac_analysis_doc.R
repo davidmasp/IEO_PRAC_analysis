@@ -286,7 +286,7 @@ prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
                    !rownames(prac.dge.unique.filtlib$samples) %in% pruning.vec]
 table(prac.dge.unique.pruned$samples$group)
 prac.se.pruned <- prac.se.sub[,rownames(prac.dge.unique.pruned$samples)]
-
+v <- voom(dge, design, plot=TRUE)
 ## ----MDS after prunning, echo=FALSE--------------------------------------
 tss <- substr(colnames(prac.se.pruned), 6, 7)
 batch <- as.integer(factor(tss))
@@ -360,6 +360,20 @@ hist(pValues, xlab= 'p-value')
 sessionInfo()
 
 ### DE analysis
+
+### How to basic
+assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=30)
+
+design <- model.matrix(~ type, data=colData(prac.se.sub)) 
+fit <- lmFit(assays(prac.se.sub)$logCPM, design)
+fit <- eBayes(fit) 
+tt <- topTable(fit, coef=2, n=Inf)
+par(mfrow=c(1,1))
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= c(-50,50)) 
+abline(0,1)
+
+
+#################
 
 na.mask <- is.na((colData(prac.se.pruned)$gleason_score))
 colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gleason_score)
@@ -444,7 +458,7 @@ head(colData(prac.se.pruned), n=8)
 ## We should get them working with covariates
 
 
-design <- model.matrix(~ type + gleason_score, data=colData(prac.se.pruned))
+design <- model.matrix(~ factor(type) + gleason_score, data=colData(prac.se.pruned))
 head(design)
 dim(v)
 dim(design)
@@ -496,4 +510,45 @@ qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="original", pch=".", cex=3
 abline(0, 1, lwd=2)
 
 
+
+library(SummarizedExperiment)
+lclse <- readRDS("data/sePRAD.rds")
+
+library(edgeR)
+dge <- DGEList(counts=assays(lclse)$counts, group=lclse$type, genes=mcols(lclse))
+dge <- calcNormFactors(dge)
+assays(lclse)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
+mask <- rowMeans(assays(lclse)$logCPM) > 1
+sum(mask)
+lclse <- lclse[mask, ]
+dim(lclse)
+dge <- dge[mask, ]
+dim(dge)
+design <- model.matrix(~ type, data=colData(lclse))
+head(design)
+fit <- lmFit(assays(lclse)$logCPM, design)
+class(fit)
+names(fit)
+fit <- eBayes(fit)
+class(fit)
+names(fit)
+res <- decideTests(fit)
+summary(res) #always 3 rows
+FDRcutoff <- 0.01
+res <- decideTests(fit, p.value=FDRcutoff)
+summary(res)
+tt <- topTable(fit, coef=2, n=Inf)
+genesmd <- data.frame(chr=as.character(seqnames(rowRanges(lclse))),
+                      symbol=as.character(rowRanges(lclse)[, 1]),
+                      stringsAsFactors=FALSE)
+fit$genes <- genesmd
+tt <- topTable(fit, coef=2, n=Inf)
+head(tt)
+sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing=TRUE)
+
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3)
+abline(0, 4, lwd=2)
 
