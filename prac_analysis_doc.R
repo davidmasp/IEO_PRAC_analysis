@@ -375,13 +375,20 @@ abline(0,1)
 
 #################
 
+
+# Modifying NAs values adding gleason score 2 as 'normal'.
+
 na.mask <- is.na((colData(prac.se.pruned)$gleason_score))
 colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gleason_score)
 colData(prac.se.pruned)$gleason_score[na.mask] <- "2"
 colData(prac.se.pruned)$gleason_score <- as.factor(colData(prac.se.pruned)$gleason_score)
 
-gs.mask <-  (colData(prac.se.pruned)$gleason_score) == 6| (colData(prac.se.pruned)$gleason_score) == 7
+gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
+             
+#------LETS APPLY the masking -------
 
+prac.se.pruned <- prac.se.pruned[,gs.mask]
+colData(prac.se.pruned)$gleason_score <- droplevels(colData(prac.se.pruned)$gleason_score)
 design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned)) 
 
 head(design)
@@ -420,14 +427,20 @@ length(DEgenes)
 
 # to diagnose the DE
 
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+par(mfrow=c(1,1), mar=c(4, 5, 2, 2))
 hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= c(-50,50)) 
-qqline(fit$t[, 2])
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim=c(-20,20)) 
+abline(0, 1, lwd=2)
+qqline(tt$P.Value, col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
 
 # VOOM
+gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
+prac.dge.unique.pruned <- prac.dge.unique.pruned[,gs.mask]
+
 par(mfrow=c(1,1))
-v <- voom(prac.dge.unique.pruned, design, plot=TRUE)
+v <- voom(prac.dge.unique.pruned, design, plot=TRUE)##
+dim(prac.dge.unique.pruned)
+dim(design)
 
 # redo the process with the voom weight
 
@@ -446,6 +459,8 @@ par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
 qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
 abline(0, 1, lwd=2)
+qqline(fit2$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
+
 par(mfrow=c(1,1))
 
 
@@ -466,11 +481,15 @@ dim(design)
 
 fit3 <- lmFit(v, design)
 fit3 <- eBayes(fit3)
+tt3 <- topTable(fit3, coef=2, n=Inf)
+
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
+hist(tt3$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="", pch=".", cex=3)
 abline(0, 1, lwd=2)
+qqline(fit3$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
+
 par(mfrow=c(1,1))
 
 
@@ -501,12 +520,13 @@ sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
 qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3) 
+qqline(fit4$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
 abline(0, 1, lwd=2)
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
-qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
 
 
