@@ -1,0 +1,312 @@
+---
+title: "PRAC Paired Design"
+author: "David Mas"
+date: "1 de junio de 2016"
+output:
+  html_document:
+    mathjax: local
+    self_contained: false
+---
+
+
+```{r setup, cache=FALSE, echo=FALSE, message=FALSE, warning=FALSE, tidy=FALSE}
+library(knitr)
+opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE)
+
+```
+
+
+```{r loading packages and reading data, echo=FALSE}
+library("SummarizedExperiment")
+library("edgeR")
+library("geneplotter")
+library("ggplot2")
+library("sva")
+old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI 
+
+prac.se <- readRDS("data/sePRAD.rds")
+
+```
+
+# Filtering and Data description
+
+```{r original dataset}
+
+table(prac.se$type)
+
+```
+
+In this design we are going to select only the paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
+
+```{r filtering for the paired data}
+# Subset the paired samples
+## we build a table from the bcr barcode occurences in our dataset
+n_occur <- data.frame(table(colData(prac.se)$bcr_patient_barcode))
+
+## we filter out the na patients (having a na in the barcode)
+## and the ones that occur only 1 time (they are unique)
+prac.se.dupl <- prac.se[,colData(prac.se)$bcr_patient_barcode
+                 %in% n_occur$Var1[n_occur$Freq > 1] & 
+                 !is.na(colData(prac.se)$bcr_patient_barcode)]
+## See the results.
+table(colData(prac.se.dupl)$type)
+
+```
+
+Most of the Normal samples had a paired tumor sample but 2. 
+
+```{r Normalizing}
+
+prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
+prac.dgenorm <- calcNormFactors(prac.dge)
+assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
+assays(prac.se.dupl)$logCPM[1:5, 1:5]
+```
+
+To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. 
+
+```{r filter genes}
+mask <- rowMeans(assays(prac.se.dupl)$logCPM) > 1
+prac.se.dupl <- prac.se.dupl[mask, ]
+prac.dgenorm <- prac.dgenorm[mask, ]
+```
+
+We explore the data to check weather there exists some kind of batch effect or an undesired source of variation.
+
+```{r lib size plots}
+libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
+ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
+
+```
+
+
+The potencial source of batch effect is the TSS so we check for that.
+
+```{r batch effect, echo = FALSE}
+
+tss <- substr(colnames(prac.se.dupl), 6, 7)
+table(tss)
+center <- substr(colnames(prac.se.dupl), 27, 28)
+table(center)
+plate <- substr(colnames(prac.se.dupl), 22, 25)
+table(plate)
+portionanalyte <- substr(colnames(prac.se.dupl), 18, 20)
+table(portionanalyte)
+samplevial <- substr(colnames(prac.se.dupl), 14, 16)
+table(samplevial)
+
+table(data.frame(TYPE=prac.se.dupl$type, TSS=tss))
+
+
+par(old.par)
+logCPM <- assays(prac.se.dupl)$logCPM
+d <- as.dist(1-cor(logCPM, method="spearman"))
+sampleClustering <- hclust(d)
+batch <- as.integer(factor(tss))
+colors <- palette()
+palette(c(colors,"darkorange1","darkmagenta","darkolivegreen","red3","seagreen","pink1","yellow3","sienna1"))
+sampleDendrogram <- as.dendrogram(sampleClustering, hang=0.1)
+names(batch) <- colnames(prac.se.dupl)
+outcome <- paste(substr(colnames(prac.se.dupl), 9, 12), as.character(prac.se.dupl$type), sep="-")
+names(outcome) <- colnames(prac.se.dupl)
+sampleDendrogram <- dendrapply(sampleDendrogram,
+                               function(x, batch, labels) {
+                                 if (is.leaf(x)) {
+                                   attr(x, "nodePar") <- list(lab.col=as.vector(batch[attr(x, "label")]))
+                                   attr(x, "label") <- as.vector(labels[attr(x, "label")])
+                                 }
+                                 x
+                               }, batch, outcome)
+
+plot(sampleDendrogram, main="Hierarchical clustering of samples")
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fill=sort(unique(batch)))
+
+```
+
+
+```{r MDS, echo=FALSE}
+par(mfrow=c(1, 1), mar=c(0,0,0,0))
+plotMDS(prac.dgenorm, labels=outcome, col=batch)
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)), inset=0.05)
+type <- as.integer(factor(prac.se.dupl$type))
+plotMDS(prac.dgenorm, pch = 19, col=type)
+legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
+       fill=sort(unique(type)), inset=0.05)
+```
+
+
+```{r filter those ind}
+GetID <- function(number, se){
+  id <- grep(number,rownames(colData(se)))
+  return(rownames(colData(se))[id])
+}
+number.id <- c("7737","7745","7738","7211","7747") 
+pruning.vec <- as.character(sapply(number.id, GetID, prac.se.dupl))
+prac.dgenorm <- prac.dgenorm[,
+                   !rownames(prac.dgenorm$samples) %in% pruning.vec]
+table(prac.dgenorm$samples$group)
+prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
+table(colData(prac.se.dupl)$type)
+```
+
+```{r MDS2, echo=FALSE}
+tss <- substr(colnames(prac.se.dupl), 6, 7)
+batch <- as.integer(factor(tss))
+names(batch) <- colnames(prac.se.dupl)
+outcome <- paste(substr(colnames(prac.se.dupl), 9, 12), as.character(prac.se.dupl$type), sep="-")
+
+
+par(mfrow=c(1, 1), mar=c(0,0,0,0))
+plotMDS(prac.dgenorm, labels=outcome, col=batch)
+legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+       fill=sort(unique(batch)), inset=0.05)
+type <- as.integer(factor(prac.se.dupl$type))
+plotMDS(prac.dgenorm, pch = 19, col=type)
+legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
+       fill=sort(unique(type)), inset=0.05)
+```
+
+# Differential Expression Analysis
+
+```{r DE1}
+design <- model.matrix(~ type, data=colData(prac.se.dupl))
+head(design)
+tail(design)
+fit <- lmFit(assays(prac.se.dupl)$logCPM, design)
+fit <- eBayes(fit)
+FDRcutoff <- 0.01
+res <- decideTests(fit, p.value=FDRcutoff)
+summary(res)
+genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
+                      symbol=as.character(rowRanges(prac.se.dupl)[, 1]),
+                      stringsAsFactors=FALSE)
+fit$genes <- genesmd
+tt <- topTable(fit, coef=2, n=Inf)
+head(tt)
+sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing=TRUE)
+
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3)
+qqline(fit$t[, 2], col=2, lwd=3)
+abline(0, 1, lwd=3)
+
+```
+
+In black we can see the Normal distribution ( \(\sigma = 1 \) ) and the red is the `qqline` extracted from the distribution itself.
+
+Right now we have a real true candidate overexpressed in tumor at the right top. The other genes, although with a high variability seem to follow a normal distribution of \(\sigma = 4 \).
+
+## Improving the DEA with voom
+
+```{r DE voom}
+par(mfrow=c(1,1))
+v <- voom(prac.dgenorm, design, plot=TRUE)
+
+# redo the process with the voom weight
+
+fit2 <- lmFit(v, design)
+fit2 <- eBayes(fit2)
+res2 <- decideTests(fit2, p.value=FDRcutoff)
+
+fit2$genes <- genesmd
+tt2 <- topTable(fit2, coef=2, n=Inf)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit2$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3)
+qqline(fit2$t[, 2], col=2, lwd=3)
+abline(0, 1, lwd=3)
+
+```
+
+
+## Introducing TSS as covariate
+
+```{r DE TSS}
+
+tss <- factor(tss)
+design <- model.matrix(~ factor(type) + tss , data=colData(prac.se.dupl))
+
+
+fit3 <- lmFit(v, design)
+fit3 <- eBayes(fit3)
+
+fit3$genes <- genesmd
+
+tt3 <- topTable(fit3, coef=2, n=Inf)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt3$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="", pch=".", cex=3)
+qqline(fit3$t[, 2], col=2, lwd=3)
+abline(0, 1, lwd=3)
+
+```
+
+## Introducing SV as covariates
+
+```{r DE SV}
+
+library(sva)
+mod0 <- model.matrix(~ 1, colData(prac.se.dupl))
+sv <- sva(v$E, mod=design, mod0=mod0)
+sv$n
+design <- cbind(design, sv$sv)
+colnames(design) <- c(colnames(design)[1:6], paste0("SV", 1:sv$n))
+
+fit4 <- lmFit(v, design)
+fit4 <- eBayes(fit4)
+res4 <- decideTests(fit4, p.value=FDRcutoff)
+
+summary(res4)
+
+
+fit4$genes <- genesmd
+tt4 <- topTable(fit4, coef=2, n=Inf) 
+head(tt4)
+
+sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
+
+par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
+qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3) 
+qqline(fit4$t[, 2], col=2, lwd=3)
+abline(0, 1, lwd=3)
+
+```
+
+## Volcano plots
+
+```{r volcano plots}
+par(mfrow=c(2,2))
+volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1)
+volcanoplot(fit2, coef=2, highlight=7, fit4$genes$symbol, main="Model voom", las=1)
+volcanoplot(fit3, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS", las=1)
+volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS + SV", las=1)
+```
+
+
+
+```{r}
+DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
+par(mfrow=c(1,1))
+top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:10]
+limma::plotMA(fit4, coef=2, status=rownames(fit4$lods) %in% DEgenes, legend=FALSE,
+main="Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
+text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, pos=4)
+```
+
+
+
+
+
+# Session Info 
+
+```{r session info}
+sessionInfo()
+```
+
+
