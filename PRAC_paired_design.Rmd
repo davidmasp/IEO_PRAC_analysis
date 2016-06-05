@@ -170,7 +170,8 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$
 # Differential Expression Analysis
 
 ```{r DE1}
-design <- model.matrix(~ type, data=colData(prac.se.dupl))
+colData(prac.se.dupl)$bcr_patient_barcode <- droplevels(colData(prac.se.dupl)$bcr_patient_barcode)
+design <- model.matrix(~ type , data=colData(prac.se.dupl))
 head(design)
 tail(design)
 fit <- lmFit(assays(prac.se.dupl)$logCPM, design)
@@ -251,11 +252,13 @@ abline(0, 1, lwd=3)
 ```{r DE SV}
 
 library(sva)
+
 mod0 <- model.matrix(~ 1, colData(prac.se.dupl))
 sv <- sva(v$E, mod=design, mod0=mod0)
 sv$n
+vars <- length(colnames(design))
 design <- cbind(design, sv$sv)
-colnames(design) <- c(colnames(design)[1:6], paste0("SV", 1:sv$n))
+colnames(design) <- c(colnames(design)[1:vars], paste0("SV", 1:sv$n))
 
 fit4 <- lmFit(v, design)
 fit4 <- eBayes(fit4)
@@ -300,8 +303,46 @@ text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, 
 ```
 
 
+## Results
+
+```{r, echo=FALSE}
+library(Gviz)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+gtrack <- GenomeAxisTrack()
+txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+for (i in fit4$genes$symbol[top10][1:3]){
+  gene.vars <- unlist(strsplit(i, ":"))
+  
+  chr <- gene.vars[1]
+  coords <- unlist(strsplit(gene.vars[2], "-"))
+  start <- as.numeric(coords[1])
+  end <- as.numeric(coords[2])
+  extrabp <- 5000
+  itrack <- IdeogramTrack(genome="hg38", chromosome=chr)
+  #grtrack <- GeneRegionTrack(txdb, genome="hg19", chromosome=chr,
+         #                  start=start-extrabp, end=end+extrabp,
+          #                 name="UCSC Known Genes", showId=TRUE, geneSymbols=TRUE)
+  refseq <- UcscTrack(track="RefSeq Genes", table="refGene",
+    trackType="GeneRegionTrack",chromosome=chr, genome="hg38",
+    rstart="exonStarts", rends="exonEnds", gene="name", symbol="name2",
+    transcript="name", strand="strand", name="RefSeq Genes",
+    feature="name2",
+    showId=T, from=start-extrabp, to=end+extrabp)
+  plotTracks(list(gtrack, itrack, refseq), from=start-extrabp, to=end+extrabp)
+}
 
 
+# biomTrack <- BiomartGeneRegionTrack(genome="hg38", chromosome="chr2", start=101200000, end=101280000, name="Ensembl") 
+
+# plotTracks(list(biomTrack,gtrack) )
+
+```
+
+As you can see in the below figres, our 3 top hits are:
+
+* [SNORD89](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89) - Small Nucleolar RNA
+* [EPHA8](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8) - ephrin receptor (development of the Nervous System)
+* [EFHD1](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EFHD1) - EF-hand domain-containing protein related to calcium ion binding (neuronal differentiation)
 
 # Session Info 
 
