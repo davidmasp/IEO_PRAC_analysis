@@ -405,7 +405,7 @@ rownames(goresults) <- 1:nrow(goresults)
 
 ### GSEA
 
-```{r}
+```{r, fig.width=14}
 genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
                          symbol=rowData(prac.se.dupl)[, 1],
                          stringsAsFactors=FALSE)
@@ -485,7 +485,7 @@ plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 
 ## GSVA
 
-```{r , fig.width=14}
+```{r}
 library(GSVA)
 
 GSexpr <- gsva(assays(prac.se.GSEA)$counts, gsc, rnaseq=TRUE,
@@ -523,7 +523,7 @@ boxplot(GSexpr[DEgs[1], ] ~ prac.se.GSEA$type, main=DEgs[1], las=1, cex.axis=2)
 boxplot(GSexpr[DEgs[2], ] ~ prac.se.GSEA$type, main=DEgs[2], las=1, cex.axis=2)
 
 
-boxplot(GSexpr[DEgs[9], ] ~ prac.se.GSEA$type, main=DEgs[9], las=1, cex.axis=2)
+boxplot(GSexpr[DEgs[5], ] ~ prac.se.GSEA$type, main=DEgs[5], las=1, cex.axis=2)
 ```
 
 # Session Info 
