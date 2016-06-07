@@ -376,7 +376,7 @@ qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= 
 abline(0,1)
 
 
-###### LET'S WORK WITH GLEANSCORE ######
+###### LET'S WORK WITH GLEASONSCORE ######
 
 
 # Modifying NAs values adding gleason score 2 as 'normal'.
@@ -386,7 +386,9 @@ colData(prac.se.pruned)$gleason_score <- as.character(colData(prac.se.pruned)$gl
 colData(prac.se.pruned)$gleason_score[na.mask] <- "2"
 colData(prac.se.pruned)$gleason_score <- as.factor(colData(prac.se.pruned)$gleason_score)
 
-gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
+
+
+gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","7","8","9","10"))
              
 #------LETS APPLY the masking -------
 dim(prac.se.pruned)
@@ -397,6 +399,13 @@ prac.dge.unique.pruned.gs <- prac.dge.unique.pruned[,gs.mask]
 dim(prac.dge.unique.pruned.gs)
 
 assays(prac.se.pruned.gs)$logCPM <- cpm(prac.dge.unique.pruned.gs, log=TRUE, prior.count=30)
+
+
+cpm.mask <- rowMeans(assays(prac.se.pruned.gs)$logCPM) > 1
+prac.se.pruned.gs <- prac.se.pruned.gs[cpm.mask, ]
+prac.dge.unique.pruned.gs <- prac.dge.unique.pruned.gs[cpm.mask, ]
+
+
 
 colData(prac.se.pruned.gs)$gleason_score <- droplevels(colData(prac.se.pruned.gs)$gleason_score)
 design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned.gs)) 
@@ -447,11 +456,11 @@ qqline(tt$P.Value, col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb ablin
 dim(prac.dge.unique.pruned)
 dim(prac.dge.unique.pruned.gs)
 
-design <- model.matrix(~ gleason_score ,data=colData(prac.se.pruned.gs)) 
+design <- model.matrix(~ factor(gleason_score) ,data=colData(prac.se.pruned.gs)) 
 dim(design)
-design
+head(design)
 par(mfrow=c(1,1))
-v <- voom(prac.dge.unique.pruned.gs, design, plot=TRUE)##
+v <- voom(prac.dge.unique.pruned.gs, design, plot=TRUE)
 
 # redo the process with the voom weight
 
@@ -460,17 +469,16 @@ fit2 <- eBayes(fit2)
 res2 <- decideTests(fit2, p.value=FDRcutoff)
 
 fit2$genes <- genesmd
-tt2 <- topTable(fit2, coef=2, n=Inf)
-head(tt2)
-chr.distro2.df <- data.frame(chr = tt2$chr[tt2$adj.P.Val < FDRcutoff])
-chr.distro2.df$chr <- sort(gsub("chr","",chr.distro2.df$chr))
-ggplot(chr.distro2.df, aes(x=chr, fill=chr)) + geom_bar() + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
-abline(0, 1, lwd=2)
-qqline(fit2$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
+for (coef in 1:5){
+  tt2 <- topTable(fit2, coef=coef, n=Inf)
+  par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
+  hist(tt2$P.Value, xlab="Raw P-values", main=coef, las=1)
+  qqt(fit2$t[, coef], df=fit2$df.prior+fit2$df.residual, main=coef, pch=".", cex=3)
+  qqline(fit2$t[, coef], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
+  
+}
+
 
 
 library(sva)
@@ -508,3 +516,4 @@ qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", ce
 abline(0, 1, lwd=2)
 qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
+
