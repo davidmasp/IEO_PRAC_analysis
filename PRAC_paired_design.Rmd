@@ -283,7 +283,7 @@ abline(0, 1, lwd=3)
 
 ## Volcano plots
 
-```{r volcano plots}
+```{r volcano plots, fig.cap="Volcano Plots using 3 different approaches", dpi=100, fig.height= 10, fig.width=14}
 par(mfrow=c(2,2))
 volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1)
 volcanoplot(fit2, coef=2, highlight=7, fit4$genes$symbol, main="Model voom", las=1)
@@ -305,7 +305,7 @@ text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, 
 
 ## Results
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval = FALSE}
 library(Gviz)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 gtrack <- GenomeAxisTrack()
@@ -343,6 +343,147 @@ As you can see in the below figres, our 3 top hits are:
 * [SNORD89](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89) - Small Nucleolar RNA
 * [EPHA8](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8) - ephrin receptor (development of the Nervous System)
 * [EFHD1](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EFHD1) - EF-hand domain-containing protein related to calcium ion binding (neuronal differentiation)
+
+
+
+### Functional Enrichment analysis
+
+```{r}
+DEgenes <- rownames(tt4)[tt$adj.P.Val < 0.001]
+length(DEgenes)
+library(GOstats)
+params <- new("GOHyperGParams", geneIds=DEgenes,
+                universeGeneIds=rownames(prac.se.dupl),
+                annotation="org.Hs.eg.db", ontology="BP",
+                pvalueCutoff=0.05, testDirection="over")
+hgOver <- hyperGTest(params) 
+
+hgOver
+
+head(summary(hgOver))
+
+head(geneCounts(hgOver))
+
+head(universeCounts(hgOver))
+head(pvalues(hgOver))
+```
+
+Now doing it conditioned by the child
+
+```{r}
+conditional(params) <- TRUE
+hgOverCond <- hyperGTest(params) 
+hgOverCond
+```
+
+```{r}
+goresults <- summary(hgOverCond) 
+head(goresults)
+```
+
+```{r}
+goresults <- goresults[goresults$Size >= 7 & goresults$Count >= 7, ] 
+goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ] 
+head(goresults)
+```
+
+```{r}
+geneIDs <- geneIdsByCategory(hgOverCond)[goresults$GOBPID]
+geneSYMs <- sapply(geneIDs, function(id) select(org.Hs.eg.db, columns="SYMBOL", key=id, keytype="ENTREZID")$SYMBOL)
+
+geneSYMs <- sapply(geneSYMs, paste, collapse=", ")
+goresults <- cbind(goresults, Genes=geneSYMs)
+rownames(goresults) <- 1:nrow(goresults)
+
+
+#library(xtable)
+#xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|") 
+#print(xtab, file="goresults.tex", type="latex")
+
+```
+
+
+### GSEA
+
+```{r}
+genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
+                         symbol=rowData(prac.se.dupl)[, 1],
+                         stringsAsFactors=FALSE)
+
+library(GSEABase)
+library(GSVAdata)
+data(c2BroadSets)
+c2BroadSets
+length(c2BroadSets)
+head(names(c2BroadSets))
+
+c2BroadSets <- c2BroadSets[c(grep("^KEGG", names(c2BroadSets)),
+               grep("^REACTOME", names(c2BroadSets)), grep("^BIOCARTA", names(c2BroadSets)))]
+c2BroadSets
+gsc <- GeneSetCollection(c(c2BroadSets))
+gsc <- mapIdentifiers(gsc, AnnoOrEntrezIdentifier(metadata(prac.se.dupl)$annotation))
+gsc
+
+Im <- incidence(gsc)
+dim(Im)
+Im[1:2, 1:10]
+Im <- Im[, colnames(Im) %in% rownames(prac.se.dupl)] # by a mask 
+dim(Im)
+
+Im <- Im[, colnames(Im) %in% rownames(prac.se.dupl)] # by a mask
+dim(Im)
+
+prac.se.GSEA <- prac.se.dupl[colnames(Im), ]
+dim(prac.se.GSEA)
+prac.dge.GSEA <- prac.dgenorm[colnames(Im), ]
+dim(prac.dge.GSEA)
+
+library(limma)
+library(sva)
+
+
+# Im <- Im[rowSums(Im) >= 5, ]
+dim(Im)
+
+tGSgenes <- tt4[match(colnames(Im), rownames(tt4)), "t"]
+length(tGSgenes)
+head(tGSgenes)
+
+zS <- sqrt(rowSums(Im)) * (as.vector(Im %*% tGSgenes) / rowSums(Im)) #sample mean of the t statistic
+length(zS)
+head(zS)
+
+qqnorm(zS)
+abline(0, 4)
+
+rnkGS <- sort(abs(zS), decreasing=TRUE)
+head(rnkGS)
+
+plotGS <- function(se, gs, pheno, ...) {
+  l <- levels(colData(se)[, pheno])
+  idxSamples1 <- colData(se)[, pheno] == l[1]
+  idxSamples2 <- colData(se)[, pheno] == l[2]
+  exps1 <- rowMeans(assays(se)$logCPM[gs, idxSamples1])
+  exps2 <- rowMeans(assays(se)$logCPM[gs, idxSamples2])
+  rng <- range(c(exps1, exps2))
+  plot(exps1, exps2, pch=21, col="black", bg="black",
+       xlim=rng, ylim=rng, xlab=l[1], ylab=l[2], ...)
+  abline(a=0, b=1, lwd=2, col="red")
+}
+
+genesGS1 <- colnames(Im)[which(Im[names(rnkGS)[1], ] == 1)]
+genesGS2 <- colnames(Im)[which(Im[names(rnkGS)[2], ] == 1)]
+genesGS3 <- colnames(Im)[which(Im[names(rnkGS)[3], ] == 1)]
+genesGS4 <- colnames(Im)[which(Im[names(rnkGS)[4], ] == 1)]
+par(mfrow=c(1, 2), mar=c(4, 5, 3, 4))
+plotGS(prac.se.GSEA, genesGS1, "type", main=names(rnkGS)[1], cex.lab=2, las=1)
+plotGS(prac.se.GSEA, genesGS2, "type", main=names(rnkGS)[2], cex.lab=2, las=1)
+plotGS(prac.se.GSEA, genesGS3, "type", main=names(rnkGS)[3], cex.lab=2, las=1)
+plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
+```
+
+
+
 
 # Session Info 
 
