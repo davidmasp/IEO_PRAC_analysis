@@ -141,7 +141,7 @@ GetID <- function(number, se){
   id <- grep(number,rownames(colData(se)))
   return(rownames(colData(se))[id])
 }
-number.id <- c("7737","7745","7738","7211","7747") 
+number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769") 
 pruning.vec <- as.character(sapply(number.id, GetID, prac.se.dupl))
 prac.dgenorm <- prac.dgenorm[,
                    !rownames(prac.dgenorm$samples) %in% pruning.vec]
@@ -485,7 +485,7 @@ plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 
 ## GSVA
 
-```{r}
+```{r , fig.width=14}
 library(GSVA)
 
 GSexpr <- gsva(assays(prac.se.GSEA)$counts, gsc, rnaseq=TRUE,
@@ -504,8 +504,8 @@ fit <- lmFit(GSexpr, modSVs)
 fit <- eBayes(fit)
 tt <- topTable(fit, coef = 2, n = Inf)
 DEgs <- rownames(tt[tt$adj.P.Val < 0.01, , drop=FALSE])
-DEgs
-DEgs[1]
+head(DEgs)
+
 
 
 par(mfrow=c(1, 1))
@@ -515,7 +515,7 @@ par(mfrow=c(1, 1))
 plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
      pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
 points(tt[tt$adj.P.Val < 0.01, "logFC"], -log10(tt[tt$adj.P.Val < 0.01, "P.Value"]), pch=".", cex=5, col="red")
-text(tt[tt$adj.P.Val < 1e-18, "logFC"], -log10(tt[tt$adj.P.Val < 1e-18, "P.Value"]), labels = rownames(tt[tt$adj.P.Val < 1e-18,]), cex=0.7, pos=4)
+text(tt[tt$adj.P.Val < 1e-20, "logFC"], -log10(tt[tt$adj.P.Val < 1e-20, "P.Value"]), labels = rownames(tt[tt$adj.P.Val < 1e-20,]), cex=0.7, pos=4)
 abline(h=-log10(max(tt[tt$adj.P.Val < 0.01, "P.Value"])), col=grey(0.5), lty=2)
 
 boxplot(GSexpr[DEgs[1], ] ~ prac.se.GSEA$type, main=DEgs[1], las=1, cex.axis=2)
