@@ -483,7 +483,48 @@ plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 ```
 
 
+## GSVA
 
+```{r}
+library(GSVA)
+
+GSexpr <- gsva(assays(prac.se.GSEA)$counts, gsc, rnaseq=TRUE,
+               min.sz=5, max.sz=300, verbose=FALSE)$es.obs
+class(GSexpr)
+dim(GSexpr)
+
+
+mod <- model.matrix(~ type, data=colData(prac.se.dupl))
+mod0 <- model.matrix(~ 1, data=colData(prac.se.dupl))
+svaobj <- sva(GSexpr, mod, mod0)
+modSVs <- cbind(mod, svaobj$sv)
+
+
+fit <- lmFit(GSexpr, modSVs)
+fit <- eBayes(fit)
+tt <- topTable(fit, coef = 2, n = Inf)
+DEgs <- rownames(tt[tt$adj.P.Val < 0.01, , drop=FALSE])
+DEgs
+DEgs[1]
+
+
+par(mfrow=c(1, 1))
+
+#boxplot(GSexpr["XiE", ] ~ lclse$gender, main="XiE", las=1, cex.axis=2)
+
+plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
+     pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
+points(tt[tt$adj.P.Val < 0.01, "logFC"], -log10(tt[tt$adj.P.Val < 0.01, "P.Value"]), pch=".", cex=5, col="red")
+text(tt[tt$adj.P.Val < 1e-18, "logFC"], -log10(tt[tt$adj.P.Val < 1e-18, "P.Value"]), labels = rownames(tt[tt$adj.P.Val < 1e-18,]), cex=0.7, pos=4)
+abline(h=-log10(max(tt[tt$adj.P.Val < 0.01, "P.Value"])), col=grey(0.5), lty=2)
+
+boxplot(GSexpr[DEgs[1], ] ~ prac.se.GSEA$type, main=DEgs[1], las=1, cex.axis=2)
+
+boxplot(GSexpr[DEgs[2], ] ~ prac.se.GSEA$type, main=DEgs[2], las=1, cex.axis=2)
+
+
+boxplot(GSexpr[DEgs[9], ] ~ prac.se.GSEA$type, main=DEgs[9], las=1, cex.axis=2)
+```
 
 # Session Info 
 
