@@ -363,10 +363,10 @@ sessionInfo()
 ### DE analysis
 
 ### How to basic
-assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count=30)
+assays(prac.se.pruned)$logCPM <- cpm(prac.dge.unique.pruned, log=TRUE, prior.count=30)
 
-design <- model.matrix(~ type, data=colData(prac.se.sub)) 
-fit <- lmFit(assays(prac.se.sub)$logCPM, design)
+design <- model.matrix(~ type, data=colData(prac.se.pruned)) 
+fit <- lmFit(assays(prac.se.pruned)$logCPM, design)
 
 fit <- eBayes(fit) 
 tt <- topTable(fit, coef=2, n=Inf)
@@ -376,7 +376,7 @@ qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= 
 abline(0,1)
 
 
-#################
+###### LET'S WORK WITH GLEANSCORE ######
 
 
 # Modifying NAs values adding gleason score 2 as 'normal'.
@@ -435,8 +435,6 @@ ggplot(chr.distro.df, aes(x=chr, fill=chr)) + geom_bar() + theme(axis.text.x = e
 DEgenes <- rownames(tt)[tt$adj.P.Val < FDRcutoff]
 length(DEgenes)
 
-
-
 # to diagnose the DE
 
 par(mfrow=c(1,1), mar=c(4, 5, 2, 2))
@@ -473,39 +471,6 @@ hist(tt2$P.Value, xlab="Raw P-values", main="", las=1)
 qqt(fit2$t[, 2], df=fit2$df.prior+fit2$df.residual, main="", pch=".", cex=3)
 abline(0, 1, lwd=2)
 qqline(fit2$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
-
-par(mfrow=c(1,1))
-
-
-head(colData(prac.se.pruned.gs), n=8)
-
-
-
-## The results are shit
-
-## We should get them working with covariates
-
-tss <- substr(colnames(prac.se.pruned.gs), 6, 7)
-
-design_mix <- model.matrix(~ tss + gleason_score  ,data=colData(prac.se.pruned.gs))
-design_mix
-dim(v)
-dim(design_mix)
-
-
-fit3 <- lmFit(design_mix)
-
-fit3 <- eBayes(fit3) #can't calculate eBayes, too much 0s
-tt3 <- topTable(fit3, coef=2, n=Inf)
-
-
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-hist(tt3$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="", pch=".", cex=3)
-abline(0, 1, lwd=2)
-qqline(fit3$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
-
-par(mfrow=c(1,1))
 
 
 library(sva)
