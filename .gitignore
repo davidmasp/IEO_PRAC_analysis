@@ -16,3 +16,4 @@ figures/
 *.md
 report_tex/*
 !/report_tex/*.tex
+*.png
