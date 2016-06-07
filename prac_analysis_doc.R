@@ -367,8 +367,10 @@ assays(prac.se.sub)$logCPM <- cpm(prac.dge.unique.filtlib, log=TRUE, prior.count
 
 design <- model.matrix(~ type, data=colData(prac.se.sub)) 
 fit <- lmFit(assays(prac.se.sub)$logCPM, design)
+
 fit <- eBayes(fit) 
 tt <- topTable(fit, coef=2, n=Inf)
+
 par(mfrow=c(1,1))
 qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3, ylim= c(-50,50)) 
 abline(0,1)
@@ -388,19 +390,25 @@ gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
              
 #------LETS APPLY the masking -------
 dim(prac.se.pruned)
-prac.se.pruned <- prac.se.pruned[,gs.mask]
-dim(prac.se.pruned)
-colData(prac.se.pruned)$gleason_score <- droplevels(colData(prac.se.pruned)$gleason_score)
-design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned)) 
+prac.se.pruned.gs <- prac.se.pruned[,gs.mask]
+dim(prac.se.pruned.gs)
+dim(prac.dge.unique.pruned)
+prac.dge.unique.pruned.gs <- prac.dge.unique.pruned[,gs.mask]
+dim(prac.dge.unique.pruned.gs)
 
+assays(prac.se.pruned.gs)$logCPM <- cpm(prac.dge.unique.pruned.gs, log=TRUE, prior.count=30)
+
+colData(prac.se.pruned.gs)$gleason_score <- droplevels(colData(prac.se.pruned.gs)$gleason_score)
+design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned.gs)) 
+dim(design)
 head(design)
-fit <- lmFit(assays(prac.se.pruned)$logCPM, design)
+fit <- lmFit(assays(prac.se.pruned.gs)$logCPM, design)
 names(fit)
 fit <- eBayes(fit) 
 class(fit)
 
 names(fit)
-dim(prac.dge.unique.pruned)
+dim(prac.dge.unique.pruned.gs)
 
 res <- decideTests(fit)
 summary(res)
@@ -412,9 +420,11 @@ tt <- topTable(fit, coef=2, n=Inf)
 class(tt)
 head(tt)
 
+#### CLEAN ####
+
 library("SummarizedExperiment")
-genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.pruned))),
-                      symbol=as.character(rowRanges(prac.se.pruned)[, 1]), stringsAsFactors=FALSE)
+genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.pruned.gs))),
+                      symbol=as.character(rowRanges(prac.se.pruned.gs)[, 1]), stringsAsFactors=FALSE)
 fit$genes <- genesmd
 tt <- topTable(fit, coef=2, n=Inf) 
 head(tt)
@@ -436,18 +446,14 @@ abline(0, 1, lwd=2)
 qqline(tt$P.Value, col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
 
 # VOOM
-gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
 dim(prac.dge.unique.pruned)
-prac.dge.unique.pruned <- prac.dge.unique.pruned[,gs.mask]
-dim(prac.dge.unique.pruned)
+dim(prac.dge.unique.pruned.gs)
 
-design <- model.matrix(~ gleason_score ,data=colData(prac.se.pruned)) 
+design <- model.matrix(~ gleason_score ,data=colData(prac.se.pruned.gs)) 
 dim(design)
 design
 par(mfrow=c(1,1))
-v <- voom(prac.dge.unique.pruned, design, plot=TRUE)##
-dim(design)
-dim(prac.dge.unique.pruned)
+v <- voom(prac.dge.unique.pruned.gs, design, plot=TRUE)##
 
 # redo the process with the voom weight
 
@@ -471,7 +477,7 @@ qqline(fit2$t[, 2], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abli
 par(mfrow=c(1,1))
 
 
-head(colData(prac.se.pruned), n=8)
+head(colData(prac.se.pruned.gs), n=8)
 
 
 
@@ -479,15 +485,17 @@ head(colData(prac.se.pruned), n=8)
 
 ## We should get them working with covariates
 
+tss <- substr(colnames(prac.se.pruned.gs), 6, 7)
 
-design <- model.matrix(~ factor(type) + gleason_score, data=colData(prac.se.pruned))
-head(design)
+design_mix <- model.matrix(~ tss + gleason_score  ,data=colData(prac.se.pruned.gs))
+design_mix
 dim(v)
-dim(design)
+dim(design_mix)
 
 
-fit3 <- lmFit(v, design)
-fit3 <- eBayes(fit3)
+fit3 <- lmFit(design_mix)
+
+fit3 <- eBayes(fit3) #can't calculate eBayes, too much 0s
 tt3 <- topTable(fit3, coef=2, n=Inf)
 
 
@@ -501,7 +509,7 @@ par(mfrow=c(1,1))
 
 
 library(sva)
-mod0 <- model.matrix(~ 1, colData(prac.se.pruned))
+mod0 <- model.matrix(~ 1, colData(prac.se.pruned.gs))
 sv <- sva(v$E, mod=design, mod0=mod0)
 
 sv$n
@@ -535,47 +543,3 @@ qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", ce
 abline(0, 1, lwd=2)
 qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="original", pch=".", cex=3,ylim=c(-20,20)) 
 abline(0, 1, lwd=2)
-
-
-
-library(SummarizedExperiment)
-lclse <- readRDS("data/sePRAD.rds")
-
-library(edgeR)
-dge <- DGEList(counts=assays(lclse)$counts, group=lclse$type, genes=mcols(lclse))
-dge <- calcNormFactors(dge)
-assays(lclse)$logCPM <- cpm(dge, log=TRUE, prior.count=0.5)
-mask <- rowMeans(assays(lclse)$logCPM) > 1
-sum(mask)
-lclse <- lclse[mask, ]
-dim(lclse)
-dge <- dge[mask, ]
-dim(dge)
-design <- model.matrix(~ type, data=colData(lclse))
-head(design)
-fit <- lmFit(assays(lclse)$logCPM, design)
-class(fit)
-names(fit)
-fit <- eBayes(fit)
-class(fit)
-names(fit)
-res <- decideTests(fit)
-summary(res) #always 3 rows
-FDRcutoff <- 0.01
-res <- decideTests(fit, p.value=FDRcutoff)
-summary(res)
-tt <- topTable(fit, coef=2, n=Inf)
-genesmd <- data.frame(chr=as.character(seqnames(rowRanges(lclse))),
-                      symbol=as.character(rowRanges(lclse)[, 1]),
-                      stringsAsFactors=FALSE)
-fit$genes <- genesmd
-tt <- topTable(fit, coef=2, n=Inf)
-head(tt)
-sort(table(tt$chr[tt$adj.P.Val < FDRcutoff]), decreasing=TRUE)
-
-
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-hist(tt$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit$t[, 2], df=fit$df.prior+fit$df.residual, main="", pch=".", cex=3)
-abline(0, 4, lwd=2)
-
