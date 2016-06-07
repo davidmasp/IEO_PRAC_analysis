@@ -286,6 +286,7 @@ prac.dge.unique.pruned <- prac.dge.unique.filtlib[,
                    !rownames(prac.dge.unique.filtlib$samples) %in% pruning.vec]
 table(prac.dge.unique.pruned$samples$group)
 prac.se.pruned <- prac.se.sub[,rownames(prac.dge.unique.pruned$samples)]
+design <- model.matrix(~ type, data=colData(lclse))
 v <- voom(dge, design, plot=TRUE)
 ## ----MDS after prunning, echo=FALSE--------------------------------------
 tss <- substr(colnames(prac.se.pruned), 6, 7)
@@ -386,8 +387,9 @@ colData(prac.se.pruned)$gleason_score <- as.factor(colData(prac.se.pruned)$gleas
 gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
              
 #------LETS APPLY the masking -------
-
+dim(prac.se.pruned)
 prac.se.pruned <- prac.se.pruned[,gs.mask]
+dim(prac.se.pruned)
 colData(prac.se.pruned)$gleason_score <- droplevels(colData(prac.se.pruned)$gleason_score)
 design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned)) 
 
@@ -435,12 +437,17 @@ qqline(tt$P.Value, col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb ablin
 
 # VOOM
 gs.mask <-  (colData(prac.se.pruned)$gleason_score %in% c("6","9"))
+dim(prac.dge.unique.pruned)
 prac.dge.unique.pruned <- prac.dge.unique.pruned[,gs.mask]
+dim(prac.dge.unique.pruned)
 
+design <- model.matrix(~ gleason_score ,data=colData(prac.se.pruned)) 
+dim(design)
+design
 par(mfrow=c(1,1))
 v <- voom(prac.dge.unique.pruned, design, plot=TRUE)##
-dim(prac.dge.unique.pruned)
 dim(design)
+dim(prac.dge.unique.pruned)
 
 # redo the process with the voom weight
 
