@@ -400,6 +400,13 @@ dim(prac.dge.unique.pruned.gs)
 
 assays(prac.se.pruned.gs)$logCPM <- cpm(prac.dge.unique.pruned.gs, log=TRUE, prior.count=30)
 
+
+cpm.mask <- rowMeans(assays(prac.se.pruned.gs)$logCPM) > 1
+prac.se.pruned.gs <- prac.se.pruned.gs[cpm.mask, ]
+prac.dge.unique.pruned.gs <- prac.dge.unique.pruned.gs[cpm.mask, ]
+
+
+
 colData(prac.se.pruned.gs)$gleason_score <- droplevels(colData(prac.se.pruned.gs)$gleason_score)
 design <- model.matrix(~ gleason_score, data=colData(prac.se.pruned.gs)) 
 dim(design)
@@ -453,7 +460,7 @@ design <- model.matrix(~ factor(gleason_score) ,data=colData(prac.se.pruned.gs))
 dim(design)
 head(design)
 par(mfrow=c(1,1))
-v <- voom(prac.dge.unique.pruned.gs, design, plot=TRUE)##
+v <- voom(prac.dge.unique.pruned.gs, design, plot=TRUE)
 
 # redo the process with the voom weight
 
@@ -463,7 +470,7 @@ res2 <- decideTests(fit2, p.value=FDRcutoff)
 
 fit2$genes <- genesmd
 
-for (coef in 2:6){
+for (coef in 1:5){
   tt2 <- topTable(fit2, coef=coef, n=Inf)
   par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
   hist(tt2$P.Value, xlab="Raw P-values", main=coef, las=1)
