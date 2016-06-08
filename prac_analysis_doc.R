@@ -470,15 +470,13 @@ res2 <- decideTests(fit2, p.value=FDRcutoff)
 
 fit2$genes <- genesmd
 
-for (coef in 1:5){
+for (coef in 2:5){
   tt2 <- topTable(fit2, coef=coef, n=Inf)
   par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
   hist(tt2$P.Value, xlab="Raw P-values", main=coef, las=1)
   qqt(fit2$t[, coef], df=fit2$df.prior+fit2$df.residual, main=coef, pch=".", cex=3)
   qqline(fit2$t[, coef], col = 2,lwd=2,lty=2)# ojo! Sembla que son diferents amb abline
-  
 }
-
 
 
 library(sva)
