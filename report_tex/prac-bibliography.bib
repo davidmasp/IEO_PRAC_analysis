@@ -1,0 +1,51 @@
+@article{Rahman15112015,
+author = {Rahman, Mumtahena and Jackson, Laurie K. and Johnson, W. Evan and Li, Dean Y. and Bild, Andrea H. and Piccolo, Stephen R.}, 
+title = {Alternative preprocessing of RNA-Sequencing data in The Cancer Genome Atlas leads to improved analysis results},
+volume = {31}, 
+number = {22}, 
+pages = {3666-3672}, 
+year = {2015}, 
+doi = {10.1093/bioinformatics/btv377}, 
+abstract ={Motivation: The Cancer Genome Atlas (TCGA) RNA-Sequencing data are used widely for research. TCGA provides ‘Level 3’ data, which have been processed using a pipeline specific to that resource. However, we have found using experimentally derived data that this pipeline produces gene-expression values that vary considerably across biological replicates. In addition, some RNA-Sequencing analysis tools require integer-based read counts, which are not provided with the Level 3 data. As an alternative, we have reprocessed the data for 9264 tumor and 741 normal samples across 24 cancer types using the Rsubread package. We have also collated corresponding clinical data for these samples. We provide these data as a community resource.Results: We compared TCGA samples processed using either pipeline and found that the Rsubread pipeline produced fewer zero-expression genes and more consistent expression levels across replicate samples than the TCGA pipeline. Additionally, we used a genomic-signature approach to estimate HER2 (ERBB2) activation status for 662 breast-tumor samples and found that the Rsubread data resulted in stronger predictions of HER2 pathway activity. Finally, we used data from both pipelines to classify 575 lung cancer samples based on histological type. This analysis identified various non-coding RNA that may influence lung-cancer histology.Availability and implementation: The RNA-Sequencing and clinical data can be downloaded from Gene Expression Omnibus (accession number GSE62944). Scripts and code that were used to process and analyze the data are available from https://github.com/srp33/TCGA_RNASeq_Clinical.Contact: stephen_piccolo@byu.edu or andreab@genetics.utah.eduSupplementary information: Supplementary material is available at Bioinformatics online.}, 
+URL = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.abstract}, 
+eprint = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.full.pdf+html}, 
+journal = {Bioinformatics} 
+}
+
+
+@online{prostate-cancer-statistics,
+ author = {cancer.org, American Cancer Society},
+  title = {Key statistics for prostate cancer},
+  year = 02/16/2016,
+  url = {http://www.cancer.org/cancer/prostatecancer/detailedguide/prostate-cancer-key-statistics},
+  urldate = {2016-06-13}
+}
+
+
+@online{TCGA,
+ author = {National Cancer Institute, National Human Genome Research Institute},
+  title = {The Cancer Genome Atlas Project(TCGA)},
+  year = 02/16/2016,
+  url = {http://cancergenome.nih.gov/},
+  urldate = {2016-06-13}
+}
+
+@Manual{R,
+    title = {R: A Language and Environment for Statistical Computing},
+    author = {{R Core Team}},
+    organization = {R Foundation for Statistical Computing},
+    address = {Vienna, Austria},
+    year = {2016},
+    url = {https://www.R-project.org/},
+  }
+
+@Article{bioconductor,
+    author = {{Huber} and {W.} and {Carey} and V. J. and {Gentleman} and {R.} and {Anders} and {S.} and {Carlson} and {M.} and {Carvalho} and B. S. and {Bravo} and H. C. and {Davis} and {S.} and {Gatto} and {L.} and {Girke} and {T.} and {Gottardo} and {R.} and {Hahne} and {F.} and {Hansen} and K. D. and {Irizarry} and R. A. and {Lawrence} and {M.} and {Love} and M. I. and {MacDonald} and {J.} and {Obenchain} and {V.} and {{Ole's}} and A. K. and {{Pag`es}} and {H.} and {Reyes} and {A.} and {Shannon} and {P.} and {Smyth} and G. K. and {Tenenbaum} and {D.} and {Waldron} and {L.} and {Morgan} and {M.}},
+    title = {{O}rchestrating high-throughput genomic analysis with {B}ioconductor},
+    journal = {Nature Methods},
+    year = {2015},
+    volume = {12},
+    number = {2},
+    pages = {115--121},
+    url = {http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html},
+  }

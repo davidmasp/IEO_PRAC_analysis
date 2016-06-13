@@ -17,3 +17,4 @@ figures/
 report_tex/*
 !/report_tex/*.tex
 *.png
+prac_analysis_doc.pdf

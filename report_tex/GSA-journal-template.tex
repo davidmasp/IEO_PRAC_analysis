@@ -12,18 +12,17 @@
 
 \author[$\ast$,$\dagger$]{Adria Auladell-Martin}
 \author[$\ast$,$\dagger$]{Joan Marti-Carreras}
-\author[$\ast$,$\dagger$,1]{David Mas-Ponte}
+\author[$\ast$,$\dagger$]{David Mas-Ponte}
+\author[$\ast$,1]{Rober Castelo-Valdueza}
 
 \affil[$\ast$]{M.Sc. in Bioinformatics at Department of Experimental and Health Sciences (CEXS), Universitat Pompeu Fabra}
 \affil[$\dagger$]{Authors Contributed Equally to this work}
 
-
-
-\keywords{Keyword; Keyword2; Keyword3; ...}
+\keywords{prostate cancer; adenocarcinoma; RNA-Seq; paired data.}
 
 \runningtitle{GENETICS Journal Template on Overleaf} % For use in the footer 
 
-\correspondingauthor{Corresponding Author}
+\correspondingauthor{Robert Castelo Valdueza}
 
 \begin{abstract}
 The abstract should be written for people who may not read the entire paper, so it must stand on its own. The impression it makes usually determines whether the reader will go on to read the article, so the abstract must be engaging, clear, and concise. In addition, the abstract may be the only part of the article that is indexed in databases, so it must accurately reflect the content of the article. A well-written abstract is the  most effective way to reach intended readers, leading to more robust search, retrieval, and usage of the article. 
@@ -39,18 +38,10 @@ Please see additional guidelines notes on preparing your abstract below.
 \thispagestyle{firststyle}
 \marginmark
 \firstpagefootnote
-\correspondingauthoraffiliation{Any of the authors can be used as correspondence contact. author and email for the corresponding author. The corresponding author should be marked with a `1' in the author list, as shown in the example.}
+\correspondingauthoraffiliation{adria.auladell@estudiant.upf.edu, joan.marti02@estudiant.upf.edu, david.mas@estudiant.upf.edu. Corresponding author: Robert Castelo Valdueza, robert.castelo@upf.edu.}
 \vspace{-11pt}%
 
 \lettrine[lines=2]{\color{color2}T}{}his \textit{Genetics} journal template is provided to help you write your work in the correct journal format. Instructions for use are provided below. 
-
-\section*{Guide to using this template in Overleaf}
-
-This template is provided to help you prepare your article for submission to the \textit{Genetics}.
-
-\section*{Author Affiliations}
-
-For the authors' names, indicate different affiliations with the symbols: $\ast$, $\dagger$, $\ddagger$, $\S$. After four authors, the symbols double, triple, quadruple, and so forth as required.
 
 \section*{Your Abstract}
 
@@ -69,23 +60,33 @@ In addition to the guidelines provided in the example abstract above, your abstr
 
 
 \section*{Introduction}
+Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer disease (following lung cancer), and one with the highest prevalences. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), it is not frequent. The mean of diagnosis is around 66 years old\citep{prostate-cancer-statistics}.
 
-For the introduction, authors should be mindful of the broad readership of the journal. The introduction should set the stage for the importance of the work to a generalist reader and draw the reader in to the specific study. The scope and impact of the work should be clearly stated.
+For patients whose cancer has spread, their survival time is usually one to three years. It was estimated that for 2011, 240,890 men would be diagnosed and 33,720 would die from prostate cancer.
 
-In individual organisms where a mutant is being studied, the rationale for the study of that mutant must be clear to a geneticist not studying that particular organism. Similarly, study of particular phenotypes should be justified broadly and not on the basis of interest for that organism alone. General background on the importance of the genetic pathway and/or phenotype should be provided in a single, well-reasoned paragraph near the beginning of the introduction.
 
-Authors are encouraged to:
-
+Since the first publication of the human genome, multiple international projects have been carried in order to study the genetic bases of the this pathology. One of the most prominent is The Cancer Genome Atlas Project (TCGA) \cite{TCGA}. Recently, part of its information was released with part of the original data \cite{Rahman15112015}. TCGA established the following points:
 \begin{itemize}
-\item cite the supporting literature completely rather than select a subset of citations;
-\item provide important background citations, including relevant review papers (to help orient the non-specialist reader);
-\item to cite similar work in other organisms.
+\item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenes drivers:
+        fusions involving (1) ERG, (2) ETV1, (3) ETV4, or (4) FLI1 (46\%, 8\%, 4\%, and 1\%, respectively)
+        mutations in (5) SPOP or (6) FOXA1; or (7) IDH1. (11\%, 3\%, and 1\%, respectively).
+\item 25\% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signalling pathways, and DNA repair genes were inactivated in 19\%.
 \end{itemize}
+   
+    
+The aim of this study is to provide a second outlook to the released data of the TCGA. For doing so we are to perform a differential expression analysis using paired data from the TCGA.
 
 \section*{Materials and Methods}
+The examination of the RNA counts can be performed in an average laptop:
+\begin{itemize}
+\item CPU Intel Core i5 or superior.
+\item 4 Gb of RAM memory or superior.
+\item 500 Gb of HDD memory, although it is not a limiting factor.
+\end{itemize}
 
-Manuscripts submitted to \textit{GENETICS} should contain a clear description of the experimental design in sufficient detail so that the experimental analysis could be repeated by another scientist. If the level of detail necessary to explain the protocol goes beyond two paragraphs, give a short description in the main body of the paper and prepare a detailed description for supporting information.  For example, details would include indicating how many individuals were used, and if applicable how individuals or groups were combined for analysis. If working with mutants indicate how many independent mutants were isolated. If working with populations indicate how samples were collected and whether they were random with respect to the target population.
+The software used was R version 3.3.0 "Supposedly Educational" \cite{R} on x86_64-pc-linux-gnu and _______MAC. Main packages where download and installed through Bioconductor version 3.3 (BiocInstaller 1.22.2)\cite{bioconductor}.
 
+Detailed information about package versions can be found on the section "Session Info" of the Supplementary Materials.
 
 \subsection*{Statistical Analysis} 
 
@@ -110,9 +111,6 @@ The results and discussion should not be repetitive. The results section should 
 
 \subsection*{Nomenclature and Italicization} Italicize names of organisms even when  when the species is not indicated.  Italicize the first three letters of the names of restriction enzyme cleavage sites, as in HindIII. Write the names of strains in roman except when incorporating specific genotypic designations. Italicize genotype names and symbols, including all components of alleles, but not when the name of a gene is the same as the name of an enzyme. Do not use "+" to indicate wild type. Carefully distinguish between genotype (italicized) and phenotype (not italicized) in both the writing and the symbolism.
 
-\section*{In-text Citations}
-
-Add citations using the \verb|\citep{}| command, for example \citep{neher2013genealogies} or for multiple citations, \citep{neher2013genealogies, rodelsperger2014characterization}
 
 \section*{Examples of Article Components}
 \label{sec:examples}
@@ -216,6 +214,6 @@ S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
 \end{equation}
 denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
 
-\bibliography{example-bibliography}
+\bibliography{prac-bibliography}
 
 \end{document}
