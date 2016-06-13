@@ -39,7 +39,7 @@ table(prac.se$type)
 
 ```
 
-In this design we are going to select only the paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
+The design of our experiment is based on paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
 
 ```{r filtering for the paired data}
 # Subset the paired samples
@@ -56,7 +56,7 @@ table(colData(prac.se.dupl)$type)
 
 ```
 
-Most of the Normal samples had a paired tumor sample but 2. 
+We select 50 normal samples with the correspondent 50 tumor samples. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data. 
 
 ```{r Normalizing}
 
@@ -66,6 +66,7 @@ assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
 assays(prac.se.dupl)$logCPM[1:5, 1:5]
 ```
 
+
 To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. 
 
 ```{r filter genes}
@@ -74,7 +75,7 @@ prac.se.dupl <- prac.se.dupl[mask, ]
 prac.dgenorm <- prac.dgenorm[mask, ]
 ```
 
-We explore the data to check weather there exists some kind of batch effect or an undesired source of variation.
+We explore the data to check whether there exists some kind of batch effect or an undesired source of variation.
 
 ```{r lib size plots}
 libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
@@ -165,7 +166,7 @@ GetID <- function(number, se){
   id <- grep(number,rownames(colData(se)))
   return(rownames(colData(se))[id])
 }
-number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769","7123") 
+number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769") 
 pruning.vec <- as.character(sapply(number.id, GetID, prac.se.dupl))
 prac.dgenorm <- prac.dgenorm[,
                    !rownames(prac.dgenorm$samples) %in% pruning.vec]
@@ -342,7 +343,7 @@ volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
-top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:3]
+top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:10]
 limma::plotMA(fit4, coef=2, status=rownames(fit4$lods) %in% DEgenes, legend=FALSE,
 main="Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
 text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, pos=4)
