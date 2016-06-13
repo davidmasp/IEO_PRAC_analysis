@@ -39,7 +39,7 @@ table(prac.se$type)
 
 ```
 
-In this design we are going to select only the paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
+The design of our experiment is based on paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
 
 ```{r filtering for the paired data}
 # Subset the paired samples
@@ -56,7 +56,7 @@ table(colData(prac.se.dupl)$type)
 
 ```
 
-Most of the Normal samples had a paired tumor sample but 2. 
+We select 50 normal samples with the correspondent 50 tumor samples. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data. 
 
 ```{r Normalizing}
 
@@ -66,6 +66,7 @@ assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
 assays(prac.se.dupl)$logCPM[1:5, 1:5]
 ```
 
+
 To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. 
 
 ```{r filter genes}
@@ -74,7 +75,7 @@ prac.se.dupl <- prac.se.dupl[mask, ]
 prac.dgenorm <- prac.dgenorm[mask, ]
 ```
 
-We explore the data to check weather there exists some kind of batch effect or an undesired source of variation.
+We explore the data to check whether there exists some kind of batch effect or an undesired source of variation.
 
 ```{r lib size plots}
 libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
