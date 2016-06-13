@@ -22,6 +22,9 @@ library("edgeR")
 library("geneplotter")
 library("ggplot2")
 library("sva")
+library("pheatmap")
+library("RColorBrewer")
+library("Rgraphviz")
 old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI 
 
 prac.se <- readRDS("data/sePRAD.rds")
@@ -124,6 +127,27 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 ```
 
 
+
+```{r clustering, fig.height=10, fig.width=10}
+sampleDists <- dist( t( assay(prac.se.dupl) ) )
+head(sampleDists)
+class(sampleDists)
+
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( substr(colnames(prac.se.dupl), 9, 12), prac.se.dupl$type, sep="-" )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+
+
+
+```
+
+
 ```{r MDS, echo=FALSE}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
 plotMDS(prac.dgenorm, labels=outcome, col=batch)
@@ -149,6 +173,28 @@ table(prac.dgenorm$samples$group)
 prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
+
+```{r Cllustering 2, echo=FALSE, fig.height=10, fig.width=10}
+
+sampleDists <- dist( t( assay(prac.se.dupl) ) )
+head(sampleDists)
+class(sampleDists)
+
+
+sampleDistMatrix <- as.matrix( sampleDists )
+rownames(sampleDistMatrix) <- paste( substr(colnames(prac.se.dupl), 9, 12), prac.se.dupl$type, sep="-" )
+colnames(sampleDistMatrix) <- NULL
+colors <- colorRampPalette( rev(brewer.pal(9, "Blues")) )(255)
+pheatmap(sampleDistMatrix,
+         clustering_distance_rows=sampleDists,
+         clustering_distance_cols=sampleDists,
+         col=colors)
+
+
+
+```
+
+
 
 ```{r MDS2, echo=FALSE}
 tss <- substr(colnames(prac.se.dupl), 6, 7)
@@ -374,8 +420,8 @@ Now doing it conditioned by the child
 conditional(params) <- TRUE
 hgOverCond <- hyperGTest(params) 
 hgOverCond
-termGraphs(hgOverCond, use.terms = TRUE)
-plotGOTermGraph(hgOverCond)
+#termGraphs(hgOverCond, use.terms = TRUE)
+#plotGOTermGraph(hgOverCond)
 ```
 
 ```{r}
@@ -406,7 +452,7 @@ rownames(goresults) <- 1:nrow(goresults)
 
 #### Using topGO
 
-```{r}
+```{r, eval=FALSE}
 
 library("topGO")
 sampleGOdata <- new("topGOdata",
@@ -500,7 +546,7 @@ plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 
 ## GSVA
 
-```{r}
+```{r, fig.height=10}
 library(GSVA)
 
 GSexpr <- gsva(assays(prac.se.GSEA)$counts, gsc, rnaseq=TRUE,
