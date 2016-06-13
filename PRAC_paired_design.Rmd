@@ -67,7 +67,8 @@ assays(prac.se.dupl)$logCPM[1:5, 1:5]
 ```
 
 
-To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. 
+To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
+
 
 ```{r filter genes}
 mask <- rowMeans(assays(prac.se.dupl)$logCPM) > 1
@@ -175,7 +176,7 @@ prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
 
-```{r Cllustering 2, echo=FALSE, fig.height=10, fig.width=10}
+```{r Cllustering 2, echo = FALSE, fig.height=10, fig.width=10}
 
 sampleDists <- dist( t( assay(prac.se.dupl) ) )
 head(sampleDists)
@@ -191,11 +192,7 @@ pheatmap(sampleDistMatrix,
          clustering_distance_cols=sampleDists,
          col=colors)
 
-
-
 ```
-
-
 
 ```{r MDS2, echo=FALSE}
 tss <- substr(colnames(prac.se.dupl), 6, 7)
