@@ -26,7 +26,7 @@
 \correspondingauthor{Robert Castelo Valdueza}
 
 \begin{abstract}
-The abstract should be written for people who may not read the entire paper, so it must stand on its own. The impression it makes usually determines whether the reader will go on to read the article, so the abstract must be engaging, clear, and concise. In addition, the abstract may be the only part of the article that is indexed in databases, so it must accurately reflect the content of the article. A well-written abstract is the  most effective way to reach intended readers, leading to more robust search, retrieval, and usage of the article. 
+
 
 \end{abstract}
 
@@ -101,41 +101,48 @@ The RNA-Sequencing and clinical data can be downloaded from Gene Expression Omni
 Please contact: stephen\_piccolo@byu.edu or andreab@genetics.utah.edu
  
 
-\section*{Results and Discussion}
+\section*{Results}
 
 The results and discussion should not be repetitive. The results section should give a factual presentation of the data and all tables and figures should be referenced; the discussion should not summarize the results but provide an interpretation of the results, and should clearly delineate between the findings of the particular study and the possible impact of those findings in a larger context. Authors are encouraged to cite recent work relevant to their interpretations. Present and discuss results only once, not in both the Results and Discussion sections. It is sometimes acceptable to combine results and discussion. The text should be as succinct as possible. Heed Strunk and White's dictum: "Omit needless words!"
 
-\section*{Additional guidelines}
+\subsection*{Quality Assessment }
 
-\subsection*{Numbers} In the text, write out numbers nine or less except as part of a date, a fraction or decimal, a percentage, or a unit of measurement. Use Arabic numbers for those larger than nine, except as the first word of a sentence; however, try to avoid starting a sentence with such a number.
+\subsection*{Differential expression analysis}
 
-\subsection*{Units} Use abbreviations of the customary units of measurement only when they are preceded by a number: "3 min" but "several minutes". Write "percent" as one word, except when used with a number: "several percent" but "75\%." To indicate temperature in centigrade, use ° (for example, 37°); include a letter after the degree symbol only when some other scale is intended (for example, 45°K).
+\subsection*{Functional analysis}
 
-\subsection*{Nomenclature and Italicization} Italicize names of organisms even when  when the species is not indicated.  Italicize the first three letters of the names of restriction enzyme cleavage sites, as in HindIII. Write the names of strains in roman except when incorporating specific genotypic designations. Italicize genotype names and symbols, including all components of alleles, but not when the name of a gene is the same as the name of an enzyme. Do not use "+" to indicate wild type. Carefully distinguish between genotype (italicized) and phenotype (not italicized) in both the writing and the symbolism.
+We can see the GOenrichment in the table \ref{tab:GOenrichment} 
+% latex table generated in R 3.3.0 by xtable 1.8-2 package
+% Tue Jun  7 15:58:47 2016
+\begin{table*}[htbp]
+\centering
+\caption{\bf GO enriched terms}
+\begin{tableminipage}{\textwidth}
+\begin{tabular}{l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+  \hline
+ & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\ 
+  \hline
+1 & GO:0045078 & 0.00 & 13.78 & 2.70 &   7 &   8 & positive regulation of interferon-gamma biosynthetic process & EBI3, CEBPG, ZFPM1, IL27, IL12B, IL21, CD276 \\ 
+  2 & GO:2001044 & 0.00 & 13.78 & 2.70 &   7 &   8 & regulation of integrin-mediated signaling pathway & CTNNA1, EMP2, LIMS2, PRKD1, PHACTR4, ITGB1BP1, CD63 \\ 
+  3 & GO:0021670 & 0.01 & 6.89 & 3.04 &   7 &   9 & lateral ventricle development & DBI, DPCD, TSKU, AQP1, PAX5, UCHL5, NUMBL \\ 
+  4 & GO:2000008 & 0.01 & 5.25 & 3.71 &   8 &  11 & regulation of protein localization to cell surface & EGF, RAB11FIP5, GPM6B, RANGRF, NRG1, SYNJ2BP, CAV3, RAB11B \\ 
+  5 & GO:0030213 & 0.02 & 4.59 & 3.37 &   7 &  10 & hyaluronan biosynthetic process & CLTC, AP2A1, EGF, HAS1, HAS2, HAS3, IL1B \\ 
+   \hline
+\end{tabular}
+ \label{tab:GOenrichment}
+\end{tableminipage}
+\end{table*}
+
+\section*{Discussion}
 
 
-\section*{Examples of Article Components}
-\label{sec:examples}
 
-The sections below show examples of different header levels, which you can use in the primary sections of the manuscript (Results, Discussion, etc.) to organize your content.
 
-\section*{First level section header}
 
-Use this level to group two or more closely related headings in a long article.
 
-\subsection*{Second level section header}
-
-Second level section text.
-
-\subsubsection*{Third level section header:}
-
-Third level section text. These headings may be numbered, but only when the numbers must be cited in the text. 
-
-\section*{Figures and Tables}
+\section*{Considerations }
 
 Figures and Tables should be labelled and referenced in the standard way using the \verb|\label{}| and \verb|\ref{}| commands.
-
-\subsection*{Sample Figure}
 
 Figure \ref{fig:spectrum} shows an example figure.
 
@@ -161,52 +168,11 @@ Figure \ref{video:spectrum} shows how to include a video in your manuscript.
 \end{figure}
 
 
-\subsection*{Sample Table}
 
-Table \ref{tab:shape-functions} shows an example table. Avoid shading, color type, line drawings, graphics, or other illustrations within tables. Use tables for data only; present drawings, graphics, and illustrations as separate figures. Histograms should not be used to present data that can be captured easily in text or small tables, as they take up much more space.  
-
-Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1B, etc., but if necessary, interior parts of the table can be labeled A, B, etc. for easy reference in the text.  
-
-% latex table generated in R 3.3.0 by xtable 1.8-2 package
-% Tue Jun  7 15:58:47 2016
-\begin{table*}[htbp]
-\centering
-\caption{\bf GO enriched terms}
-\begin{tableminipage}{\textwidth}
-\begin{tabular}{l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
-  \hline
- & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\ 
-  \hline
-1 & GO:0045078 & 0.00 & 13.78 & 2.70 &   7 &   8 & positive regulation of interferon-gamma biosynthetic process & EBI3, CEBPG, ZFPM1, IL27, IL12B, IL21, CD276 \\ 
-  2 & GO:2001044 & 0.00 & 13.78 & 2.70 &   7 &   8 & regulation of integrin-mediated signaling pathway & CTNNA1, EMP2, LIMS2, PRKD1, PHACTR4, ITGB1BP1, CD63 \\ 
-  3 & GO:0021670 & 0.01 & 6.89 & 3.04 &   7 &   9 & lateral ventricle development & DBI, DPCD, TSKU, AQP1, PAX5, UCHL5, NUMBL \\ 
-  4 & GO:2000008 & 0.01 & 5.25 & 3.71 &   8 &  11 & regulation of protein localization to cell surface & EGF, RAB11FIP5, GPM6B, RANGRF, NRG1, SYNJ2BP, CAV3, RAB11B \\ 
-  5 & GO:0030213 & 0.02 & 4.59 & 3.37 &   7 &  10 & hyaluronan biosynthetic process & CLTC, AP2A1, EGF, HAS1, HAS2, HAS3, IL1B \\ 
-   \hline
-\end{tabular}
- \label{tab:GOenrichment}
-\end{tableminipage}
-\end{table*}
+Table shows an example table. 
 
 
-\begin{table*}[htbp]
-\centering
-\caption{\bf Students and their grades}
-\begin{tableminipage}{\textwidth}
-\begin{tabularx}{\textwidth}{XXXX}
-\hline
-Student & Grade\footnote{This is an example of a footnote in a table. Lowercase, superscript italic letters (a, b, c, etc.) are used by default. You can also use *, **, and *** to indicate conventional levels of statistical significance, explained below the table.} & Rank & Notes \\
-\hline
-Alice & 82\% & 1 & Performed very well.\\
-Bob & 65\% & 3 & Not up to his usual standard.\\
-Charlie & 73\% & 2 & A good attempt.\\
-\hline
-\end{tabularx}
-  \label{tab:shape-functions}
-\end{tableminipage}
-\end{table*}
 
-\section*{Sample Equation}
 
 Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
 \begin{equation}
@@ -215,6 +181,9 @@ S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
 \label{eq:refname1}
 \end{equation}
 denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
+
+
+
 
 \bibliography{prac-bibliography}
 

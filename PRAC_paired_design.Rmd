@@ -374,6 +374,8 @@ Now doing it conditioned by the child
 conditional(params) <- TRUE
 hgOverCond <- hyperGTest(params) 
 hgOverCond
+termGraphs(hgOverCond, use.terms = TRUE)
+plotGOTermGraph(hgOverCond)
 ```
 
 ```{r}
@@ -402,6 +404,19 @@ rownames(goresults) <- 1:nrow(goresults)
 
 ```
 
+#### Using topGO
+
+```{r}
+
+library("topGO")
+sampleGOdata <- new("topGOdata",
+           description = "Simple session", ontology = "BP",
+                  allGenes = rownames(prac.se.dupl), geneSel = DEgenes,
+                    nodeSize = 10,
+           annot = annFUN.db, affyLib = affyLib)
+
+
+```
 
 ### GSEA
 
