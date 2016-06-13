@@ -173,7 +173,7 @@ table(data.frame(TYPE=prac.se.dupl$type, Plate=plate))
 
 By looking at the distributions of the tables, we observe that the values are equally distributed. It is expected to not present any batch effect. One of the possible batch effects would be the plate distribution, but in relation of the type variable they are equally analysed.
 
-```{r dendogram, echo=FALSE, fig.width=10}
+```{r dendogram, echo=FALSE, fig.width=10, fig.cap="Fig. 5: Dendogram of Spearman distances."}
 par(old.par)
 logCPM <- assays(prac.se.dupl)$logCPM
 d <- as.dist(1-cor(logCPM, method="spearman"))
@@ -199,11 +199,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))), fil
 
 ```
 
-Using the Spearman method, we observe the clustering of normal and tumoral samples. The results cluster adecuatelly each attribute, with some samples presenting a bad clustering, without damaging the overall cluster. 
-
-We choose to 
-
-```{r clustering, fig.height=10, fig.width=10}
+```{r clustering, fig.height=10, fig.width=10, , fig.cap="Fig. 6: Heatmap of Spearman distances."}
 sampleDists <- d
 head(sampleDists)
 class(sampleDists)
@@ -217,23 +213,26 @@ pheatmap(sampleDistMatrix,
          clustering_distance_rows=sampleDists,
          clustering_distance_cols=sampleDists,
          col=colors)
-
-
-
 ```
 
+Using the Spearman method, we observe the clustering of normal and tumoral samples (fig. 5 and 6). The results cluster adecuatelly each attribute, with some samples presenting a bad clustering, without damaging the overall cluster. 
+We display the data with another algorithm:
 
-```{r MDS, echo=FALSE}
+```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.dupl dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
 plotMDS(prac.dgenorm, labels=outcome, col=batch)
-legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
+legend("right", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
+```
+
+```{r mds2, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 10: MDS of the prac.se.dupl dataset', fig.height=8}
 type <- as.integer(factor(prac.se.dupl$type))
 plotMDS(prac.dgenorm, pch = 19, col=type)
-legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
+legend("right", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
        fill=sort(unique(type)), inset=0.05)
 ```
 
+We observe an anomalous cluster. That mini-cluster of samples is partially responsible for the overall disposition of samples (which differentiates poorly between normal and cancer tissues). We filter these values and observe the graph distribution again. 
 
 ```{r filter those ind}
 GetID <- function(number, se){
@@ -249,7 +248,7 @@ prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
 
-```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10}
+```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
 logCPM <- assays(prac.se.dupl)$logCPM
 d <- as.dist(1-cor(logCPM, method="spearman"))
@@ -270,22 +269,30 @@ pheatmap(sampleDistMatrix,
 
 ```
 
-```{r MDS2, echo=FALSE}
+```{r MDS after prunning, echo=FALSE}
 tss <- substr(colnames(prac.se.dupl), 6, 7)
 batch <- as.integer(factor(tss))
-names(batch) <- colnames(prac.se.dupl)
 outcome <- paste(substr(colnames(prac.se.dupl), 9, 12), as.character(prac.se.dupl$type), sep="-")
+names(outcome) <- colnames(prac.se.dupl)
+```
 
-
-par(mfrow=c(1, 1), mar=c(0,0,0,0))
+```{r mds3, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 8: MDS of the prac.se.dupl dataset', fig.height=8}
 plotMDS(prac.dgenorm, labels=outcome, col=batch)
 legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
        fill=sort(unique(batch)), inset=0.05)
+
+
+```
+
+```{r mds4, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.dupl dataset', fig.height=8}
+
 type <- as.integer(factor(prac.se.dupl$type))
 plotMDS(prac.dgenorm, pch = 19, col=type)
 legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
        fill=sort(unique(type)), inset=0.05)
 ```
+
+YEAH BABY
 
 # Differential Expression Analysis
 
