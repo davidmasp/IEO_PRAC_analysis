@@ -167,7 +167,7 @@ GetID <- function(number, se){
   id <- grep(number,rownames(colData(se)))
   return(rownames(colData(se))[id])
 }
-number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769","7123") 
+number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769") 
 pruning.vec <- as.character(sapply(number.id, GetID, prac.se.dupl))
 prac.dgenorm <- prac.dgenorm[,
                    !rownames(prac.dgenorm$samples) %in% pruning.vec]
@@ -340,7 +340,7 @@ volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
-top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:3]
+top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:10]
 limma::plotMA(fit4, coef=2, status=rownames(fit4$lods) %in% DEgenes, legend=FALSE,
 main="Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
 text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, pos=4)
