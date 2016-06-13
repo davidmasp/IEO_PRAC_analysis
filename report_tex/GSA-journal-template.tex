@@ -67,19 +67,26 @@ For patients whose cancer has spread, their survival time is usually one to thre
 
 Since the first publication of the human genome, multiple international projects have been carried in order to study the genetic bases of the this pathology. One of the most prominent is The Cancer Genome Atlas Project (TCGA) \cite{TCGA}. Recently, part of its information was released with part of the original data \cite{Rahman15112015}. TCGA established the following points:
 \begin{itemize}
-\item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenic drivers:
+\item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenes drivers:
         fusions involving (1) ERG, (2) ETV1, (3) ETV4, or (4) FLI1 (46\%, 8\%, 4\%, and 1\%, respectively)
         mutations in (5) SPOP or (6) FOXA1; or (7) IDH1. (11\%, 3\%, and 1\%, respectively).
-\item 25\% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signaling pathways, and DNA repair genes were inactivated in 19\%.
+\item 25\% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signalling pathways, and DNA repair genes were inactivated in 19\%.
 \end{itemize}
    
     
 The aim of this study is to provide a second outlook to the released data of the TCGA. For doing so we are to perform a differential expression analysis using paired data from the TCGA.
 
 \section*{Materials and Methods}
+The examination of the RNA counts can be performed in an average laptop:
+\begin{itemize}
+\item CPU Intel Core i5 or superior.
+\item 4 Gb of RAM memory or superior.
+\item 500 Gb of HDD memory, although it is not a limiting factor.
+\end{itemize}
 
-Manuscripts submitted to \textit{GENETICS} should contain a clear description of the experimental design in sufficient detail so that the experimental analysis could be repeated by another scientist. If the level of detail necessary to explain the protocol goes beyond two paragraphs, give a short description in the main body of the paper and prepare a detailed description for supporting information.  For example, details would include indicating how many individuals were used, and if applicable how individuals or groups were combined for analysis. If working with mutants indicate how many independent mutants were isolated. If working with populations indicate how samples were collected and whether they were random with respect to the target population.
+The software used was R version 3.3.0 "Supposedly Educational" \cite{R} on x86_64-pc-linux-gnu and _______MAC. Main packages where download and installed through Bioconductor version 3.3 (BiocInstaller 1.22.2)\cite{bioconductor}.
 
+Detailed information about package versions can be found on the section "Session Info" of the Supplementary Materials.
 
 \subsection*{Statistical Analysis} 
 
