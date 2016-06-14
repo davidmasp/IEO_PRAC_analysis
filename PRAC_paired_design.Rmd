@@ -292,7 +292,7 @@ legend("topright", paste("Batch", sort(unique(batch)), levels(factor(tss))),
 
 type <- as.integer(factor(prac.se.dupl$type))
 plotMDS(prac.dgenorm, pch = 19, col=type)
-legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
+legend("topleft", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$type))),
        fill=sort(unique(type)), inset=0.05)
 ```
 
@@ -309,7 +309,7 @@ head(design)
 tail(design)
 fit <- lmFit(assays(prac.se.dupl)$logCPM, design)
 fit <- eBayes(fit)
-FDRcutoff <- 0.01
+FDRcutoff <- 0.001
 res <- decideTests(fit, p.value=FDRcutoff)
 summary(res)
 genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
@@ -333,10 +333,11 @@ In black we can see the Normal distribution ( \(\sigma = 1 \) ) and the red is t
 
 Right now we have a real true candidate overexpressed in tumor at the right top. The other genes, although with a high variability seem to follow a normal distribution of \(\sigma = 4 \).
 
-## Improving the DEA with voom
+## Improving the DEA with voom and patient barcode
 
 ```{r DE voom}
 par(mfrow=c(1,1))
+design <- model.matrix(~ type + bcr_patient_barcode , data=colData(prac.se.dupl))
 v <- voom(prac.dgenorm, design, plot=TRUE)
 
 # redo the process with the voom weight
@@ -357,28 +358,6 @@ abline(0, 1, lwd=3)
 ```
 
 
-## Introducing TSS as covariate
-
-```{r DE TSS}
-
-tss <- factor(tss)
-design <- model.matrix(~ factor(type) + tss , data=colData(prac.se.dupl))
-
-
-fit3 <- lmFit(v, design)
-fit3 <- eBayes(fit3)
-
-fit3$genes <- genesmd
-
-tt3 <- topTable(fit3, coef=2, n=Inf)
-
-par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
-hist(tt3$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="", pch=".", cex=3)
-qqline(fit3$t[, 2], col=2, lwd=3)
-abline(0, 1, lwd=3)
-
-```
 
 ## Introducing SV as covariates
 
@@ -386,30 +365,30 @@ abline(0, 1, lwd=3)
 
 library(sva)
 
-mod0 <- model.matrix(~ 1, colData(prac.se.dupl))
+mod0 <- model.matrix(~ bcr_patient_barcode, colData(prac.se.dupl))
 sv <- sva(v$E, mod=design, mod0=mod0)
 sv$n
 vars <- length(colnames(design))
 design <- cbind(design, sv$sv)
 colnames(design) <- c(colnames(design)[1:vars], paste0("SV", 1:sv$n))
 
-fit4 <- lmFit(v, design)
-fit4 <- eBayes(fit4)
-res4 <- decideTests(fit4, p.value=FDRcutoff)
+fit3 <- lmFit(v, design)
+fit3 <- eBayes(fit3)
+res3 <- decideTests(fit3, p.value=FDRcutoff)
 
-summary(res4)
+summary(res3)
 
 
-fit4$genes <- genesmd
-tt4 <- topTable(fit4, coef=2, n=Inf) 
+fit3$genes <- genesmd
+tt4 <- topTable(fit3, coef=2, n=Inf) 
 head(tt4)
 
 sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit4$t[, 2], df=fit4$df.prior+fit4$df.residual, main="after SV", pch=".", cex=3) 
-qqline(fit4$t[, 2], col=2, lwd=3)
+qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="after SV", pch=".", cex=3) 
+qqline(fit3$t[, 2], col=2, lwd=3)
 abline(0, 1, lwd=3)
 
 ```
@@ -420,11 +399,28 @@ Volcano plots are a type of scatter-plots used to quickly identify changes in la
 Here there will be presented 3 different models plus de null model. The null model represents XXXX, then, 
 ```{r volcano plots, fig.cap="Volcano Plots using 3 different approaches", dpi=100, fig.height= 10, fig.width=14}
 
-par(mfrow=c(2,2))
-volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.1 )
-volcanoplot(fit2, coef=2, highlight=7, fit4$genes$symbol, main="Model voom", las=1, cex = 0.1)
-volcanoplot(fit3, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS", las=1, cex = 0.1)
-volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS + SV", las=1, cex = 0.1)
+par(mfrow=c(1,2))
+volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.2 )
+volcanoplot(fit2, coef=2, highlight=7, fit3$genes$symbol, main="Model voom + patients", las=1, cex = 0.2)
+par(mfrow=c(1,1))
+volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="Final Model SV", las=1, cex = 0.2, col = ifelse(fit3$  "red"))
+abline(-log10(FDRcutoff),0)
+abline(v=1)
+abline(v=-1)
+
+
+ggplot(tt4, aes(logFC, B, 
+  colour = ifelse(B>-log10(FDRcutoff) & (logFC < -1 |logFC > 1) ,"red","black" ))) +
+  geom_point() + 
+  ggtitle("Volcano Plot SV") + geom_vline(xintercept = c(1, -1), col = "red")+ 
+  geom_hline(yintercept =-log10(FDRcutoff), 
+             col = "red") + 
+  geom_text(data= tt4[order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,], 
+  aes(logFC, B, label=symbol),angle = 25, vjust = 0) +   
+  guides(colour=FALSE) + 
+  theme(plot.title = element_text(size = rel(3)))
+
+
 ```
 
 
@@ -432,10 +428,10 @@ volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
-top10 <- order(fit4$lods[, 2], decreasing=TRUE)[1:3]
-limma::plotMA(fit4, coef=2, status=rownames(fit4$lods) %in% DEgenes, legend=FALSE,
+top10 <- order(fit3$lods[, 2], decreasing=TRUE)[1:3]
+limma::plotMA(fit3, coef=2, status=rownames(fit3$lods) %in% DEgenes, legend=FALSE,
 main="Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
-text(fit4$Amean[top10], fit4$coef[top10, 2], fit4$genes$symbol[top10], cex=0.5, pos=4)
+text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, pos=4)
 ```
 
 
@@ -446,7 +442,7 @@ library(Gviz)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 gtrack <- GenomeAxisTrack()
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
-for (i in fit4$genes$symbol[top10][1:3]){
+for (i in fit3$genes$symbol[top10][1:3]){
   gene.vars <- unlist(strsplit(i, ":"))
   
   chr <- gene.vars[1]
