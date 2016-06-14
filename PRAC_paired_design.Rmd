@@ -533,11 +533,11 @@ goresults <- cbind(goresults, Genes=geneSYMs)
 rownames(goresults) <- 1:nrow(goresults)
 ```
 
-```{r printing latex table, eval=FALSE}
+```{r printing latex table, eval=TRUE}
 
 library(xtable)
 xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|") 
-print(xtab, file="goresults.tex", type="latex")
+print(xtab, type="latex")
 
 ```
 
