@@ -550,7 +550,7 @@ library(GSVAdata)
 ```
 
 
-```{r, fig.width=14}
+```{r, fig.width=10}
 genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
                          symbol=rowData(prac.se.dupl)[, 1],
                          stringsAsFactors=FALSE)
@@ -595,7 +595,9 @@ head(zS)
 qqnorm(zS)
 qqline(zS)
 #abline(0, 4)
+```
 
+```{r plot Gene sets, fig.width=12}
 rnkGS <- sort(abs(zS), decreasing=TRUE)
 head(rnkGS)
 
@@ -625,7 +627,7 @@ plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 
 ## GSVA
 
-```{r, fig.height=10}
+```{r, fig.height=6, fig.width=8}
 library(GSVA)
 
 GSexpr <- gsva(assays(prac.se.dupl)$counts, gsc, rnaseq=TRUE,
@@ -655,10 +657,12 @@ tt.under <- tt[tt$logFC > 0,]
 plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
      pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
 points(tt[tt$adj.P.Val < 0.01, "logFC"], -log10(tt[tt$adj.P.Val < 0.01, "P.Value"]), pch=".", cex=5, col="red")
-text(tt[1:2, "logFC"], -log10(tt[1:2, "P.Value"]), labels = rownames(tt[1:2,]), cex=0.5, pos=4)
+text(tt[1:2, "logFC"], -log10(tt[1:2, "P.Value"]), labels = rownames(tt[1:2,]), cex=0.5, pos=c(3,1))
 text(tt.under[1:2, "logFC"], -log10(tt.under[1:2, "P.Value"]), labels = rownames(tt.under[1:2,]), cex=0.5, pos=3)
 abline(h=-log10(max(tt[tt$adj.P.Val < 0.01, "P.Value"])), col=grey(0.5), lty=2)
+```
 
+```{r boxplot, fig.height=6, fig.width=10 }
 
 
 boxplot(GSexpr[DEgs.over[1], ] ~ prac.se.dupl$type, main=DEgs.over[1], las=1, cex.axis=2)
@@ -667,10 +671,12 @@ boxplot(GSexpr[DEgs.under[1], ] ~ prac.se.dupl$type, main=DEgs.under[1], las=1, 
 
 ```
 
-```{r}
+```{r, fig.height=10, fig.width=16 }
 DEgeneSets <- tt[1:30, , drop=FALSE]
 dim(DEgeneSets)
 GSVAsco <- GSexpr[rownames(DEgeneSets), ]
+
+colors <- colorRampPalette( rev(brewer.pal(9, "YlOrRd")) )(255)
 
 colorLegend <- c("darkred", "darkblue")
 names(colorLegend) <- c("tumor", "normal")
@@ -682,7 +688,7 @@ heatmap(GSVAsco, ColSideColors=sample.color.map, xlab="samples",
         ylab="Gene sets and pathways", margins=c(2, 20),
         labRow=substr(gsub("_", " ", gsub("^KEGG_|^REACTOME_|^BIOCARTA_", "", rownames(GSVAsco))), 1, 35),
         labCol="", scale="row",
-        Colv=as.dendrogram(sampleClustering), Rowv=as.dendrogram(geneSetClustering))
+        Colv=as.dendrogram(sampleClustering), Rowv=as.dendrogram(geneSetClustering), col=colors)
 legend("topleft", names(colorLegend), fill=colorLegend, inset=0.01, bg="white")
 
 ```
