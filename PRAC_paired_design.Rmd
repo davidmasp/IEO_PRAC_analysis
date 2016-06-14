@@ -67,29 +67,7 @@ assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
 assays(prac.se.dupl)$logCPM[1:5, 1:5]
 ```
 
-
-To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
-
-
-```{r filter genes}
-mask <- rowMeans(assays(prac.se.dupl)$logCPM) > 1
-prac.se.dupl <- prac.se.dupl[mask, ]
-prac.dgenorm <- prac.dgenorm[mask, ]
-```
-
-We explore the data to check whether there exists some kind of batch effect or an undesired source of variation. See fig 1,2,3 and 4 below.
-
-** Ojo, hi ha chunks sense processar, activar al final**
-
-```{r lib size plots, eval = FALSE, fig.cap='Fig 1: Library size distribution of the samples.'}
-
-# Libsize distribution of the samples
-libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
-ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
-
-```
-
-```{r Multidensity, eval = FALSE, fig.align='center', fig.cap='Fig 2: Multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
+```{r Multidensity, eval = FALSE, fig.align='center', fig.cap='Fig 1: Multidensity plot representing the clusters of the non expressed genes at the left and the expressed genes at the right.', echo=FALSE, fig.width=12}
 MDS_normal <- prac.dgenorm[,prac.dgenorm$samples$group == 'normal']
 MDS_tumor <- prac.dgenorm[,prac.dgenorm$samples$group == 'tumor']
 
@@ -101,6 +79,31 @@ multidensity(as.list(as.data.frame(logCPM.MDS_normal)), xlab = "log2 CPM", legen
 multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend = NULL, main = "Tumor samples")
 
 ```
+
+
+By looking at the disribution we observe a peak around logCPM 1.
+
+To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
+
+
+```{r filter genes}
+mask <- rowMeans(assays(prac.se.dupl)$logCPM) > 1
+prac.se.dupl <- prac.se.dupl[mask, ]
+prac.dgenorm <- prac.dgenorm[mask, ]
+```
+
+We explore the data to check whether there exists some kind of batch effect or an undesired source of variation. See fig 2,3 and 4 below.
+
+** Ojo, hi ha chunks sense processar, activar al final**
+
+```{r lib size plots, eval = FALSE, fig.cap='Fig 2: Library size distribution of the samples.'}
+
+# Libsize distribution of the samples
+libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
+ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
+
+```
+
 
 <center><h4>Tumor samples MA-plot</h4></center>
 
@@ -293,9 +296,11 @@ legend("topright", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$
        fill=sort(unique(type)), inset=0.05)
 ```
 
-YEAH BABY
+Having the samples / genes filtered and ready, we proceed with the differential expression analysis. 
 
 # Differential Expression Analysis
+
+Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.01 .
 
 ```{r DE1}
 colData(prac.se.dupl)$bcr_patient_barcode <- droplevels(colData(prac.se.dupl)$bcr_patient_barcode)
