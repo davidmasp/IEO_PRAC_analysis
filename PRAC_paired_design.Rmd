@@ -410,13 +410,16 @@ abline(0, 1, lwd=3)
 ```
 
 ## Volcano plots
+Volcano plots are a type of scatter-plots used to quickly identify changes in large datasets with replicate data. It contraposes fold-change (or intensity of change) and p-value (or significance of the change).
 
+Here there will be presented 3 different models plus de null model. The null model represents XXXX, then, 
 ```{r volcano plots, fig.cap="Volcano Plots using 3 different approaches", dpi=100, fig.height= 10, fig.width=14}
+
 par(mfrow=c(2,2))
-volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1)
-volcanoplot(fit2, coef=2, highlight=7, fit4$genes$symbol, main="Model voom", las=1)
-volcanoplot(fit3, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS", las=1)
-volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS + SV", las=1)
+volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.1 )
+volcanoplot(fit2, coef=2, highlight=7, fit4$genes$symbol, main="Model voom", las=1, cex = 0.1)
+volcanoplot(fit3, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS", las=1, cex = 0.1)
+volcanoplot(fit4, coef=2, highlight=7, fit4$genes$symbol, main="Model voom + TSS + SV", las=1, cex = 0.1)
 ```
 
 
