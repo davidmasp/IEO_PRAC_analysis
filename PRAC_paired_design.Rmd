@@ -481,7 +481,7 @@ As you can see in the below figres, our 3 top hits are:
 ### Functional Enrichment analysis
 
 ```{r}
-DEgenes <- rownames(tt4)[tt$adj.P.Val < 0.001]
+DEgenes <- rownames(tt4)[tt$adj.P.Val < FDRcutoff]
 length(DEgenes)
 library(GOstats)
 params <- new("GOHyperGParams", geneIds=DEgenes,
@@ -640,8 +640,8 @@ class(GSexpr)
 dim(GSexpr)
 
 
-mod <- model.matrix(~ type, data=colData(prac.se.dupl))
-mod0 <- model.matrix(~ 1, data=colData(prac.se.dupl))
+mod <- model.matrix(~ type + bcr_patient_barcode, data=colData(prac.se.dupl))
+mod0 <- model.matrix(~ bcr_patient_barcode, data=colData(prac.se.dupl))
 svaobj <- sva(GSexpr, mod, mod0)
 modSVs <- cbind(mod, svaobj$sv)
 
