@@ -569,7 +569,7 @@ params.under <- new("GOHyperGParams", geneIds=DEgenes.under,
 
 ```
 
-Now doing it conditioned by the child
+It can be observed that there are 6347 differential expresses genes (over and under represented). Now the procedure is repeated, conditioned by the child:
 
 ```{r}
 conditional(params) <- TRUE
