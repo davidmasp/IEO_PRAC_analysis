@@ -12,7 +12,7 @@ bibliography: prac.bib
 
 ```{r setup, cache=FALSE, echo=FALSE, message=FALSE, warning=FALSE, tidy=FALSE}
 library(knitr)
-opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE)
+opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE, dev=c('png','postscript'))
 
 ```
 
@@ -20,7 +20,7 @@ The following are the main packages used along the methods path. The data
 is readed from [here]() and stored in a `SummarizedExperiment`container from 
 @SE .
 
-```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE}
+```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE, results='hide'}
 library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
@@ -663,7 +663,7 @@ print(xtab, type="latex")
 
 ### GSEA
 
-```{r loading packages, echo=FALSE}
+```{r loading packages, results='hide'}
 library(GSEABase)
 library(GSVAdata)
 ```
@@ -788,11 +788,12 @@ abline(h=-log10(max(tt[tt$adj.P.Val < 0.01, "P.Value"])), col=grey(0.5), lty=2)
 
 ```{r boxplot, fig.height=6, fig.width=10 }
 
-
+par(mfrow=c(1,2))
 boxplot(GSexpr[DEgs.over[1], ] ~ prac.se.dupl$type, main=DEgs.over[1], las=1, cex.axis=2)
 boxplot(GSexpr[DEgs.over[2], ] ~ prac.se.dupl$type, main=DEgs.over[2], las=1, cex.axis=2)
+par(mfrow=c(1,2))
 boxplot(GSexpr[DEgs.under[1], ] ~ prac.se.dupl$type, main=DEgs.under[1], las=1, cex.axis=2)
-
+boxplot(GSexpr[DEgs.under[2], ] ~ prac.se.dupl$type, main=DEgs.under[2], las=1, cex.axis=2)
 ```
 
 ```{r, fig.height=10, fig.width=16 }
