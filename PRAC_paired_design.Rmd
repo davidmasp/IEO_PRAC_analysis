@@ -68,7 +68,7 @@ table(colData(prac.se.dupl)$type)
 
 The selected samples are 50 normal and 50 tumor. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data using the `DGE` package @Robinson2010 .
 
-```{r Normalizing}
+```{r Normalizing, warning=FALSE}
 
 prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, 
                     genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
