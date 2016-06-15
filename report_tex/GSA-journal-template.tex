@@ -96,7 +96,9 @@ From the initial dataset, there are 52 normal samples and 502 tumour samples. Se
 After applying the corresponding logical mask, the dataset was composed by 50 normal samples and 50 tumour samples.
 
 \subsection*{Quality Assessment and Normalization}
-Concerning the normalisation the DGE functions were used. DGE functions belong to edgeR package 
+Concerning the normalisation the DGE functions were used. DGE functions belong to edgeR package \cite{Robinson01012010}. Normalization factors were calculated and logarithms of counts per million reads (logCPM) computed.
+
+LogCPM is used to filter for spurious transcription or non-trustable data (transcripts with logCPM < 1 are deprecated).
 
 \subsection*{Batch Effect Identification}
 \subsection*{Differential Expression Analysis}
