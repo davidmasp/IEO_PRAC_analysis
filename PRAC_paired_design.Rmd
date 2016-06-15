@@ -443,19 +443,30 @@ It is known that SV method are stringent and some meaningful variance can be los
 
 From SV model can be seen that the following genomic regions are *significantly* differentially expressed:
 
-- ch2:10127
-```{r, eval=FALSE}
-order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,]
-```
+- chr1:225
+
+- chr2:101
+
+- chr3:385
+
+- chr11:11
+
+- chrX:492
+
+
 
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
 top10 <- order(fit3$lods[, 2], decreasing=TRUE)[1:3]
 limma::plotMA(fit3, coef=2, status=rownames(fit3$lods) %in% DEgenes, legend=FALSE,
-main="Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
+main="MA plot: Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
 text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, pos=4)
 ```
+
+Looking at the MA plot, we can see which gene or chromosome regions are significally differentially expressed (black) or not significally differentially expressed (red).
+
+We can see that some of the chromosome mentioned before, are overexpressed in tumour samples wiht respect to normal (chr3:385, chr11:11 and chrX:492).
 
 
 ## Results
@@ -493,14 +504,17 @@ for (i in fit3$genes$symbol[top10][1:3]){
 
 ```
 
-As you can see in the below figres, our 3 top hits are:
+As you can see in the below figres, our 5 top hits are:
 
-* [SNORD89](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89) - Small Nucleolar RNA
-* [EFHD1](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EFHD1) - EF-hand domain-containing protein related to calcium ion binding (neuronal differentiation)
-* [EPHA8](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8) - ephrin receptor (development of the Nervous System)
+* chr1:225 [EPHA8](http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8) - ephrin receptor (development of the Nervous System)
 
+* chr2:101 [SNORD89](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89) - Small Nucleolar RNA
 
+* chr3:385 [SCN5A](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A) - Sodium Channel Voltage gated V Type
 
+* chr11:11 [TIMM8B](http://www.genecards.org/cgi-bin/carddisp.pl?gene=TIMM8B) - Translocase Inner Mithocondrial Membrane 8' Homolog
+
+* chrX:492 [CACNA1F](http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F) - Calcium Channel Voltage dependant L Type
 ### Functional Enrichment analysis
 
 ```{r}
