@@ -409,21 +409,22 @@ abline(v=1)
 abline(v=-1)
 
 
-ggvolcano <- function(tt,FDR,hl = 5,title = element_blank()){
+ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
   ggplot(tt, aes(logFC, B, 
-  colour = ifelse(B>-log10(FDR) & (logFC < -1 |logFC > 1) ,"red","black" ))) +
+  colour = ifelse(B>-log10(FDR) & (logFC < -fc |logFC > fc) ,"red","black" ))) +
   geom_point() + 
-  ggtitle(title) + geom_vline(xintercept = c(1, -1), col = "red")+ 
+  ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+ 
   geom_hline(yintercept =-log10(FDR), 
              col = "red") + 
-  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -1 | tt$logFC > 1),][1:hl,], 
+  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc | tt$logFC > fc),][1:hl,], 
   aes(logFC, B, label=symbol),angle = 25, vjust = 0) +   
   guides(colour=FALSE) + 
   theme(plot.title = element_text(size = rel(3)))
 }
 
-ggvolcano(tt4,FDRcutoff,title = "Volcano Plot SV")
-
+ggvolcano(tt4,FDRcutoff,title = "SV")
+ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
+ggvolcano(tt,FDRcutoff,title = "Base Model")
 
 ```
 
@@ -665,7 +666,7 @@ par(mfrow=c(1, 1))
 
 tt.under <- tt[tt$logFC > 0,]
 
-#ggvolcano(tt,FDRcutoff)
+ggvolcano(tt,FDRcutoff, fc=log2(1.25), hl=10)
 
 plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
      pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
