@@ -396,14 +396,21 @@ abline(0, 1, lwd=3)
 ## Volcano plots
 Volcano plots are a type of scatter-plots used to quickly identify changes in large datasets with replicate data. It contraposes fold-change (or intensity of change) and p-value (or significance of the change).
 
-Here there will be presented 3 different models plus de null model. The null model represents XXXX, then, 
+Here there will be presented 3 different models plus de base model:
+
+- Base model represents the DEA taking into account type of tissue (tumour vs normal).
+
+- Voom model represents the DEA taking into account the voom weight plus patients barcode (correcting for within pair variability).
+
+- SV model represents the DEA using surrogate variable algorithms to infer the *best* correcting factors.
+
 ```{r volcano plots, fig.cap="Volcano Plots using 3 different approaches", dpi=100, fig.height= 10, fig.width=14}
 
 par(mfrow=c(1,2))
 volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.2 )
-volcanoplot(fit2, coef=2, highlight=7, fit3$genes$symbol, main="Model voom + patients", las=1, cex = 0.2)
+volcanoplot(fit2, coef=2, highlight=7, fit3$genes$symbol, main="Voom model + patients", las=1, cex = 0.2)
 par(mfrow=c(1,1))
-volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="Final Model SV", las=1, cex = 0.2, col = ifelse(fit3$  "red"))
+volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="SV model", las=1, cex = 0.2, col = ifelse(fit3$  "red"))
 abline(-log10(FDRcutoff),0)
 abline(v=1)
 abline(v=-1)
@@ -423,7 +430,16 @@ ggplot(tt4, aes(logFC, B,
 
 ```
 
+The *best* option to consider is using SV model, as it corrects for many surrogate variables, even those that have not been detected.
 
+It is known that SV method are stringent and some meaningful variance can be lost, however by the same reason encrease the significance of the data. ???????
+
+From SV model can be seen that the following genomic regions are *significantly* differentially expressed:
+
+- ch2:10127
+```{prova}
+order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,]
+```
 
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
