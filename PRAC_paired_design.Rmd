@@ -680,8 +680,12 @@ c2BroadSets
 length(c2BroadSets)
 head(names(c2BroadSets))
 
-c2BroadSets <- c2BroadSets[c(grep("^KEGG", names(c2BroadSets)),
-               grep("^REACTOME", names(c2BroadSets)), grep("^BIOCARTA", names(c2BroadSets)))]
+# Since for PROSTATE index there is one KEGG, we choose only unique values. 
+c2BroadSets <- c2BroadSets[unique(c(grep("^KEGG", names(c2BroadSets)), 
+                                    grep("PROSTATE", names(c2BroadSets)),
+                                    grep("^REACTOME", names(c2BroadSets)), 
+                                    grep("^BIOCARTA", names(c2BroadSets))))]
+
 c2BroadSets
 gsc <- GeneSetCollection(c(c2BroadSets))
 gsc <- mapIdentifiers(gsc, AnnoOrEntrezIdentifier(metadata(prac.se.dupl)$annotation))
