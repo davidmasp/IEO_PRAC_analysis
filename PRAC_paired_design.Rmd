@@ -409,9 +409,10 @@ Here there will be presented 3 different models plus de base model:
 par(mfrow=c(1,2))
 volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.2 )
 volcanoplot(fit2, coef=2, highlight=7, fit3$genes$symbol, main="Voom model + patients", las=1, cex = 0.2)
+
 par(mfrow=c(1,1))
 
-volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="SV model", las=1, cex = 0.2, col = ifelse(fit3$  "red"))
+volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="SV model", las=1, cex = 0.2)
 abline(-log10(FDRcutoff),0)
 abline(v=1)
 abline(v=-1)
@@ -443,7 +444,7 @@ It is known that SV method are stringent and some meaningful variance can be los
 From SV model can be seen that the following genomic regions are *significantly* differentially expressed:
 
 - ch2:10127
-```{prova}
+```{r, eval= FALSE}
 order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,]
 ```
 
