@@ -98,7 +98,11 @@ After applying the corresponding logical mask, the dataset was composed by 50 no
 \subsection*{Quality Assessment and Normalization}
 Concerning the normalisation the DGE functions were used. DGE functions belong to edgeR package \cite{Robinson01012010}. Normalization factors were calculated and logarithms of counts per million reads (logCPM) computed.
 
-LogCPM is used to filter for spurious transcription or non-trustable data (transcripts with logCPM < 1 are deprecated).
+LogCPM distributions is compared between normal samples and tumour samples. There are no significant differences. Transcripts with logCPM < 1 are deprecated.
+
+Despite there is a peak of high library size in the library size distribution, it was decided to not to take it out. The rest of the distribution was considered to be uniform.
+
+When plotting the log ratio - mean average plots (MA-plots) for all samples, it was noticed that the normalization procedure succeeded. Any deviation is considered to be despicable.
 
 \subsection*{Batch Effect Identification}
 \subsection*{Differential Expression Analysis}
