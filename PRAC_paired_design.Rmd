@@ -444,7 +444,7 @@ It is known that SV method are stringent and some meaningful variance can be los
 From SV model can be seen that the following genomic regions are *significantly* differentially expressed:
 
 - ch2:10127
-```{r, eval= FALSE}
+```{r, eval=FALSE}
 order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,]
 ```
 
