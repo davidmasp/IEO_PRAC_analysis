@@ -6,6 +6,7 @@ output:
   html_document:
     mathjax: local
     self_contained: false
+bibliography: prac.bib
 ---
 
 
@@ -15,8 +16,11 @@ opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE)
 
 ```
 
+The following are the main packages used along the methods path. The data 
+is readed from [here]() and stored in a `SummarizedExperiment`container from 
+@SE .
 
-```{r loading packages and reading data, echo=FALSE}
+```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE}
 library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
@@ -34,13 +38,18 @@ prac.se <- readRDS("data/sePRAD.rds")
 
 # Filtering and Data description
 
+The original data set obtained from @Rahman15112015 have the following
+distribution of samples. 
+
 ```{r original dataset}
 
 table(prac.se$type)
 
 ```
 
-The design of our experiment is based on paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
+The design of our experiment is based on paired samples. Therefore, each 
+patient have to be the source for an assigned as tumor sample and a assigned
+normal sample. 
 
 ```{r filtering for the paired data}
 # Subset the paired samples
@@ -57,11 +66,12 @@ table(colData(prac.se.dupl)$type)
 
 ```
 
-We select 50 normal samples with the correspondent 50 tumor samples. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data. 
+The selected samples are 50 normal and 50 tumor. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data using the `DGE` package @Robinson2010 .
 
 ```{r Normalizing}
 
-prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
+prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, 
+                    genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
 prac.dgenorm <- calcNormFactors(prac.dge)
 assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
 assays(prac.se.dupl)$logCPM[1:5, 1:5]
@@ -81,7 +91,7 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 ```
 
 
-By looking at the disribution we observe a peak around logCPM 1.
+By looking at the disribution we observe a peak around logCPM 1. ?¿?¿?¿?¿?
 
 To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
 
@@ -92,9 +102,12 @@ prac.se.dupl <- prac.se.dupl[mask, ]
 prac.dgenorm <- prac.dgenorm[mask, ]
 ```
 
+After filtering the low-expressed genes we explore the data to perform a Quality Assesment.
 We explore the data to check whether there exists some kind of batch effect or an undesired source of variation. See fig 2,3 and 4 below.
 
 ** Ojo, hi ha chunks sense processar, activar al final**
+
+Here we asses the Library size for each sample. Although we can see an extreme value in the rigth end, the distribution is uniform.
 
 ```{r lib size plots, eval = FALSE, fig.cap='Fig 2: Library size distribution of the samples.'}
 
@@ -103,6 +116,7 @@ libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se
 ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
 
 ```
+
 
 
 <center><h4>Tumor samples MA-plot</h4></center>
@@ -157,7 +171,7 @@ From the plots above, we see that in figure 1 the distribution of library size p
 
 # Batch effect analysis
 
-From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples
+From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples.
 
 ```{r batch effect, echo = FALSE}
 
@@ -219,8 +233,9 @@ pheatmap(sampleDistMatrix,
          col=colors)
 ```
 
-Using the Spearman method, we observe the clustering of normal and tumoral samples (fig. 5 and 6). The results cluster adecuatelly each attribute, with some samples presenting a bad clustering, without damaging the overall cluster. 
-We display the data with another algorithm:
+As a general insight from our data we can see how samples are clustering by type. No TSS cluster can be observed so we can be almost sure this factor is not introducing us some batch effect. In the general dendogram the samples are colored by TSS. Furthermore, in the heatmap we can see a clear clustering by type although some of the samples have an undesired variation with the rest of it. In order to asses that anormal cluster we will plot a MDS to detect those samples. 
+
+The clustering have been done both in the Dendogram and the heatmap using the Spearman method. The heatmap clustering have been done using the @pheatmap package.
 
 ```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.dupl dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
@@ -236,7 +251,7 @@ legend("right", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$typ
        fill=sort(unique(type)), inset=0.05)
 ```
 
-We observe an anomalous cluster. That mini-cluster of samples is partially responsible for the overall disposition of samples (which differentiates poorly between normal and cancer tissues). We filter these values and observe the graph distribution again. 
+We observe an anomalous cluster of normal samples. In order to minimize the associated variability of the samples and focus only in the variability responsible for the generation of the tumor we filter those samples.
 
 ```{r filter those ind}
 GetID <- function(number, se){
@@ -251,6 +266,8 @@ table(prac.dgenorm$samples$group)
 prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
+
+After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved. 
 
 ```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
@@ -296,11 +313,11 @@ legend("topleft", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$t
        fill=sort(unique(type)), inset=0.05)
 ```
 
-Having the samples / genes filtered and ready, we proceed with the differential expression analysis. 
+Having the samples / genes filtered we can finnish the Quality asesment of the data and proceed with the differential expression analysis. 
 
 # Differential Expression Analysis
 
-Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.01 .
+Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.001 .
 
 ```{r DE1}
 colData(prac.se.dupl)$bcr_patient_barcode <- droplevels(colData(prac.se.dupl)$bcr_patient_barcode)
@@ -794,3 +811,4 @@ sessionInfo()
 ```
 
 
+# References
