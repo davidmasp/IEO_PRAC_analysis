@@ -6,6 +6,7 @@ output:
   html_document:
     mathjax: local
     self_contained: false
+bibliography: prac.bib
 ---
 
 
@@ -15,8 +16,11 @@ opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE)
 
 ```
 
+The following are the main packages used along the methods path. The data 
+is readed from [here]() and stored in a `SummarizedExperiment`container from 
+@SE .
 
-```{r loading packages and reading data, echo=FALSE}
+```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE}
 library("SummarizedExperiment")
 library("edgeR")
 library("geneplotter")
@@ -32,7 +36,10 @@ prac.se <- readRDS("data/sePRAD.rds")
 
 ```
 
-# Filtering and Data description
+# Quality Assesment
+
+The original data set obtained from @Rahman15112015 have the following
+distribution of samples. 
 
 ```{r original dataset}
 
@@ -40,7 +47,9 @@ table(prac.se$type)
 
 ```
 
-The design of our experiment is based on paired samples. Therefore, each patient have to be the source for an assigned as tumor sample and a assigned normal sample. 
+The design of our experiment is based on paired samples. Therefore, each 
+patient have to be the source for an assigned as tumor sample and a assigned
+normal sample. 
 
 ```{r filtering for the paired data}
 # Subset the paired samples
@@ -57,11 +66,12 @@ table(colData(prac.se.dupl)$type)
 
 ```
 
-We select 50 normal samples with the correspondent 50 tumor samples. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data. 
+The selected samples are 50 normal and 50 tumor. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data using the `DGE` package @Robinson2010 .
 
 ```{r Normalizing}
 
-prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
+prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, 
+                    genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
 prac.dgenorm <- calcNormFactors(prac.dge)
 assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
 assays(prac.se.dupl)$logCPM[1:5, 1:5]
@@ -81,7 +91,7 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 ```
 
 
-By looking at the disribution we observe a peak around logCPM 1.
+By looking at the disribution we observe a peak around logCPM 1. ?¿?¿?¿?¿?
 
 To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
 
@@ -92,9 +102,12 @@ prac.se.dupl <- prac.se.dupl[mask, ]
 prac.dgenorm <- prac.dgenorm[mask, ]
 ```
 
+After filtering the low-expressed genes we explore the data to perform a Quality Assesment.
 We explore the data to check whether there exists some kind of batch effect or an undesired source of variation. See fig 2,3 and 4 below.
 
 ** Ojo, hi ha chunks sense processar, activar al final**
+
+Here we asses the Library size for each sample. Although we can see an extreme value in the rigth end, the distribution is uniform.
 
 ```{r lib size plots, eval = FALSE, fig.cap='Fig 2: Library size distribution of the samples.'}
 
@@ -103,6 +116,7 @@ libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se
 ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
 
 ```
+
 
 
 <center><h4>Tumor samples MA-plot</h4></center>
@@ -155,9 +169,9 @@ for (i in 1:ncol(setmp)) {
 
 From the plots above, we see that in figure 1 the distribution of library size presents some stratifiction, with values of 20 M and a mean of 40 M. This changes in lib size will be compensated by the normalization. In figure 2, we observe that the distribution of expression is the expressed, identical in both graphs. Finally, in figure 3 and 4 we present the MA plots, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
 
-# Batch effect analysis
+## Batch effect analysis
 
-From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples
+From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples.
 
 ```{r batch effect, echo = FALSE}
 
@@ -219,8 +233,9 @@ pheatmap(sampleDistMatrix,
          col=colors)
 ```
 
-Using the Spearman method, we observe the clustering of normal and tumoral samples (fig. 5 and 6). The results cluster adecuatelly each attribute, with some samples presenting a bad clustering, without damaging the overall cluster. 
-We display the data with another algorithm:
+As a general insight from our data we can see how samples are clustering by type. No TSS cluster can be observed so we can be almost sure this factor is not introducing us some batch effect. In the general dendogram the samples are colored by TSS. Furthermore, in the heatmap we can see a clear clustering by type although some of the samples have an undesired variation with the rest of it. In order to asses that anormal cluster we will plot a MDS to detect those samples. 
+
+The clustering have been done both in the Dendogram and the heatmap using the Spearman method. The heatmap clustering have been done using the @pheatmap package.
 
 ```{r mds, echo=FALSE, fig.align='center', fig.width=14, dpi=100, fig.cap='Fig. 9: MDS of the prac.se.dupl dataset', fig.height=8}
 par(mfrow=c(1, 1), mar=c(0,0,0,0))
@@ -236,7 +251,7 @@ legend("right", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$typ
        fill=sort(unique(type)), inset=0.05)
 ```
 
-We observe an anomalous cluster. That mini-cluster of samples is partially responsible for the overall disposition of samples (which differentiates poorly between normal and cancer tissues). We filter these values and observe the graph distribution again. 
+We observe an anomalous cluster of normal samples. In order to minimize the associated variability of the samples and focus only in the variability responsible for the generation of the tumor we filter those samples.
 
 ```{r filter those ind}
 GetID <- function(number, se){
@@ -251,6 +266,8 @@ table(prac.dgenorm$samples$group)
 prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
+
+After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved. 
 
 ```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
@@ -296,11 +313,11 @@ legend("topleft", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$t
        fill=sort(unique(type)), inset=0.05)
 ```
 
-Having the samples / genes filtered and ready, we proceed with the differential expression analysis. 
+Having the samples / genes filtered we can finnish the **Quality Assesment** of the data and proceed with the differential expression analysis. 
 
 # Differential Expression Analysis
 
-Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.01 .
+Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.001. This highly restringent value have been used because of the large number of differential expressed genes in our data.
 
 ```{r DE1}
 colData(prac.se.dupl)$bcr_patient_barcode <- droplevels(colData(prac.se.dupl)$bcr_patient_barcode)
@@ -335,6 +352,8 @@ Right now we have a real true candidate overexpressed in tumor at the right top.
 
 ## Improving the DEA with voom and patient barcode
 
+In order to correct for unreliable fold changes in low expressed genes we have used the function `voom` from the `limma` package ( @limma ). The resulting matrix have a weighted expression levels corrected and is useful to avoid wrong hits. 
+
 ```{r DE voom}
 par(mfrow=c(1,1))
 design <- model.matrix(~ type + bcr_patient_barcode , data=colData(prac.se.dupl))
@@ -360,6 +379,8 @@ abline(0, 1, lwd=3)
 
 
 ## Introducing SV as covariates
+
+The `SVA` package ( @Leek2007 and @svamanual ) introduce the concept of surrogate variables in the gene expression analysis. This statistical transformation aims to select the main sources of variability between groups and use them to select the DE genes. After these transformations we would find more DE genes. Although we have a considerable amount of genes, this statistical transformation is also useful in order to focus on the real hits and avoid other non DE genes becuase only the real ones will increase the significance level. 
 
 ```{r DE SV}
 
@@ -394,15 +415,15 @@ abline(0, 1, lwd=3)
 ```
 
 ## Volcano plots
-Volcano plots are a type of scatter-plots used to quickly identify changes in large datasets with replicate data. It contraposes fold-change (or intensity of change) and p-value (or significance of the change).
+Volcano plots are a type of scatter-plots used to quickly identify changes in large datasets with replicate data. It contraposes fold-change (or intensity of change) and a significance measure (or significance of the change).
 
-Here there will be presented 3 different models plus de base model:
+We plot the 3 different models used above:
 
-- Base model represents the DEA taking into account type of tissue (tumour vs normal).
+- **Base model** represents the DEA taking into account type of the sample (tumour vs normal).
 
-- Voom model represents the DEA taking into account the voom weight plus patients barcode (correcting for within pair variability).
+- **Voom model** represents the DEA taking into account the voom weight plus patients barcode (correcting for within pair variability).
 
-- SV model represents the DEA using surrogate variable algorithms to infer the *best* correcting factors.
+- **SV model** represents the DEA using surrogate variable algorithms to infer the *best* correcting factors.
 
 ```{r volcano plots, fig.cap="Volcano Plots using 3 different approaches", dpi=100, fig.height= 10, fig.width=14}
 
@@ -431,17 +452,24 @@ ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
   theme(plot.title = element_text(size = rel(3)))
 }
 
-ggvolcano(tt4,FDRcutoff,title = "SV")
+par(mfrow=c(1,2))
 ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
 ggvolcano(tt,FDRcutoff,title = "Base Model")
-
+par(mfrow=c(1,1))
+ggvolcano(tt4,FDRcutoff,title = "SV")
 ```
 
+
+After considering the differents model we believe the one that predicts better and in a most reliable manner the De genes is the Surrogate Variable model. With other methods we could not distinguish clearly between an artifact of the data and a real hit. 
+
+It is woth noting that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. We believe that this decrease is impliying that it is an artifact instead of a hit. 
+
+???????
 The *best* option to consider is using SV model, as it corrects for many surrogate variables, even those that have not been detected.
 
 It is known that SV method are stringent and some meaningful variance can be lost, however by the same reason encrease the significance of the data. ???????
 
-From SV model can be seen that the following genomic regions are *significantly* differentially expressed:
+From the SV model, it can be seen that the following genomic regions as **top** differentially expressed:
 
 - chr1:225
 
@@ -453,12 +481,10 @@ From SV model can be seen that the following genomic regions are *significantly*
 
 - chrX:492
 
-
-
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
-top10 <- order(fit3$lods[, 2], decreasing=TRUE)[1:3]
+top10 <- order(fit3$lods[, 2], decreasing=TRUE)[1:6]
 limma::plotMA(fit3, coef=2, status=rownames(fit3$lods) %in% DEgenes, legend=FALSE,
 main="MA plot: Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
 text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, pos=4)
@@ -466,16 +492,20 @@ text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, 
 
 Looking at the MA plot, we can see which gene or chromosome regions are significally differentially expressed (black) or not significally differentially expressed (red).
 
-We can see that some of the chromosome mentioned before, are overexpressed in tumour samples wiht respect to normal (chr3:385, chr11:11 and chrX:492).
+
+We can see that some of the chromosome mentioned before, are overexpressed in tumour samples wiht respect to normal (chr3:385, chr11:11 and chrX:492) manwhile others () are underexpressed.
 
 
 ## Results
 
+In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection. 
+
+
 ```{r, echo=FALSE, eval = FALSE}
 library(Gviz)
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+
 gtrack <- GenomeAxisTrack()
-txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
+
 for (i in fit3$genes$symbol[top10][1:3]){
   gene.vars <- unlist(strsplit(i, ":"))
   
@@ -483,11 +513,9 @@ for (i in fit3$genes$symbol[top10][1:3]){
   coords <- unlist(strsplit(gene.vars[2], "-"))
   start <- as.numeric(coords[1])
   end <- as.numeric(coords[2])
-  extrabp <- 5000
+  extrabp <- 2500
   itrack <- IdeogramTrack(genome="hg38", chromosome=chr)
-  #grtrack <- GeneRegionTrack(txdb, genome="hg19", chromosome=chr,
-         #                  start=start-extrabp, end=end+extrabp,
-          #                 name="UCSC Known Genes", showId=TRUE, geneSymbols=TRUE)
+
   refseq <- UcscTrack(track="RefSeq Genes", table="refGene",
     trackType="GeneRegionTrack",chromosome=chr, genome="hg38",
     rstart="exonStarts", rends="exonEnds", gene="name", symbol="name2",
@@ -498,9 +526,6 @@ for (i in fit3$genes$symbol[top10][1:3]){
 }
 
 
-# biomTrack <- BiomartGeneRegionTrack(genome="hg38", chromosome="chr2", start=101200000, end=101280000, name="Ensembl") 
-
-# plotTracks(list(biomTrack,gtrack) )
 
 ```
 
@@ -512,13 +537,15 @@ As you can see in the below figres, our 5 top hits are:
 
 * chr3:385 [SCN5A](http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A) - Sodium Channel Voltage gated V Type
 
+
 * chr11:11 [TIMM8B](http://www.genecards.org/cgi-bin/carddisp.pl?gene=TIMM8B) - Translocase Inner Mithocondrial Membrane 8' Homolog
 
 * chrX:492 [CACNA1F](http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F) - Calcium Channel Voltage dependant L Type
- 
 
+# Functional Enrichment analysis
 
-### Functional Enrichment analysis
+In order to detect weather the DE genes are enriched in a particular function or pathway that might be relevant for our study we have used as a first insight the `GOstats`package ( @GOstats ). Its main method uses a HyperGeometric Statistical test in order to detect functional enrichment in our DE genes from Gene Onthology categories. 
+
 
 ```{r}
 DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
@@ -797,3 +824,4 @@ sessionInfo()
 ```
 
 
+# References
