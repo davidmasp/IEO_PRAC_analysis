@@ -1,6 +1,6 @@
 ---
 title: "PRAC Paired Design"
-author: "David Mas"
+author: "PRAC Team: A. Auladell, J. Martí & D. Mas"
 date: "1 de junio de 2016"
 output:
   html_document:
@@ -410,23 +410,29 @@ par(mfrow=c(1,2))
 volcanoplot(fit, coef=2, highlight=7, fit$genes$symbol, main="Base Model", las=1, cex = 0.2 )
 volcanoplot(fit2, coef=2, highlight=7, fit3$genes$symbol, main="Voom model + patients", las=1, cex = 0.2)
 par(mfrow=c(1,1))
+
 volcanoplot(fit3, coef=2, highlight=7, fit3$genes$symbol, main="SV model", las=1, cex = 0.2, col = ifelse(fit3$  "red"))
 abline(-log10(FDRcutoff),0)
 abline(v=1)
 abline(v=-1)
 
 
-ggplot(tt4, aes(logFC, B, 
-  colour = ifelse(B>-log10(FDRcutoff) & (logFC < -1 |logFC > 1) ,"red","black" ))) +
+ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
+  ggplot(tt, aes(logFC, B, 
+  colour = ifelse(B>-log10(FDR) & (logFC < -fc |logFC > fc) ,"red","black" ))) +
   geom_point() + 
-  ggtitle("Volcano Plot SV") + geom_vline(xintercept = c(1, -1), col = "red")+ 
-  geom_hline(yintercept =-log10(FDRcutoff), 
+  ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+ 
+  geom_hline(yintercept =-log10(FDR), 
              col = "red") + 
-  geom_text(data= tt4[order(tt4$B,decreasing = TRUE),][(tt4$logFC < -1 | tt4$logFC > 1),][1:5,], 
+  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc | tt$logFC > fc),][1:hl,], 
   aes(logFC, B, label=symbol),angle = 25, vjust = 0) +   
   guides(colour=FALSE) + 
   theme(plot.title = element_text(size = rel(3)))
+}
 
+ggvolcano(tt4,FDRcutoff,title = "SV")
+ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
+ggvolcano(tt,FDRcutoff,title = "Base Model")
 
 ```
 
@@ -497,13 +503,24 @@ As you can see in the below figres, our 3 top hits are:
 ### Functional Enrichment analysis
 
 ```{r}
-DEgenes <- rownames(tt4)[tt$adj.P.Val < FDRcutoff]
+DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
+DEgenes.over <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff & tt$logFC < 0]
+DEgenes.under <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff & tt$logFC > 0]
 length(DEgenes)
 library(GOstats)
 params <- new("GOHyperGParams", geneIds=DEgenes,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
                 pvalueCutoff=0.05, testDirection="over")
+params.over <- new("GOHyperGParams", geneIds=DEgenes.over,
+                universeGeneIds=rownames(prac.se.dupl),
+                annotation="org.Hs.eg.db", ontology="BP",
+                pvalueCutoff=0.05, testDirection="over")
+params.under <- new("GOHyperGParams", geneIds=DEgenes.under,
+                universeGeneIds=rownames(prac.se.dupl),
+                annotation="org.Hs.eg.db", ontology="BP",
+                pvalueCutoff=0.05, testDirection="over")
+
 
 ```
 
@@ -522,10 +539,8 @@ head(goresults)
 dim(goresults)
 ```
 
-
-
 ```{r}
-goresults <- goresults[ goresults$Size >= 6 & goresults$Count >= 6  , ] 
+goresults <- goresults[ goresults$Size >= 8 & goresults$Count >= 8 , ] 
 dim(goresults)
 goresults <- goresults[order(goresults$Pvalue, decreasing=FALSE), ] 
 head(goresults)
@@ -533,15 +548,54 @@ goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ]
 head(goresults)
 ```
 
+
 ```{r plotting go results}
 go.plot <- ggplot(goresults, aes(Size, Count, size = OddsRatio, colour = Pvalue)) + geom_point() + xlim(5,50) + ylim(5,50) + geom_abline(intercept = 0, slope = 1) 
 
 go.plot 
+```
 
+```{r plot go 2}
 go.plot <- ggplot(goresults, aes(OddsRatio, Size, size = Count, colour = Pvalue)) + geom_point()  + ylim(0,500)
 
 go.plot 
+```
 
+```{r plot go 3}
+ggGO <- function(goresults,OR = 7.5){
+  ggplot(goresults, aes(-log2(Pvalue), OddsRatio, size = Count, colour = Pvalue)) +
+    geom_point() + geom_smooth(method = lm) +
+    geom_text(data=goresults[goresults$OddsRatio > OR,], 
+        aes(-log2(Pvalue), OddsRatio , 
+            label = Term, vjust=1.5, hjust=0.5) , size=4)
+}
+ggGO(goresults)
+```
+
+```{r go over}
+conditional(params.over) <- TRUE
+hgOverCond.over <- hyperGTest(params.over) 
+goresults.over <- GOstats::summary(hgOverCond.over) 
+goresults.over <- goresults.over[ goresults.over$Size >= 6 & goresults.over$Count >= 6 , ] 
+goresults.over <- goresults.over[order(goresults.over$OddsRatio, decreasing=TRUE), ] 
+head(goresults.over, n=6)
+```
+
+```{r}
+ggGO(goresults.over)
+```
+
+```{r go under}
+conditional(params.under) <- TRUE
+hgOverCond.under <- hyperGTest(params.under) 
+goresults.under <- GOstats::summary(hgOverCond.under) 
+goresults.under <- goresults.under[ goresults.under$Size >= 6 & goresults.under$Count >= 6  , ] 
+goresults.under <- goresults.under[order(goresults.under$OddsRatio, decreasing=TRUE), ] 
+head(goresults.under, n=6)
+```
+
+```{r}
+ggGO(goresults.under)
 ```
 
 ```{r}
@@ -665,6 +719,9 @@ modSVs <- cbind(mod, svaobj$sv)
 fit <- lmFit(GSexpr, modSVs)
 fit <- eBayes(fit)
 tt <- topTable(fit, coef = 2, n = Inf)
+
+tt$symbol <- rownames(tt)
+
 DEgs <- rownames(tt[tt$adj.P.Val < 0.01, , drop=FALSE])
 head(DEgs)
 
@@ -673,6 +730,8 @@ DEgs.under <- rownames(tt[tt$adj.P.Val < 0.01 & tt$logFC > 0 , , drop=FALSE])
 par(mfrow=c(1, 1))
 
 tt.under <- tt[tt$logFC > 0,]
+
+ggvolcano(tt,FDRcutoff, fc=log2(1.25), hl=10, title = "Gene Set DE - GSVA")
 
 plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
      pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
