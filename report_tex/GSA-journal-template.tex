@@ -101,7 +101,18 @@ Concerning the normalisation the DGE functions were used. DGE functions belong t
 \subsection*{Batch Effect Identification}
 \subsection*{Differential Expression Analysis}
 \subsection*{Functional Enrichment}
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \citep{GOstats}. A p-value cutoff of 0.05 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio. 
+
+The same analysis have been also performed in the DE over-expressed and under-expressed gene sets to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. 
+
 \subsection*{Gene Set expression analysis}
+In order to analyze differential expression in gene sets and not uniquely at the gene level 2 different approaches have been used, a Gene Set Enrichment Analysis (GSEA) and a Gene Set Variation Analysis (GSVA). 
+
+For both GSEA and GSVA the gene sets from the GSVAdata package \citep{GSVAdata} have been selected. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \citep{kanehisa2016kegg}, Reactome \citep{fabregat2016reactome} and   Biocarta \citep{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
+
+The package GSEABase \citep{GSEABase} 
+
+
 
 
 \section*{Results}
