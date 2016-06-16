@@ -186,7 +186,7 @@ Figure \ref{fig:spectrum} shows an example figure.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{Custering}
+\includegraphics[width=\linewidth]{Clustering}
 \caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumor samples and the bottom-right contains most of the Normal samples. 
 }%
 \label{fig:Clustering}
@@ -194,9 +194,9 @@ Figure \ref{fig:spectrum} shows an example figure.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{CusteringGSVA}
+\includegraphics[width=\linewidth]{ClusteringGSVA}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.
-}%
+}
 \label{fig:ClusteringGSVA}
 \end{figure}
 
@@ -215,16 +215,16 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
- \begin{tabular}{l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+ \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+  \hline
+ & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\ 
+  \hline
+1 & GO:0032891 & 0.01 & Inf & 4.30 &   8 &   8 & negative regulation of organic acid transport & HRH3, ABAT, AGTR2, AKT2, ACSL4, IL1B, TRH, CYP4F2 \\ 
+  2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\ 
+  3 & GO:0051016 & 0.02 & 7.75 & 5.38 &   9 &  10 & barbed-end actin filament capping & TWF2, ADD1, EPS8, FAM21C, TWF1, VIL1, CAPG, CAPZB, CAPZA3 \\ 
+  4 & GO:0010954 & 0.03 & 6.88 & 4.84 &   8 &   9 & positive regulation of protein processing & ADAM8, F12, HPN, ASTL, PHB, PLGRKT, CNTN2, CLEC3B \\ 
+  5 & GO:0022401 & 0.03 & 6.88 & 4.84 &   8 &   9 & negative adaptation of signaling pathway & ADM, ADRB2, ADRBK1, DNM1, DNM2, DRD3, HTR2B, CAMK2B \\ 
    \hline
-  & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
-   \hline
- 1 & GO:1902547 & 0.00 & Inf & 2.19 &   6 &   6 & regulation of cellular response to vascular endothelial growth factor stimulus & DAB2IP, DCN, ADGRA2, HRG, ADAMTS3, CD63 \\
-   2 & GO:0045078 & 0.00 & 12.21 & 2.92 &   7 &   8 & positive regulation of interferon-gamma biosynthetic process & EBI3, CEBPG, ZFPM1, IL27, IL12B, IL21, CD276 \\
-   3 & GO:2001044 & 0.00 & 12.21 & 2.92 &   7 &   8 & regulation of integrin-mediated signaling pathway & CTNNA1, EMP2, LIMS2, PRKD1, PHACTR4, ITGB1BP1, CD63 \\
-   4 & GO:0002115 & 0.01 & 10.47 & 2.55 &   6 &   7 & store-operated calcium entry & SPINK1, ORAI2, CRACR2A, ORAI1, CD84, HOMER1 \\
-   5 & GO:0016093 & 0.01 & 10.47 & 2.55 &   6 &   7 & polyprenol metabolic process & NUS1, DPAGT1, ALG5, AKR1B10, AKR1C3, DPM2 \\
-    \hline
  \end{tabular}
  \label{tab:GOenrichment}
 \end{tableminipage}

@@ -456,9 +456,10 @@ ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
   theme(plot.title = element_text(size = rel(3)))
 }
 
-par(mfrow=c(1,2))
-ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
+par(mfrow=c(2,1))
 ggvolcano(tt,FDRcutoff,title = "Base Model")
+ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
+
 par(mfrow=c(1,1))
 ggvolcano(tt4,FDRcutoff,title = "SV")
 ```
@@ -466,13 +467,7 @@ ggvolcano(tt4,FDRcutoff,title = "SV")
 
 After considering the differents model we believe the one that predicts better and in a most reliable manner the De genes is the Surrogate Variable model. With other methods we could not distinguish clearly between an artifact of the data and a real hit.
 
-It is woth noting that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. We believe that this decrease is impliying that it is an artifact instead of a hit.
-
-???????
-The *best* option to consider is using SV model, as it corrects for many surrogate variables, even those that have not been detected.
-
-It is known that SV method are stringent and some meaningful variance can be lost, however by the same reason encrease the significance of the data. ???????
-
+It should be noted that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. 
 From the SV model, it can be seen that the following genomic regions as **top** differentially expressed:
 
 - chr1:225
@@ -495,7 +490,6 @@ text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, 
 ```
 
 Looking at the MA plot, we can see which gene or chromosome regions are significally differentially expressed (black) or not significally differentially expressed (red).
-
 
 We can see that some of the chromosome mentioned before, are overexpressed in tumour samples wiht respect to normal (chr3:385, chr11:11 and chrX:492) manwhile others () are underexpressed.
 
@@ -809,7 +803,7 @@ boxplot(GSexpr[DEgs.under[1], ] ~ prac.se.dupl$type, main=DEgs.under[1], las=1, 
 boxplot(GSexpr[DEgs.under[2], ] ~ prac.se.dupl$type, main=DEgs.under[2], las=1, cex.axis=2)
 ```
 
-```{r, fig.height=10, fig.width=16 }
+```{r, fig.height=15, fig.width=21 }
 DEgeneSets <- tt[1:30, , drop=FALSE]
 dim(DEgeneSets)
 GSVAsco <- GSexpr[rownames(DEgeneSets), ]
