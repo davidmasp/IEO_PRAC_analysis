@@ -1,23 +1,26 @@
 ---
-title: "PRAC Paired Design"
+title: "Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma - Paired Design"
 author: "PRAC Team: A. Auladell, J. Martí & D. Mas"
 date: "1 de junio de 2016"
 output:
   html_document:
     mathjax: local
     self_contained: false
+    toc: yes
+    css: css/ieo.css
+    number_sections: yes
 bibliography: prac.bib
 ---
 
 
 ```{r setup, cache=FALSE, echo=FALSE, message=FALSE, warning=FALSE, tidy=FALSE}
 library(knitr)
-opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE, dev=c('png','postscript'))
+opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE, dev=c('png','postscript'), autodep=T)
 
 ```
 
 The following are the main packages used along the methods path. The data 
-is readed from [here]() and stored in a `SummarizedExperiment`container from 
+is readed from [here](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) and stored in a `SummarizedExperiment`container from 
 @SE .
 
 ```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE, results='hide'}
@@ -502,7 +505,7 @@ We can see that some of the chromosome mentioned before, are overexpressed in tu
 In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection. 
 
 
-```{r, echo=FALSE, eval = TRUE}
+```{r, echo=FALSE, eval = TRUE, dev= 'png'}
 library(Gviz)
 
 gtrack <- GenomeAxisTrack()
@@ -770,6 +773,10 @@ fit <- lmFit(GSexpr, modSVs)
 fit <- eBayes(fit)
 tt <- topTable(fit, coef = 2, n = Inf)
 
+res.GS <- decideTests(fit, p.value=FDRcutoff)
+
+
+
 tt$symbol <- rownames(tt)
 
 DEgs <- rownames(tt[tt$adj.P.Val < 0.01, , drop=FALSE])
@@ -822,6 +829,36 @@ heatmap(GSVAsco, ColSideColors=sample.color.map, xlab="samples",
 legend("topleft", names(colorLegend), fill=colorLegend, inset=0.01, bg="white")
 
 ```
+
+### Comparing GSEA and GSVA resuts
+
+```{r venn 1, dev= "png"}
+library(VennDiagram)
+# GS from GSEA
+rnkGS.pvalues <- 2*pnorm(-abs(rnkGS))
+rnkGS.df <- data.frame(names(rnkGS),rnkGS.pvalues)
+gs.GSEA <- as.character(rnkGS.df[rnkGS.df$rnkGS.pvalues < FDRcutoff,]$names.rnkGS.)
+
+# GSVA
+gs.GSVA <- tt[tt$P.Value < FDRcutoff,]$symbol
+
+area.GSEA <- length(gs.GSEA)
+area.GSVA <- length(gs.GSVA)
+gs.all <- c(gs.GSEA,gs.GSVA)
+area.junct <- length(gs.all) - length(unique(gs.all))
+grid::grid.newpage()
+draw.pairwise.venn(area1 = area.GSEA, area2 = area.GSVA , cross.area = area.junct, category = c("GSEA","GSVA"), fill = c("red","blue"),alpha=c(0.3,0.3), lwd = c(2,2), cat.fontfamily = c("Helvetica","Helvetica"))
+```
+
+```{r}
+in.GSEA <- (gs.all %in% gs.GSEA)
+in.GSVA <- (gs.all %in% gs.GSVA)
+in.all <- cbind(in.GSEA, in.GSVA)
+
+limma::vennDiagram(in.all,circle.col = c("red","blue"))
+```
+
+
 
 # Session Info 
 
