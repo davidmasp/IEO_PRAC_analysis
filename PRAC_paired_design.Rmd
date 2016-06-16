@@ -19,8 +19,8 @@ opts_chunk$set(cache=T, fig.align='center', dpi=100, message=FALSE, dev=c('png',
 
 ```
 
-The following are the main packages used along the methods path. The data 
-is readed from [here](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) and stored in a `SummarizedExperiment`container from 
+The following are the main packages used along the methods path. The data
+is readed from [here](http://functionalgenomics.upf.edu/courses/IEO/projects/datasets/sePRAD.rds) and stored in a `SummarizedExperiment`container from
 @SE .
 
 ```{r loading packages and reading data, echo=TRUE, warning= FALSE, error=FALSE, message = TRUE, tidy=FALSE, results='hide'}
@@ -33,7 +33,7 @@ library("pheatmap")
 library("RColorBrewer")
 library("Rgraphviz")
 
-old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI 
+old.par <- par(mar = c(0, 0, 0, 0)) # to get CLI
 
 prac.se <- readRDS("data/sePRAD.rds")
 
@@ -42,7 +42,7 @@ prac.se <- readRDS("data/sePRAD.rds")
 #Experimental Design
 
 The original data set obtained from @Rahman15112015 have the following
-distribution of samples. 
+distribution of samples.
 
 ```{r original dataset}
 
@@ -50,9 +50,9 @@ table(prac.se$type)
 
 ```
 
-The design of our experiment is based on paired samples. Therefore, each 
+The design of our experiment is based on paired samples. Therefore, each
 patient have to be the source for an assigned as tumor sample and a assigned
-normal sample. 
+normal sample.
 
 ```{r filtering for the paired data}
 # Subset the paired samples
@@ -62,7 +62,7 @@ n_occur <- data.frame(table(colData(prac.se)$bcr_patient_barcode))
 ## we filter out the na patients (having a na in the barcode)
 ## and the ones that occur only 1 time (they are unique)
 prac.se.dupl <- prac.se[,colData(prac.se)$bcr_patient_barcode
-                 %in% n_occur$Var1[n_occur$Freq > 1] & 
+                 %in% n_occur$Var1[n_occur$Freq > 1] &
                  !is.na(colData(prac.se)$bcr_patient_barcode)]
 ## See the results.
 table(colData(prac.se.dupl)$type)
@@ -74,7 +74,7 @@ The selected samples are 50 normal and 50 tumor. Most of the Normal samples had 
 #Quality Assessment and Normalization
 ```{r Normalizing, warning=FALSE}
 
-prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, 
+prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts,
                     genes = mcols(prac.se.dupl), group = prac.se.dupl$type)
 prac.dgenorm <- calcNormFactors(prac.dge)
 assays(prac.se.dupl)$logCPM <- cpm(prac.dgenorm, log=TRUE, prior.count=3.5)
@@ -117,7 +117,7 @@ Here we asses the Library size for each sample. Although we can see an extreme v
 
 # Libsize distribution of the samples
 libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se.dupl$type, samples = rownames(prac.dgenorm$samples) )
-ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity") 
+ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity")
 
 ```
 
@@ -131,7 +131,7 @@ setmp <- prac.se.dupl[, prac.se.dupl$type == "tumor"]
 dgetmp <- prac.dgenorm[, prac.dgenorm$type == "tumor"]
 
 samples.number <- length(rownames(colData(setmp)))
-if (samples.number %% 6 == 0) { 
+if (samples.number %% 6 == 0) {
   nr <- samples.number / 6
 } else {nr <- samples.number %/% 6 + 1}
 par(mfrow=c(nr, 6), mar=c(4, 5, 3, 1))
@@ -155,7 +155,7 @@ setmp <- prac.se.dupl[, prac.se.dupl$type == "normal"]
 dgetmp <- prac.dgenorm[, prac.dgenorm$type == "normal"]
 
 samples.number <- length(rownames(colData(setmp)))
-if (samples.number %% 6 == 0) { 
+if (samples.number %% 6 == 0) {
   nr <- samples.number / 6
 } else {nr <- samples.number %/% 6 + 1}
 par(mfrow=c(nr, 6), mar=c(4, 5, 3, 1))
@@ -237,7 +237,7 @@ pheatmap(sampleDistMatrix,
          col=colors)
 ```
 
-As a general insight from our data we can see how samples are clustering by type. No TSS cluster can be observed so we can be almost sure this factor is not introducing us some batch effect. In the general dendogram the samples are colored by TSS. Furthermore, in the heatmap we can see a clear clustering by type although some of the samples have an undesired variation with the rest of it. In order to asses that anormal cluster we will plot a MDS to detect those samples. 
+As a general insight from our data we can see how samples are clustering by type. No TSS cluster can be observed so we can be almost sure this factor is not introducing us some batch effect. In the general dendogram the samples are colored by TSS. Furthermore, in the heatmap we can see a clear clustering by type although some of the samples have an undesired variation with the rest of it. In order to asses that anormal cluster we will plot a MDS to detect those samples.
 
 The clustering have been done both in the Dendogram and the heatmap using the Spearman method. The heatmap clustering have been done using the @pheatmap package.
 
@@ -262,7 +262,7 @@ GetID <- function(number, se){
   id <- grep(number,rownames(colData(se)))
   return(rownames(colData(se))[id])
 }
-number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769") 
+number.id <- c("7737","7745","7738","7211","7747","6356","6362","5769")
 pruning.vec <- as.character(sapply(number.id, GetID, prac.se.dupl))
 prac.dgenorm <- prac.dgenorm[,
                    !rownames(prac.dgenorm$samples) %in% pruning.vec]
@@ -271,7 +271,7 @@ prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
 
-After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved. 
+After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved.
 
 ```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
@@ -317,7 +317,7 @@ legend("topleft", paste("Type", sort(unique(type)), levels(factor(prac.se.dupl$t
        fill=sort(unique(type)), inset=0.05)
 ```
 
-Having the samples / genes filtered we can finnish the **Quality Assesment** of the data and proceed with the differential expression analysis. 
+Having the samples / genes filtered we can finnish the **Quality Assesment** of the data and proceed with the differential expression analysis.
 
 # Differential Expression Analysis
 
@@ -356,7 +356,7 @@ Right now we have a real true candidate overexpressed in tumor at the right top.
 
 ## Improving the DEA with voom and patient barcode
 
-In order to correct for unreliable fold changes in low expressed genes we have used the function `voom` from the `limma` package ( @limma ). The resulting matrix have a weighted expression levels corrected and is useful to avoid wrong hits. 
+In order to correct for unreliable fold changes in low expressed genes we have used the function `voom` from the `limma` package ( @limma ). The resulting matrix have a weighted expression levels corrected and is useful to avoid wrong hits.
 
 ```{r DE voom}
 par(mfrow=c(1,1))
@@ -384,7 +384,7 @@ abline(0, 1, lwd=3)
 
 ## Introducing SV as covariates
 
-The `SVA` package ( @Leek2007 and @svamanual ) introduce the concept of surrogate variables in the gene expression analysis. This statistical transformation aims to select the main sources of variability between groups and use them to select the DE genes. After these transformations we would find more DE genes. Although we have a considerable amount of genes, this statistical transformation is also useful in order to focus on the real hits and avoid other non DE genes becuase only the real ones will increase the significance level. 
+The `SVA` package ( @Leek2007 and @svamanual ) introduce the concept of surrogate variables in the gene expression analysis. This statistical transformation aims to select the main sources of variability between groups and use them to select the DE genes. After these transformations we would find more DE genes. Although we have a considerable amount of genes, this statistical transformation is also useful in order to focus on the real hits and avoid other non DE genes becuase only the real ones will increase the significance level.
 
 ```{r DE SV}
 
@@ -405,14 +405,14 @@ summary(res3)
 
 
 fit3$genes <- genesmd
-tt4 <- topTable(fit3, coef=2, n=Inf) 
+tt4 <- topTable(fit3, coef=2, n=Inf)
 head(tt4)
 
 sort(table(tt4$chr[tt4$adj.P.Val < FDRcutoff]), decreasing=TRUE)
 
 par(mfrow=c(1,2), mar=c(4, 5, 2, 2))
 hist(tt4$P.Value, xlab="Raw P-values", main="", las=1)
-qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="after SV", pch=".", cex=3) 
+qqt(fit3$t[, 2], df=fit3$df.prior+fit3$df.residual, main="after SV", pch=".", cex=3)
 qqline(fit3$t[, 2], col=2, lwd=3)
 abline(0, 1, lwd=3)
 
@@ -444,15 +444,15 @@ abline(v=-1)
 
 
 ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
-  ggplot(tt, aes(logFC, B, 
+  ggplot(tt, aes(logFC, B,
   colour = ifelse(B>-log10(FDR) & (logFC < -fc |logFC > fc) ,"red","black" ))) +
-  geom_point() + 
-  ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+ 
-  geom_hline(yintercept =-log10(FDR), 
-             col = "red") + 
-  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc | tt$logFC > fc),][1:hl,], 
+  geom_point() +
+  ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+
+  geom_hline(yintercept =-log10(FDR),
+             col = "red") +
+  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc | tt$logFC > fc),][1:hl,],
   aes(logFC, B, label=symbol),angle = 25, vjust = 0) +   
-  guides(colour=FALSE) + 
+  guides(colour=FALSE) +
   theme(plot.title = element_text(size = rel(3)))
 }
 
@@ -464,9 +464,9 @@ ggvolcano(tt4,FDRcutoff,title = "SV")
 ```
 
 
-After considering the differents model we believe the one that predicts better and in a most reliable manner the De genes is the Surrogate Variable model. With other methods we could not distinguish clearly between an artifact of the data and a real hit. 
+After considering the differents model we believe the one that predicts better and in a most reliable manner the De genes is the Surrogate Variable model. With other methods we could not distinguish clearly between an artifact of the data and a real hit.
 
-It is woth noting that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. We believe that this decrease is impliying that it is an artifact instead of a hit. 
+It is woth noting that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. We believe that this decrease is impliying that it is an artifact instead of a hit.
 
 ???????
 The *best* option to consider is using SV model, as it corrects for many surrogate variables, even those that have not been detected.
@@ -490,7 +490,7 @@ DEgenes <- rownames(tt4)[tt4$adj.P.Val < FDRcutoff]
 par(mfrow=c(1,1))
 top10 <- order(fit3$lods[, 2], decreasing=TRUE)[1:6]
 limma::plotMA(fit3, coef=2, status=rownames(fit3$lods) %in% DEgenes, legend=FALSE,
-main="MA plot: Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1) 
+main="MA plot: Model SV", hl.pch=46, hl.cex=4, bg.pch=46, bg.cex=3, las=1)
 text(fit3$Amean[top10], fit3$coef[top10, 2], fit3$genes$symbol[top10], cex=0.5, pos=4)
 ```
 
@@ -502,17 +502,18 @@ We can see that some of the chromosome mentioned before, are overexpressed in tu
 
 ## Results
 
-In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection. 
+In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection.
 
 
 ```{r, echo=FALSE, eval = TRUE, dev= 'png'}
+
 library(Gviz)
 
 gtrack <- GenomeAxisTrack()
 
 for (i in fit3$genes$symbol[top10][1:3]){
   gene.vars <- unlist(strsplit(i, ":"))
-  
+
   chr <- gene.vars[1]
   coords <- unlist(strsplit(gene.vars[2], "-"))
   start <- as.numeric(coords[1])
@@ -548,7 +549,7 @@ As you can see in the below figres, our 5 top hits are:
 
 # Functional Enrichment analysis
 
-In order to detect weather the DE genes are enriched in a particular function or pathway that might be relevant for our study we have used as a first insight the `GOstats`package ( @GOstats ). Its main method uses a HyperGeometric Statistical test in order to detect functional enrichment in our DE genes from Gene Onthology categories. 
+In order to detect weather the DE genes are enriched in a particular function or pathway that might be relevant for our study we have used as a first insight the `GOstats`package ( @GOstats ). Its main method uses a HyperGeometric Statistical test in order to detect functional enrichment in our DE genes from Gene Onthology categories.
 
 
 ```{r}
@@ -577,45 +578,45 @@ It can be observed that there are 6347 differential expresses genes (over and un
 
 ```{r}
 conditional(params) <- TRUE
-hgOverCond <- hyperGTest(params) 
+hgOverCond <- hyperGTest(params)
 hgOverCond
 
 ```
 
 ```{r}
-goresults <- GOstats::summary(hgOverCond) 
+goresults <- GOstats::summary(hgOverCond)
 head(goresults)
 dim(goresults)
 ```
 
 ```{r}
-goresults <- goresults[ goresults$Size >= 8 & goresults$Count >= 8 , ] 
+goresults <- goresults[ goresults$Size >= 8 & goresults$Count >= 8 , ]
 dim(goresults)
-goresults <- goresults[order(goresults$Pvalue, decreasing=FALSE), ] 
+goresults <- goresults[order(goresults$Pvalue, decreasing=FALSE), ]
 head(goresults)
-goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ] 
+goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ]
 head(goresults)
 ```
 
 
 ```{r plotting go results}
-go.plot <- ggplot(goresults, aes(Size, Count, size = OddsRatio, colour = Pvalue)) + geom_point() + xlim(5,50) + ylim(5,50) + geom_abline(intercept = 0, slope = 1) 
+go.plot <- ggplot(goresults, aes(Size, Count, size = OddsRatio, colour = Pvalue)) + geom_point() + xlim(5,50) + ylim(5,50) + geom_abline(intercept = 0, slope = 1)
 
-go.plot 
+go.plot
 ```
 
 ```{r plot go 2}
 go.plot <- ggplot(goresults, aes(OddsRatio, Size, size = Count, colour = Pvalue)) + geom_point()  + ylim(0,500)
 
-go.plot 
+go.plot
 ```
 
 ```{r plot go 3}
 ggGO <- function(goresults,OR = 7.5){
   ggplot(goresults, aes(-log2(Pvalue), OddsRatio, size = Count, colour = Pvalue)) +
     geom_point() + geom_smooth(method = lm) +
-    geom_text(data=goresults[goresults$OddsRatio > OR,], 
-        aes(-log2(Pvalue), OddsRatio , 
+    geom_text(data=goresults[goresults$OddsRatio > OR,],
+        aes(-log2(Pvalue), OddsRatio ,
             label = Term, vjust=1.5, hjust=0.5) , size=4)
 }
 ggGO(goresults)
@@ -623,10 +624,10 @@ ggGO(goresults)
 
 ```{r go over}
 conditional(params.over) <- TRUE
-hgOverCond.over <- hyperGTest(params.over) 
-goresults.over <- GOstats::summary(hgOverCond.over) 
-goresults.over <- goresults.over[ goresults.over$Size >= 6 & goresults.over$Count >= 6 , ] 
-goresults.over <- goresults.over[order(goresults.over$OddsRatio, decreasing=TRUE), ] 
+hgOverCond.over <- hyperGTest(params.over)
+goresults.over <- GOstats::summary(hgOverCond.over)
+goresults.over <- goresults.over[ goresults.over$Size >= 6 & goresults.over$Count >= 6 , ]
+goresults.over <- goresults.over[order(goresults.over$OddsRatio, decreasing=TRUE), ]
 head(goresults.over, n=6)
 ```
 
@@ -636,10 +637,10 @@ ggGO(goresults.over)
 
 ```{r go under}
 conditional(params.under) <- TRUE
-hgOverCond.under <- hyperGTest(params.under) 
-goresults.under <- GOstats::summary(hgOverCond.under) 
-goresults.under <- goresults.under[ goresults.under$Size >= 6 & goresults.under$Count >= 6  , ] 
-goresults.under <- goresults.under[order(goresults.under$OddsRatio, decreasing=TRUE), ] 
+hgOverCond.under <- hyperGTest(params.under)
+goresults.under <- GOstats::summary(hgOverCond.under)
+goresults.under <- goresults.under[ goresults.under$Size >= 6 & goresults.under$Count >= 6  , ]
+goresults.under <- goresults.under[order(goresults.under$OddsRatio, decreasing=TRUE), ]
 head(goresults.under, n=6)
 ```
 
@@ -659,7 +660,7 @@ rownames(goresults) <- 1:nrow(goresults)
 ```{r printing latex table, eval=TRUE}
 
 library(xtable)
-xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|") 
+xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|")
 print(xtab, type="latex")
 
 ```
@@ -684,10 +685,10 @@ c2BroadSets
 length(c2BroadSets)
 head(names(c2BroadSets))
 
-# Since for PROSTATE index there is one KEGG, we choose only unique values. 
-c2BroadSets <- c2BroadSets[unique(c(grep("^KEGG", names(c2BroadSets)), 
+# Since for PROSTATE index there is one KEGG, we choose only unique values.
+c2BroadSets <- c2BroadSets[unique(c(grep("^KEGG", names(c2BroadSets)),
                                     grep("PROSTATE", names(c2BroadSets)),
-                                    grep("^REACTOME", names(c2BroadSets)), 
+                                    grep("^REACTOME", names(c2BroadSets)),
                                     grep("^BIOCARTA", names(c2BroadSets))))]
 
 c2BroadSets
@@ -698,7 +699,7 @@ gsc
 Im <- incidence(gsc)
 dim(Im)
 Im[1:2, 1:10]
-Im <- Im[, colnames(Im) %in% rownames(prac.se.dupl)] # by a mask 
+Im <- Im[, colnames(Im) %in% rownames(prac.se.dupl)] # by a mask
 dim(Im)
 
 prac.se.GSEA <- prac.se.dupl[colnames(Im), ]
@@ -860,7 +861,7 @@ limma::vennDiagram(in.all,circle.col = c("red","blue"))
 
 
 
-# Session Info 
+# Session Info
 
 ```{r session info}
 sessionInfo()
