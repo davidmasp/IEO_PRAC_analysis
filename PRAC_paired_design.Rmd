@@ -502,7 +502,7 @@ We can see that some of the chromosome mentioned before, are overexpressed in tu
 In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection. 
 
 
-```{r, echo=FALSE, eval = TRUE}
+```{r, echo=FALSE, eval = FALSE}
 library(Gviz)
 
 gtrack <- GenomeAxisTrack()
