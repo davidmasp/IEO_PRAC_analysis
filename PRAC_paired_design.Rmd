@@ -36,7 +36,7 @@ prac.se <- readRDS("data/sePRAD.rds")
 
 ```
 
-# Quality Assesment
+#Experimental Design
 
 The original data set obtained from @Rahman15112015 have the following
 distribution of samples. 
@@ -68,6 +68,7 @@ table(colData(prac.se.dupl)$type)
 
 The selected samples are 50 normal and 50 tumor. Most of the Normal samples had a paired tumor sample but 2. We proceed in the normalization of the data using the `DGE` package @Robinson2010 .
 
+#Quality Assessment and Normalization
 ```{r Normalizing, warning=FALSE}
 
 prac.dge <- DGEList(counts = assays(prac.se.dupl)$counts, 
@@ -169,7 +170,7 @@ for (i in 1:ncol(setmp)) {
 
 From the plots above, we see that in figure 1 the distribution of library size presents some stratifiction, with values of 20 M and a mean of 40 M. This changes in lib size will be compensated by the normalization. In figure 2, we observe that the distribution of expression is the expressed, identical in both graphs. Finally, in figure 3 and 4 we present the MA plots, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
 
-## Batch effect analysis
+#Batch Effect Identification
 
 From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples.
 
