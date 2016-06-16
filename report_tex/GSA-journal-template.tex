@@ -107,10 +107,17 @@ Despite there was a peak of high library size in the library size distribution, 
 When plotting the log ratio - mean average plots (MA-plots) for all samples, it was noticed that the normalization procedure succeeded. Any deviation was considered as non-significance.
 
 \subsection*{Batch Effect Identification}
-Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumour/normal comparison (see SM). To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining the 42 tumour/normal samples.
+Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumour/normal comparison (see SM). 
+
+To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining the 42 tumour/normal samples.
 
 \subsection*{Differential Expression Analysis}
-Talk about p-value
+
+A design matrix was built with sample type (tumor/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \citep{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \citep{GSVA}. 
+
+With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with \cite{limma} package. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were caculated with empirical Bayes statistics from \cite{limma} package. P-values were adjusted with FDR measurements and cutoff was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from \cite{limma} package (see SM). Top DE hits were visualized with Gviz package. \textcolor{red}{Creieu que cal aixo final?}
+
+
 \subsection*{Functional Enrichment}
 
 
