@@ -1,15 +1,15 @@
 @article{Rahman15112015,
-author = {Rahman, Mumtahena and Jackson, Laurie K. and Johnson, W. Evan and Li, Dean Y. and Bild, Andrea H. and Piccolo, Stephen R.}, 
+author = {Rahman, Mumtahena and Jackson, Laurie K. and Johnson, W. Evan and Li, Dean Y. and Bild, Andrea H. and Piccolo, Stephen R.},
 title = {Alternative preprocessing of RNA-Sequencing data in The Cancer Genome Atlas leads to improved analysis results},
-volume = {31}, 
-number = {22}, 
-pages = {3666-3672}, 
-year = {2015}, 
-doi = {10.1093/bioinformatics/btv377}, 
-abstract ={Motivation: The Cancer Genome Atlas (TCGA) RNA-Sequencing data are used widely for research. TCGA provides ‘Level 3’ data, which have been processed using a pipeline specific to that resource. However, we have found using experimentally derived data that this pipeline produces gene-expression values that vary considerably across biological replicates. In addition, some RNA-Sequencing analysis tools require integer-based read counts, which are not provided with the Level 3 data. As an alternative, we have reprocessed the data for 9264 tumor and 741 normal samples across 24 cancer types using the Rsubread package. We have also collated corresponding clinical data for these samples. We provide these data as a community resource.Results: We compared TCGA samples processed using either pipeline and found that the Rsubread pipeline produced fewer zero-expression genes and more consistent expression levels across replicate samples than the TCGA pipeline. Additionally, we used a genomic-signature approach to estimate HER2 (ERBB2) activation status for 662 breast-tumor samples and found that the Rsubread data resulted in stronger predictions of HER2 pathway activity. Finally, we used data from both pipelines to classify 575 lung cancer samples based on histological type. This analysis identified various non-coding RNA that may influence lung-cancer histology.Availability and implementation: The RNA-Sequencing and clinical data can be downloaded from Gene Expression Omnibus (accession number GSE62944). Scripts and code that were used to process and analyze the data are available from https://github.com/srp33/TCGA_RNASeq_Clinical.Contact: stephen_piccolo@byu.edu or andreab@genetics.utah.eduSupplementary information: Supplementary material is available at Bioinformatics online.}, 
-URL = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.abstract}, 
-eprint = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.full.pdf+html}, 
-journal = {Bioinformatics} 
+volume = {31},
+number = {22},
+pages = {3666-3672},
+year = {2015},
+doi = {10.1093/bioinformatics/btv377},
+abstract ={Motivation: The Cancer Genome Atlas (TCGA) RNA-Sequencing data are used widely for research. TCGA provides ‘Level 3’ data, which have been processed using a pipeline specific to that resource. However, we have found using experimentally derived data that this pipeline produces gene-expression values that vary considerably across biological replicates. In addition, some RNA-Sequencing analysis tools require integer-based read counts, which are not provided with the Level 3 data. As an alternative, we have reprocessed the data for 9264 tumor and 741 normal samples across 24 cancer types using the Rsubread package. We have also collated corresponding clinical data for these samples. We provide these data as a community resource.Results: We compared TCGA samples processed using either pipeline and found that the Rsubread pipeline produced fewer zero-expression genes and more consistent expression levels across replicate samples than the TCGA pipeline. Additionally, we used a genomic-signature approach to estimate HER2 (ERBB2) activation status for 662 breast-tumor samples and found that the Rsubread data resulted in stronger predictions of HER2 pathway activity. Finally, we used data from both pipelines to classify 575 lung cancer samples based on histological type. This analysis identified various non-coding RNA that may influence lung-cancer histology.Availability and implementation: The RNA-Sequencing and clinical data can be downloaded from Gene Expression Omnibus (accession number GSE62944). Scripts and code that were used to process and analyze the data are available from https://github.com/srp33/TCGA_RNASeq_Clinical.Contact: stephen_piccolo@byu.edu or andreab@genetics.utah.eduSupplementary information: Supplementary material is available at Bioinformatics online.},
+URL = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.abstract},
+eprint = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.full.pdf+html},
+journal = {Bioinformatics}
 }
 
 
@@ -60,6 +60,7 @@ journal = {Bioinformatics}
     pages = {e108}
  }
 
+<<<<<<< HEAD
 @Article{GOstats,
     author = {S Falcon and R Gentleman},
     title = {Using {G}{O}stats to test gene lists for {G}{O} term association.},
@@ -110,4 +111,18 @@ journal = {Bioinformatics}
     author = {Martin Morgan and Seth Falcon and Robert Gentleman},
     year = {2016},
     note = {R package version 1.34.0}
+}
+
+@article{Robinson01012010,
+	author = {Robinson, Mark D. and McCarthy, Davis J. and Smyth, Gordon K.},
+	title = {edgeR: a Bioconductor package for differential expression analysis of digital gene expression data},
+	volume = {26},
+	number = {1},
+	pages = {139-140},
+	year = {2010},
+	doi = {10.1093/bioinformatics/btp616},
+	abstract ={Summary: It is expected that emerging digital gene expression (DGE) technologies will overtake microarray technologies in the near future for many functional genomics applications. One of the fundamental data analysis tasks, especially for gene expression studies, involves determining whether there is evidence that counts for a transcript or exon are significantly different across experimental conditions. edgeR is a Bioconductor software package for examining differential expression of replicated count data. An overdispersed Poisson model is used to account for both biological and technical variability. Empirical Bayes methods are used to moderate the degree of overdispersion across transcripts, improving the reliability of inference. The methodology can be used even with the most minimal levels of replication, provided at least one phenotype or experimental condition is replicated. The software may have other applications beyond sequencing data, such as proteome peptide count data.Availability: The package is freely available under the LGPL licence from the Bioconductor web site (http://bioconductor.org).Contact: mrobinson@wehi.edu.au},
+	URL = {http://bioinformatics.oxfordjournals.org/content/26/1/139.abstract},
+	eprint = {http://bioinformatics.oxfordjournals.org/content/26/1/139.full.pdf+html},
+	journal = {Bioinformatics}
 }
