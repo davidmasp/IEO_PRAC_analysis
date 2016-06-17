@@ -1,7 +1,7 @@
 ---
 title: "Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma - Paired Design"
 author: "PRAC Team: A. Auladell, J. Martí & D. Mas"
-date: "1 de junio de 2016"
+date: Sys.Date()
 output:
   html_document:
     mathjax: local
@@ -828,7 +828,7 @@ boxplot(GSexpr[DEgs.under[1], ] ~ prac.se.dupl$type, main=DEgs.under[1], las=1, 
 boxplot(GSexpr[DEgs.under[2], ] ~ prac.se.dupl$type, main=DEgs.under[2], las=1, cex.axis=2)
 ```
 
-```{r, fig.height=15, fig.width=21 }
+```{r ClusteringGSVA, fig.height=15, fig.width=21 }
 DEgeneSets <- tt[1:30, , drop=FALSE]
 dim(DEgeneSets)
 GSVAsco <- GSexpr[rownames(DEgeneSets), ]
