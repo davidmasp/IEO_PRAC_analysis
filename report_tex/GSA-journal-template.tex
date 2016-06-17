@@ -152,7 +152,7 @@ After computing the multiple linear model test, and the eBayes test \cite{limma}
 As there are many variables that can affect the expression data, and not all of them might be taken into account in the analysis or even taken into account by the design of the original project, it was decided that the best option was to use surrogate variable analysis \cite{leek2007capturing}, which is implemented in the SVA package \cite{SVA}.
 
 
-After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plots were performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
+After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plot (\ref{fig:volcano}) was performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
 
 Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
 
@@ -162,7 +162,7 @@ Genes out of the area formed by minimum levels of signification (depends on FDR)
 \includegraphics[width=\linewidth]{Volcano.eps}
 \caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
 }
-\label{fig:Volcano plot}
+\label{fig:volcano}
 \end{figure}
 
 Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
@@ -170,7 +170,7 @@ Despite that there are lots of genes that fall out of the rejection zones, in fa
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
 \item chr2:101 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89}{SNORD89} which is a small nucleolar RNA.
 \item chr3:385 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A}{SCN5A} which is a sodium channel voltage gated V Type.
-\item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which is an oxyreductase mitocondrial protein (does not appear on RefSeq).
+\item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which seems to mitocondrial protein (but does not appear on RefSeq).
 \item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
 \end{itemize}
 
@@ -185,6 +185,8 @@ AP002884.2 seems to be an unmapped transcript. A more accurated display of the r
 We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
 
 CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
+
+It can be concluded, thus, that the main over-expressed genes in tumour samples are those related with signalling, metabolism and transcription modulation; fields that are usually related to carcinogenic processes.
 
 \subsubsection*{Functional Enrichment}
 
