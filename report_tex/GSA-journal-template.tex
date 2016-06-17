@@ -138,7 +138,7 @@ The GSVA package \cite{GSVA} was used to define the set expression values. Then,
 
 
 \section*{Results}
-\subsubsection*{Differential Expression Analysis}\\
+\subsubsection*{Differential Expression Analysis}
 
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
 
@@ -154,6 +154,15 @@ After defining the null model (bcr patient code variable, which corrects by pati
 
 Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{Volcano.eps}
+\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
+}
+\label{fig:Volcano plot}
+\end{figure}
+
 Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
 \begin{itemize}
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
@@ -162,6 +171,18 @@ Despite that there are lots of genes that fall out of the rejection zones, in fa
 \item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which is an oxyreductase mitocondrial protein (does not appear on RefSeq).
 \item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
 \end{itemize}
+
+EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumour types, between them prostate cancer \cite{proteinatlas}.
+
+SNORD89 is related with several cancer-related pathways:  anaplastic large cell lymphomas, lymphoma (NHL) cell lines, metastasis and death cell in colon cancer, prostate cancer, ovarian adenocarcinomas, etc \cite{tcng}.
+
+SCN5A is a voltage-gated sodium channel (VGSC), a group that is known to be related with metastatic potential of breast cancer, prostate cancer and lung cancer between others \cite{Nelson2015}.
+
+AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have and strong relation with all kinds of cancer \cite{proteinatlas}.
+
+We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
+
+CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
 
 \subsubsection*{Functional Enrichment}
 ADRIA
