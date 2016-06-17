@@ -60,12 +60,12 @@ In addition to the guidelines provided in the example abstract above, your abstr
 
 
 \section*{Introduction}
-Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer disease (following lung cancer), and one with the highest prevalences. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), it is not frequent. The mean of diagnosis is around 66 years old \citep{prostatestatistics}.
+Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer disease (following lung cancer), and one with the highest prevalences. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), it is not frequent. The mean of diagnosis is around 66 years old \cite{prostatestatistics}.
 
 For patients whose cancer has spread, their survival time is usually one to three years. It was estimated that for 2011, 240,890 men would be diagnosed and 33,720 would die from prostate cancer.
 
 
-Since the first publication of the human genome, multiple international projects have been carried in order to study the genetic bases of the this pathology. One of the most prominent is The Cancer Genome Atlas Project (TCGA) \citep{tgca}. Recently, part of its information was released with part of the original data \cite{Rahman15112015}. TCGA established the following points:
+Since the first publication of the human genome, multiple international projects have been carried in order to study the genetic bases of the this pathology. One of the most prominent is The Cancer Genome Atlas Project (TCGA) \cite{tgca}. Recently, part of its information was released with part of the original data \cite{Rahman15112015}. TCGA established the following points:
 
 \begin{itemize}
 \item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenes drivers:
@@ -107,14 +107,21 @@ Despite there was a peak of high library size in the library size distribution, 
 When plotting the log ratio - mean average plots (MA-plots) for all samples, it was noticed that the normalization procedure succeeded. Any deviation was considered as non-significance.
 
 \subsection*{Batch Effect Identification}
-Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumour/normal comparison (see SM). To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining the 42 tumour/normal samples.
+Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumour/normal comparison (see SM).
+
+To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining 42 tumour and 42 normal samples.
 
 \subsection*{Differential Expression Analysis}
-Talk about p-value
+
+A design matrix was built with sample type (tumor/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \cite{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \cite{GSVA}.
+
+With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with \cite{limma} package. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were caculated with empirical Bayes statistics from \cite{limma} package. P-values were adjusted with FDR measurements and cutoff was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from \cite{limma} package (see SM). Top DE hits were visualized with Gviz package. \textcolor{red}{Creieu que cal aixo final?}
+
+
 \subsection*{Functional Enrichment}
 
 
-The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \citep{GOstats} was used. As parameters, a p-value cutoff of 0.05 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.05 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
 
 The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results.
 
@@ -122,75 +129,95 @@ The same analysis have been also performed in the DE over-expressed and under-ex
 \subsection*{Gene Set expression analysis}
 In order to analyse differential expression in gene sets and not uniquely at the gene level 2 different approaches have been used, a Gene Set Enrichment Analysis (GSEA) and a Gene Set Variation Analysis (GSVA).
 
-For both GSEA and GSVA the gene sets from the GSVAdata package \citep{GSVAdata} have been selected. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \citep{kanehisa2016kegg}, Reactome \citep{fabregat2016reactome} and   Biocarta \citep{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
+For both GSEA and GSVA the gene sets from the GSVAdata package \cite{GSVAdata} have been selected. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \cite{kanehisa2016kegg}, Reactome \cite{fabregat2016reactome} and   Biocarta \cite{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
 
 
-The package GSEABase \citep{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes.
+The package GSEABase \cite{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes.
 
-The GSVA package \citep{GSVA} was used to define the set expression values. Then, limma  \citep{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \citep{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
+The GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \cite{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
 
 
 \section*{Results}
 \subsubsection*{Differential Expression Analysis}
-JOAN, gradient de significacincia. agfem aquests pq ens en podem fiar més que els altres pq tenen més escore,pero pas x rs mes
+
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
+
 \begin{itemize}
 \item 2168 genes are under-expressed in tumour samples compared to normal samples.
 \item 7569 genes have no significant difference in their expression between sample types.
 \item 2127 genes are over-expressed in tumour samples compared to normal samples.
 \end{itemize}
+
+As there are many variables that can affect the expression data, and not all of them might be taken into account in the analysis or even taken into account by the design of the original project, it was decided that the best option was to use surrogate variable analysis \cite{leek2007capturing}, which is implemented in the SVA package \cite{SVA}.
+
+
+After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plots were performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
+
+Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
+
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{Volcano.eps}
+\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
+}
+\label{fig:Volcano plot}
+\end{figure}
+
+Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
+\begin{itemize}
+\item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
+\item chr2:101 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89}{SNORD89} which is a small nucleolar RNA.
+\item chr3:385 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A}{SCN5A} which is a sodium channel voltage gated V Type.
+\item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which is an oxyreductase mitocondrial protein (does not appear on RefSeq).
+\item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
+\end{itemize}
+
+EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumour types, between them prostate cancer \cite{proteinatlas}.
+
+SNORD89 is related with several cancer-related pathways:  anaplastic large cell lymphomas, lymphoma (NHL) cell lines, metastasis and death cell in colon cancer, prostate cancer, ovarian adenocarcinomas, etc \cite{tcng}.
+
+SCN5A is a voltage-gated sodium channel (VGSC), a group that is known to be related with metastatic potential of breast cancer, prostate cancer and lung cancer between others \cite{Nelson2015}.
+
+AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have and strong relation with all kinds of cancer \cite{proteinatlas}.
+
+We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
+
+CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
+
 \subsubsection*{Functional Enrichment}
 ADRIA
 \subsubsection*{Gene set expression analysis}
 DAVID
 
 
-\paragraph{Under-expression of Endogenous Sterols } The genes in this gene set, 
+\paragraph{Under-expression of Endogenous Sterols } The genes in this gene set,
+
+
+Purament el resultat
 
 
 \section*{Discussion}
 
 Creure'ns o no els resultats
 
-
-\section*{Examples of Article Components}
-\label{sec:examples}
-
-The sections below show examples of different header levels, which you can use in the primary sections of the manuscript (Results, Discussion, etc.) to organize your content.
-
-\section*{First level section header}
-
-Use this level to group two or more closely related headings in a long article.
-
-\subsection*{Second level section header}
-
-Second level section text.
-
-\subsubsection*{Third level section header:}
-
-Third level section text. These headings may be numbered, but only when the numbers must be cited in the text.
-
 \section*{Figures and Tables}
 
 Figures and Tables should be labelled and referenced in the standard way using the \verb|\label{}| and \verb|\ref{}| commands.
 
-\subsection*{Sample Figure}
-
-Figure \ref{fig:spectrum} shows an example figure.
-
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{Custering}
-\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumor samples and the bottom-right contains most of the Normal samples. 
+\includegraphics[width=\linewidth]{Clustering.eps}
+\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples.
 }%
 \label{fig:Clustering}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{CusteringGSVA}
+\includegraphics[width=\linewidth]{ClusteringGSVA.eps}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.
-}%
+}
 \label{fig:ClusteringGSVA}
 \end{figure}
 
@@ -209,36 +236,18 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
- \begin{tabular}{l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+ \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+  \hline
+ & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
+  \hline
+1 & GO:0032891 & 0.01 & Inf & 4.30 &   8 &   8 & negative regulation of organic acid transport & HRH3, ABAT, AGTR2, AKT2, ACSL4, IL1B, TRH, CYP4F2 \\
+  2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\
+  3 & GO:0051016 & 0.02 & 7.75 & 5.38 &   9 &  10 & barbed-end actin filament capping & TWF2, ADD1, EPS8, FAM21C, TWF1, VIL1, CAPG, CAPZB, CAPZA3 \\
+  4 & GO:0010954 & 0.03 & 6.88 & 4.84 &   8 &   9 & positive regulation of protein processing & ADAM8, F12, HPN, ASTL, PHB, PLGRKT, CNTN2, CLEC3B \\
+  5 & GO:0022401 & 0.03 & 6.88 & 4.84 &   8 &   9 & negative adaptation of signaling pathway & ADM, ADRB2, ADRBK1, DNM1, DNM2, DRD3, HTR2B, CAMK2B \\
    \hline
-  & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
-   \hline
- 1 & GO:1902547 & 0.00 & Inf & 2.19 &   6 &   6 & regulation of cellular response to vascular endothelial growth factor stimulus & DAB2IP, DCN, ADGRA2, HRG, ADAMTS3, CD63 \\
-   2 & GO:0045078 & 0.00 & 12.21 & 2.92 &   7 &   8 & positive regulation of interferon-gamma biosynthetic process & EBI3, CEBPG, ZFPM1, IL27, IL12B, IL21, CD276 \\
-   3 & GO:2001044 & 0.00 & 12.21 & 2.92 &   7 &   8 & regulation of integrin-mediated signaling pathway & CTNNA1, EMP2, LIMS2, PRKD1, PHACTR4, ITGB1BP1, CD63 \\
-   4 & GO:0002115 & 0.01 & 10.47 & 2.55 &   6 &   7 & store-operated calcium entry & SPINK1, ORAI2, CRACR2A, ORAI1, CD84, HOMER1 \\
-   5 & GO:0016093 & 0.01 & 10.47 & 2.55 &   6 &   7 & polyprenol metabolic process & NUS1, DPAGT1, ALG5, AKR1B10, AKR1C3, DPM2 \\
-    \hline
  \end{tabular}
  \label{tab:GOenrichment}
-\end{tableminipage}
-\end{table*}
-
-
-\begin{table*}[htbp]
-\centering
-\caption{\bf Students and their grades}
-\begin{tableminipage}{\textwidth}
-\begin{tabularx}{\textwidth}{XXXX}
-\hline
-Student & Grade\footnote{This is an example of a footnote in a table. Lowercase, superscript italic letters (a, b, c, etc.) are used by default. You can also use *, **, and *** to indicate conventional levels of statistical significance, explained below the table.} & Rank & Notes \\
-\hline
-Alice & 82\% & 1 & Performed very well.\\
-Bob & 65\% & 3 & Not up to his usual standard.\\
-Charlie & 73\% & 2 & A good attempt.\\
-\hline
-\end{tabularx}
-  \label{tab:shape-functions}
 \end{tableminipage}
 \end{table*}
 

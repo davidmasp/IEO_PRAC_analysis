@@ -30,6 +30,22 @@ eprint = {http://bioinformatics.oxfordjournals.org/content/31/22/3666.full.pdf+h
 journal = {Bioinformatics}
 }
 
+@Article{voom,
+author="Law, Charity W.
+and Chen, Yunshun
+and Shi, Wei
+and Smyth, Gordon K.",
+title="voom: precision weights unlock linear model analysis tools for RNA-seq read counts",
+journal="Genome Biology",
+year="2014",
+volume="15",
+number="2",
+pages="1--17",
+abstract="New normal linear modeling strategies are presented for analyzing read counts from RNA-seq experiments. The voom method estimates the mean-variance relationship of the log-counts, generates a precision weight for each observation and enters these into the limma empirical Bayes analysis pipeline. This opens access for RNA-seq analysts to a large body of methodology developed for microarrays. Simulation studies show that voom performs as well or better than count-based RNA-seq methods even when the data are generated according to the assumptions of the earlier methods. Two case studies illustrate the use of linear modeling and gene set testing methods.",
+issn="1474-760X",
+doi="10.1186/gb-2014-15-2-r29",
+url="http://dx.doi.org/10.1186/gb-2014-15-2-r29"
+}
 
 @misc{prostatestatistics,
  author = {cancer.org, American Cancer Society},
@@ -39,6 +55,21 @@ journal = {Bioinformatics}
   urldate = {2016-06-13}
 }
 
+
+@misc{proteinatlas,
+ author = {proteinatlas.org, Human Protein Atlas},
+  title = {Key statistics for prostate cancer},
+  year = {2016-04-11},
+  url = {http://www.cancer.org/cancer/prostatecancer/detailedguide/prostate-cancer-key-statistics},
+  urldate = {2016-06-17}
+}
+
+@misc{tcng,
+ author = {tcng.hgc.jp, Cancer Network Galaxy},
+  year = {2016-03-14},
+  url = {http://tcng.hgc.jp/index.html},
+  urldate = {2016-06-17}
+}
 
 @misc{tgca,
  author = {National Cancer Institute, National Human Genome Research Institute},
@@ -222,4 +253,63 @@ url = {https://CRAN.R-project.org/package=pheatmap}
     isbn = {978-1-4939-3578-9},
     doi = {10.1007/978-1-4939-3578-9_16},
     url = {http://dx.doi.org/10.1007/978-1-4939-3578-9_16}
+}
+
+@article{Leek2007,
+abstract = {It has unambiguously been shown that genetic, environmental, demographic, and technical factors may have substantial effects on gene expression levels. In addition to the measured variable(s) of interest, there will tend to be sources of signal due to factors that are unknown, unmeasured, or too complicated to capture through simple models. We show that failing to incorporate these sources of heterogeneity into an analysis can have widespread and detrimental effects on the study. Not only can this reduce power or induce unwanted dependence across genes, but it can also introduce sources of spurious signal to many genes. This phenomenon is true even for well-designed, randomized studies. We introduce "surrogate variable analysis" (SVA) to overcome the problems caused by heterogeneity in expression studies. SVA can be applied in conjunction with standard analysis techniques to accurately capture the relationship between expression and any modeled variables of interest. We apply SVA to disease class, time course, and genetics of gene expression studies. We show that SVA increases the biological accuracy and reproducibility of analyses in genome-wide expression studies.},
+author = {Leek, Jeffrey T and Storey, John D},
+doi = {10.1371/journal.pgen.0030161},
+file = {:Users/davidmasp/Documents/Mendeley/Leek, Storey/2007/Leek, Storey{\_}2007{\_}PLoS genetics.pdf:pdf},
+isbn = {1553-7404 (Electronic)$\backslash$n1553-7390 (Linking)},
+issn = {15537390},
+journal = {PLoS Genetics},
+number = {9},
+pages = {1724--1735},
+pmid = {17907809},
+title = {{Capturing heterogeneity in gene expression studies by surrogate variable analysis}},
+volume = {3},
+year = {2007}
+}
+
+@article{SVA,
+abstract = {Heterogeneity and latent variables are now widely recognized as major sources of bias and variability in high-throughput experiments. The most well-known source of latent variation in genomic experiments are batch effects-when samples are processed on different days, in different groups or by different people. However, there are also a large number of other variables that may have a major impact on high-throughput measurements. Here we describe the sva package for identifying, estimating and removing unwanted sources of variation in high-throughput experiments. The sva package supports surrogate variable estimation with the sva function, direct adjustment for known batch effects with the ComBat function and adjustment for batch and latent variables in prediction problems with the fsva function.},
+author = {Leek, Jeffrey T and Johnson, W Evan and Parker, Hilary S and Jaffe, Andrew E and Storey, John D},
+doi = {10.1093/bioinformatics/bts034},
+file = {:Users/davidmasp/Documents/Mendeley/Leek et al/2012/Leek et al.{\_}2012{\_}Bioinformatics.pdf:pdf},
+isbn = {1367480314602059},
+issn = {13674803},
+journal = {Bioinformatics},
+month = {mar},
+number = {6},
+pages = {882--883},
+pmid = {22257669},
+title = {{The SVA package for removing batch effects and other unwanted variation in high-throughput experiments}},
+url = {http://bioinformatics.oxfordjournals.org/cgi/doi/10.1093/bioinformatics/bts034},
+volume = {28},
+year = {2012}
+}
+
+@Article{Nelson2015,
+author="Nelson, Michaela and Yang, Ming and Dowle, Adam A. and Thomas, Jerry R. and Brackenbury, William J.",
+title="The sodium channel-blocking antiepileptic drug phenytoin inhibits breast tumour growth and metastasis",
+journal="Molecular Cancer",
+year="2015",
+volume="14",
+number="1",
+pages="1--7",
+abstract="Voltage-gated Na+ channels (VGSCs) are heteromeric protein complexes containing pore-forming $\alpha$ subunits and smaller, non-pore-forming $\beta$ subunits. VGSCs are classically expressed in electrically excitable cells, e.g. neurons. VGSCs are also expressed in tumour cells, including breast cancer (BCa) cells, where they enhance cellular migration and invasion. However, despite extensive work defining in detail the molecular mechanisms underlying the expression of VGSCs and their pro-invasive role in cancer cells, there has been a notable lack of clinically relevant in vivo data exploring their value as potential therapeutic targets.",
+issn="1476-4598",
+doi="10.1186/s12943-014-0277-x",
+url="http://dx.doi.org/10.1186/s12943-014-0277-x"
+}
+
+@article{oncometabolites,
+  title={Oncometabolites: linking altered metabolism with cancer},
+  author={Yang, Ming and Soga, Tomoyoshi and Pollard, Patrick J},
+  journal={The Journal of clinical investigation},
+  volume={123},
+  number={9},
+  pages={3652--3658},
+  year={2013},
+  publisher={Am Soc Clin Investig}
 }
