@@ -443,15 +443,17 @@ abline(v=1)
 abline(v=-1)
 
 
-ggvolcano <- function(tt,FDR,hl = 5,title = element_blank(), fc = 1){
+ggvolcano <- function(tt,FDR,hll = 3, hlr = 3,title = element_blank(), fc = 1){
   ggplot(tt, aes(logFC, B,
   colour = ifelse(B>-log10(FDR) & (logFC < -fc |logFC > fc) ,"red","black" ))) +
   geom_point() +
   ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+
   geom_hline(yintercept =-log10(FDR),
              col = "red") +
-  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc | tt$logFC > fc),][1:hl,],
-  aes(logFC, B, label=symbol),angle = 25, vjust = 0) +   
+  geom_text(data= tt[order(tt$B,decreasing = TRUE),][(tt$logFC < -fc ),][1:hll,],
+  aes(logFC, B, label=symbol),angle = 25, vjust = -1) +
+  geom_text(data= tt[order(tt$B,decreasing = TRUE),][( tt$logFC > fc),][1:hlr,],
+  aes(logFC, B, label=symbol),angle = 25, vjust = -1) +
   guides(colour=FALSE) +
   theme(plot.title = element_text(size = rel(3)))
 }
@@ -665,8 +667,9 @@ print(xtab, type="latex")
 
 ```
 
+# Gese Set Expression Analysis
 
-### GSEA
+## GSEA
 
 ```{r loading packages, results='hide'}
 library(GSEABase)
@@ -741,10 +744,34 @@ plotGS <- function(se, gs, pheno, ...) {
   abline(a=0, b=1, lwd=2, col="red")
 }
 
+geneSetTable <- function(rank.element, n=4, SE=prac.se.dupl){
+  gn <- data.frame(EntrezId = rownames(prac.se.dupl),rowData(prac.se.dupl))
+  geneS <- c()
+  genes <- c()
+  for (i in 1:n){
+    genesGS <- colnames(Im)[which(Im[names(rank.element)[i], ] == 1)]
+    genesGS.sym <- paste(gn[gn$EntrezId %in% genesGS,]$symbol, collapse = ', ')
+    geneS <- c(geneS,rank.element[i])
+    genes <- c(genes,genesGS.sym)
+  }
+  #print(geneS)
+  #print(genes)
+  result.df <- data.frame(geneS,genes)
+  colnames(result.df) <- c("Z-value","Genes")
+  return(data.frame(geneS,genes))
+}
+
+xtab <- xtable(geneSetTable(rnkGS,n=5), align="l|c|c|")
+print(xtab, type="latex")
+
 genesGS1 <- colnames(Im)[which(Im[names(rnkGS)[1], ] == 1)]
+
 genesGS2 <- colnames(Im)[which(Im[names(rnkGS)[2], ] == 1)]
+
 genesGS3 <- colnames(Im)[which(Im[names(rnkGS)[3], ] == 1)]
+
 genesGS4 <- colnames(Im)[which(Im[names(rnkGS)[4], ] == 1)]
+
 par(mfrow=c(1, 2), mar=c(4, 5, 3, 4))
 plotGS(prac.se.GSEA, genesGS1, "type", main=names(rnkGS)[1], cex.lab=2, las=1)
 plotGS(prac.se.GSEA, genesGS2, "type", main=names(rnkGS)[2], cex.lab=2, las=1)
@@ -789,7 +816,7 @@ par(mfrow=c(1, 1))
 
 tt.under <- tt[tt$logFC > 0,]
 
-ggvolcano(tt,FDRcutoff, fc=log2(1.25), hl=10, title = "Gene Set DE - GSVA")
+ggvolcano(tt,FDRcutoff, fc=log2(1.25), hll=2, hlr = 2, title = "Gene Set DE - GSVA")
 
 plot(tt$logFC, -log10(tt$P.Value), xlab="Log2 fold-change", ylab="-log10 P-value",
      pch=".", cex=5, col=grey(0.75), cex.axis=1.2, cex.lab=1.5, las=1)
