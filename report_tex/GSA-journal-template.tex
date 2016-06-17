@@ -138,13 +138,29 @@ The GSVA package \citep{GSVA} was used to define the set expression values. Then
 
 
 \section*{Results}
-\subsubsection*{Differential Expression Analysis}
-JOAN, gradient de significacincia. agfem aquests pq ens en podem fiar més que els altres pq tenen més escore,pero pas x rs mes
+\subsubsection*{Differential Expression Analysis}\\
+
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
+
 \begin{itemize}
 \item 2168 genes are under-expressed in tumour samples compared to normal samples.
 \item 7569 genes have no significant difference in their expression between sample types.
 \item 2127 genes are over-expressed in tumour samples compared to normal samples.
+\end{itemize}
+
+As there are many variables that can affect the expression data, and not all of them might be taken into account in the analysis or even taken into account by the design of the original project, it was decided that the best option was to use surrogate variable analysis \cite{leek2007capturing}, which is implemented in the SVA package \cite{SVA}.
+
+After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plots were performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
+
+Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
+
+Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
+\begin{itemize}
+\item chr1:225 \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} - ephrin receptor (development of the Nervous System)
+\item chr2:101 \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89}{SNORD89} - Small Nucleolar RNA
+\item chr3:385 \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A}{SCN5A} - Sodium Channel Voltage gated V Type
+\item chr11:11 \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} - Oxyreductase Mitocondrial Protein (does not appear on RefSeq)
+\item chrX:492 \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} - Calcium Channel Voltage dependant L Type
 \end{itemize}
 \subsubsection*{Functional Enrichment}
 ADRIA
@@ -186,15 +202,15 @@ Figure \ref{fig:spectrum} shows an example figure.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{Clustering}
-\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumor samples and the bottom-right contains most of the Normal samples. 
+\includegraphics[width=\linewidth]{Clustering.eps}
+\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples. 
 }%
 \label{fig:Clustering}
 \end{figure}
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{ClusteringGSVA}
+\includegraphics[width=\linewidth]{ClusteringGSVA.eps}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.
 }
 \label{fig:ClusteringGSVA}
