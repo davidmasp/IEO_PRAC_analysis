@@ -121,7 +121,7 @@ With the design matrix and voom logCPM values, Multiple linear regression (MLR) 
 \subsection*{Functional Enrichment}
 
 
-The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.05 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
 
 The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results.
 
@@ -186,7 +186,13 @@ We suggest that in the case of AP002884.2 there has been an error in the mapping
 CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
 
 \subsubsection*{Functional Enrichment}
-ADRIA
+
+From the 11143 gene ontology (GO) terms for biological processes (BP) tested, only 21 presented significant results (p < 0.01). The top 5 results in odds ratio decreasing order are listed in Table \ref{tab:GOenrichment}. 
+
+The first result is related with processes that modulate the frequency, rate or extent of astrocyte differentiation (GO:0048710). 
+
+One consideration about the Gene Ontology is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis change considerably. This makes the assay subjective for each researcher, making the results quite bad. It is for this reason that our main functional analysis will be based in GSEA / GSVA results. 
+
 \subsubsection*{Gene set expression analysis}
 DAVID
 
@@ -236,15 +242,15 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
- \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+ \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{4.3cm}|}
   \hline
  & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
   \hline
-1 & GO:0032891 & 0.01 & Inf & 4.30 &   8 &   8 & negative regulation of organic acid transport & HRH3, ABAT, AGTR2, AKT2, ACSL4, IL1B, TRH, CYP4F2 \\
-  2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\
-  3 & GO:0051016 & 0.02 & 7.75 & 5.38 &   9 &  10 & barbed-end actin filament capping & TWF2, ADD1, EPS8, FAM21C, TWF1, VIL1, CAPG, CAPZB, CAPZA3 \\
-  4 & GO:0010954 & 0.03 & 6.88 & 4.84 &   8 &   9 & positive regulation of protein processing & ADAM8, F12, HPN, ASTL, PHB, PLGRKT, CNTN2, CLEC3B \\
-  5 & GO:0022401 & 0.03 & 6.88 & 4.84 &   8 &   9 & negative adaptation of signaling pathway & ADM, ADRB2, ADRBK1, DNM1, DNM2, DRD3, HTR2B, CAMK2B \\
+ 1 & GO:0048710 & 0.00 & 11.20 & 7.53 &  13 &  14 & regulation of astrocyte differentiation & DAB1, EPHA4, F2, FGFR3, ATF5, PRPF19, BIN1, HES1, IL1B, NTRK3, SERPINE2, CNTN2, NR2E1 \\ 
+   2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\ 
+   3 & GO:0032309 & 0.01 & 6.03 & 8.60 &  14 &  16 & icosanoid secretion & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SYK, CYP4F2, TNFSF11 \\ 
+   4 & GO:1901571 & 0.01 & 4.31 & 9.68 &  15 &  18 & fatty acid derivative transport & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SLCO2A1, SYK, CYP4F2, TNFSF11 \\ 
+   5 & GO:0043966 & 0.01 & 3.45 & 13.45 &  20 &  25 & histone H3 acetylation & TRIM16, TAF6L, WDR5, CHEK1, KAT7, SGF29, DR1, BRD4, KAT6B, WBP2, SIN3A, BRPF3, PER1, PIH1D1, CSRP2BP, BRCA2, TAF10, BRPF1, KAT2B, SUPT7L \\ 
    \hline
  \end{tabular}
  \label{tab:GOenrichment}
