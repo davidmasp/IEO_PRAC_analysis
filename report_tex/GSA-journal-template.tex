@@ -26,11 +26,7 @@
 \correspondingauthor{Auladell-Martin}
 
 \begin{abstract}
-The abstract should be written for people who may not read the entire paper, so it must stand on its own. The impression it makes usually determines whether the reader will go on to read the article, so the abstract must be engaging, clear, and concise. In addition, the abstract may be the only part of the article that is indexed in databases, so it must accurately reflect the content of the article. A well-written abstract is the  most effective way to reach intended readers, leading to more robust search, retrieval, and usage of the article.
-
-\textcolor{red}{--------}
-
-Transciptomics studies have improved substantially the molecular analysis of cancer, with the discovery of many new drug targets. The Cancer Genome Atlas Project has provided to the research society high quality RNA-seq data in many different tumour types. Prostate cancer, or prostate adenocarcinoma, is the second most deadly cancer disease, and one with the highest prevalences. The present article aims to perform an analysis of the differential expression and a functional analysis of rna seq data obtained from The Cancer Genome Atlas project. With previous subsetting and normalization, a paired design of 42 tumor and 42 normal samples was used. Differential expression analysis was realized by multiple linear regression. Finally, a functional analysis was realized by hypergeometric test on gene ontology and gene set enrichment analysis/gene set variation analysis on various pathway datasets. \textcolor{red}{falten els resultats conclus ojo}
+Transciptomics studies have improved substantially the molecular analysis of cancer, with the discovery of many new drug targets. The Cancer Genome Atlas Project has provided to the research society high quality RNA-seq data in many different tumour types. Prostate cancer, or prostate adenocarcinoma, is the second most deadly cancer disease, and one with the highest prevalences. The present article aims to perform an analysis of the differential expression and a functional analysis of RNA-seq data obtained from The Cancer Genome Atlas project. With previous sub-setting and normalization, a paired design of 42 tumour and 42 normal samples was used. Differential expression analysis was realized by multiple linear regression. Finally, a functional analysis was realized by hypergeometric test on gene ontology and gene set enrichment analysis/gene set variation analysis on various pathway datasets. \textcolor{red}{falten els resultats conclus ojo}
 
 \end{abstract}
 
@@ -44,10 +40,6 @@ Transciptomics studies have improved substantially the molecular analysis of can
 \firstpagefootnote
 \correspondingauthoraffiliation{adria.auladell@estudiant.upf.edu, joan.marti02@estudiant.upf.edu, david.mas@estudiant.upf.edu. Corresponding author: Robert Castelo Valdueza, robert.castelo@upf.edu.}
 \vspace{-11pt}%
-
-\lettrine[lines=2]{\color{color2}T}{}his \textit{Genetics} journal template is provided to help you write your work in the correct journal format. Instructions for use are provided below.
-
-\section*{Your Abstract}
 
 \section*{Introduction}
 
@@ -122,17 +114,16 @@ To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{
 
 \subsection*{Differential Expression Analysis}
 
-A design matrix was built with sample type (tumor/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \cite{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \cite{GSVA}.
+A design matrix was built with sample type (tumour/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \cite{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \cite{GSVA}.
 
-With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with \cite{limma} package. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were caculated with empirical Bayes statistics from \cite{limma} package. P-values were adjusted with FDR measurements and cutoff was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from \cite{limma} package (see SM). Top DE hits were visualized with Gviz package. \textcolor{red}{Creieu que cal aixo final?}
+With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with \cite{limma} package. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were calculated with empirical Bayes statistics from \cite{limma} package. P-values were adjusted with FDR measurements and cut-off was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from \cite{limma} package (see SM). Top DE hits were visualized with Gviz package.
 
 
 \subsection*{Functional Enrichment}
 
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cut-off of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
 
-The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
-
-The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results.
+The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumour cells. The aim of this stratified analysis is to improve the biological content of our results.
 
 
 \subsection*{Gene Set Expression Analysis}
@@ -144,19 +135,18 @@ For both GSEA and GSVA the gene sets from the GSVAdata package \cite{GSVAdata} h
 
 The package GSEABase \cite{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes. It is also an enrichment approach, however, it uses the expression values from the expressed genes to rank them so therefore it is been using expression data.
 
-The GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \cite{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
+The GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \cite{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumour and normal samples.
 
 
 \section*{Results}
 \subsubsection*{Differential Expression Analysis}
 
-\begin{figure}[!h]
+\begin{figure*}[!h]
 \centering
 \includegraphics[width=\linewidth]{Volcano.eps}
-\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
-}
+\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Blue dots are accepted transcripts, red dots are rejected. Most scoring genes are highlighted.}
 \label{fig:volcano}
-\end{figure}
+\end{figure*}
 
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
 
@@ -171,9 +161,8 @@ After defining the null model (bcr patient code variable, which corrects by pati
 Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
 
 
-
-
 Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
+
 \begin{itemize}
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
 \item chr2:101 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89}{SNORD89} which is a small nucleolar RNA.
@@ -210,7 +199,7 @@ Both icosanoid secretion and fatty acid transport have been related with cancer 
 Finally, hystone acetylation (HA) presents relationship with cancer due to the regulatory role during transcription of genes through its influence on chromatin conformation \citep{histoneacet, histoneacet2, histoneacet3, histoneacet4}. Since in GO studies we only evaluate DE gene sets, this gene ontology factor can be related with the normal type. This would coincide with the expectation, since HA supresses tumour formation \cite{histonea}.
 
 
-One consideration about the Gene Ontology analysis using hypergeometric tests is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis considerably. This makes the assay subjective for each researcher parametic decisions. With that purpose in mind, our analysis was restrictive to an small specific subset of GO terms, losing some other authentic results but reassuring the ones obtained.
+One consideration about the Gene Ontology analysis using hypergeometric tests is the variation of results with the parametic adjustment of the researcher. P-value cut-off and minimal gene sizes change the results of the functional enrichment analysis considerably. This makes the assay subjective for each researcher parametic decisions. With that purpose in mind, our analysis was restrictive to an small specific subset of GO terms, losing some other authentic results but reassuring the ones obtained.
 
 
 
@@ -285,12 +274,12 @@ As a new hits we can get some interesting results in both sides of the expressio
 
 In the over-expression hits can still be found other growth factors like the Insulin-like growth factor, also reported in \cite{hellawell2002expression}, or the cell cycle regulator E2F gene set that some studies have used as target to unresponsive prostate cancers tumors to androgen-deprivation therapy \citep{kaseb2007androgen}.
 
-In the top part of the heatmap there are also new hits reported from the GSVA. The  \textit{VAV3 PROSTATE CARCINOGENESIS DN} \citep{liu2008targeted} is a gene set from Reactome that contain downregulated genes in a specific prostate cancer type chractarized by the over-expression of VAV3. The Hsp27 gene code for a heat-shock protein that could be related with the heat response GO biological process found also in the GO enrichment analysis.
+In the top part of the heatmap there are also new hits reported from the GSVA. The  \textit{VAV3 PROSTATE CARCINOGENESIS DN} \citep{liu2008targeted} is a gene set from Reactome that contain downregulated genes in a specific prostate cancer type characterized by the over-expression of VAV3. The Hsp27 gene code for a heat-shock protein that could be related with the heat response GO biological process found also in the GO enrichment analysis.
 
 
 
 \section*{Conclusions}
-
+As 
 
 
 
