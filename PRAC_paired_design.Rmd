@@ -1,7 +1,7 @@
 ---
 title: "Analysis of a TCGA RNA-seq data set on Prostate Adenocarcinoma - Paired Design"
 author: "PRAC Team: A. Auladell, J. Martí & D. Mas"
-date: Sys.Date()
+date: 19-06-2016
 output:
   html_document:
     mathjax: local

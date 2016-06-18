@@ -76,7 +76,7 @@ The examination of the RNA counts can be performed in an average laptop. As a li
 
 \begin{figure*}[!h]
 \centering
-\includegraphics[width=\textwidth]{Clustering.eps}
+\includegraphics[width=.9\textwidth]{Clustering.eps}
 \caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples.
 }
 \label{fig:Clustering}
@@ -190,7 +190,8 @@ AP002884.2 seems to be an unmapped transcript. A more accurated display of the r
 
 We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
 
-CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
+CACNA1F is related with several cancers like colon cancer, breast cancer, melanoma, myeloma and prostate cancer \citep{tcng}.
+
 
 It can be concluded, thus, that the main over-expressed genes in tumour samples are those related with signalling, metabolism and transcription modulation; fields that are usually related to carcinogenic processes.
 
@@ -236,7 +237,7 @@ One consideration about the Gene Ontology analysis using hypergeometric tests is
 \centering
 \caption{\bf GSEA enriched normal scores}
 \begin{tableminipage}{\textwidth}
-\begin{tabular}{|l|c|c|p{3cm}|}
+\begin{tabular}{|l|c|c|p{4.5cm}|}
  \hline
 Gene Set & Relative tumor expression &  Z-value & Genes \\
   \hline
@@ -257,7 +258,7 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 
 \begin{figure*}[!h]
 \centering
-\includegraphics[width=\linewidth]{ClusteringGSVA.eps}
+\includegraphics[width=1.1\textwidth]{ClusteringGSVA.eps}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.}
 \label{fig:ClusteringGSVA}
 \end{figure*}
