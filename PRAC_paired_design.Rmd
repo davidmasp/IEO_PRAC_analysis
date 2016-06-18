@@ -273,7 +273,7 @@ table(colData(prac.se.dupl)$type)
 
 After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved.
 
-```{r InitialClustering, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
+```{r FinalClustering, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
 logCPM <- assays(prac.se.dupl)$logCPM
 d <- as.dist(1-cor(logCPM, method="spearman"))
@@ -831,7 +831,7 @@ boxplot(GSexpr[DEgs.under[1], ] ~ prac.se.dupl$type, main=DEgs.under[1], las=1, 
 boxplot(GSexpr[DEgs.under[2], ] ~ prac.se.dupl$type, main=DEgs.under[2], las=1, cex.axis=2)
 ```
 
-```{r ClusteringGSVA, fig.height=15, fig.width=21 }
+```{r ClusteringGSVA, fig.height=18, fig.width=25 }
 DEgeneSets <- tt[1:30, , drop=FALSE]
 dim(DEgeneSets)
 GSVAsco <- GSexpr[rownames(DEgeneSets), ]
@@ -844,14 +844,19 @@ sample.color.map <- colorLegend[colData(prac.se.dupl)$type]
 names(sample.color.map) <- colnames(GSVAsco)
 sampleClustering <- hclust(as.dist(1-cor(GSVAsco, method="spearman")), method="complete")
 geneSetClustering <- hclust(as.dist(1-cor(t(GSVAsco), method="pearson")), method="complete")
-heatmap(GSVAsco, ColSideColors=sample.color.map, xlab="samples",
-        ylab="Gene sets and pathways", margins=c(2, 20),
-        labRow=substr(gsub("_", " ", gsub("^KEGG_|^REACTOME_|^BIOCARTA_", "", rownames(GSVAsco))), 1, 35),
-        labCol="", scale="row",
-        Colv=as.dendrogram(sampleClustering), Rowv=as.dendrogram(geneSetClustering), col=colors)
-legend("topleft", names(colorLegend), fill=colorLegend, inset=0.01, bg="white")
 
+par(oma=c(2,1,1,1))
+
+heatmap(GSVAsco, ColSideColors=sample.color.map,  margins=c(2, 20),
+        labRow=substr(gsub("_", " ", gsub("^KEGG_|^REACTOME_|^BIOCARTA_", "", rownames(GSVAsco))), 1, 35),
+        labCol="", scale="row", cexRow = 2, 
+        Colv=as.dendrogram(sampleClustering), Rowv=as.dendrogram(geneSetClustering), col=colors)
+legend("topleft", names(colorLegend), fill=colorLegend, inset=0.01, bg="white", cex = 2)
+mtext('Samples', side = 1, cex=2, line = 6)
+mtext('Gene sets and Pathways', side = 4, cex=2)
 ```
+
+
 
 ### Comparing GSEA and GSVA resuts
 
