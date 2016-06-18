@@ -95,9 +95,9 @@ multidensity(as.list(as.data.frame(logCPM.MDS_tumor)), xlab = "log2 CPM", legend
 ```
 
 
-By looking at the disribution we observe a peak around logCPM 1. ?¿?¿?¿?¿?
+By looking at the disribution we observe a peak before logCPM 1.
 
-To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes. For these values the CPM expression level is very low and we cannot establish real conclusions.
+To avoid errors or misleading data in the future we set up a threshold of the gene expression to remove the low expressed genes(logCPM < 1 will be deprecated). For these values the CPM expression level is very low and we cannot establish real conclusions.
 
 
 ```{r filter genes}
@@ -109,9 +109,8 @@ prac.dgenorm <- prac.dgenorm[mask, ]
 After filtering the low-expressed genes we explore the data to perform a Quality Assesment.
 We explore the data to check whether there exists some kind of batch effect or an undesired source of variation. See fig 2,3 and 4 below.
 
-** Ojo, hi ha chunks sense processar, activar al final**
 
-Here we asses the Library size for each sample. Although we can see an extreme value in the rigth end, the distribution is uniform.
+Here we asses the Library size for each sample. Although we can see an extreme value in the rigth end, the distribution is more or less as expected.
 
 ```{r lib size plots, eval = TRUE, fig.cap='Fig 2: Library size distribution of the samples.'}
 
@@ -120,6 +119,8 @@ libsize <- data.frame(libsize = prac.dgenorm$sample$lib.size/1e6, type = prac.se
 ggplot(libsize, aes(x=reorder(samples, libsize), y=libsize, fill=type)) +  theme(plot.background = element_blank(), axis.title.x=element_blank(), axis.text.x = element_blank()) + geom_bar(stat = "identity")
 
 ```
+
+After that, MA-plots are created to see if how the data is arranged after the normalization.
 
 
 
@@ -171,11 +172,11 @@ for (i in 1:ncol(setmp)) {
 }
 ```
 
-From the plots above, we see that in figure 1 the distribution of library size presents some stratifiction, with values of 20 M and a mean of 40 M. This changes in lib size will be compensated by the normalization. In figure 2, we observe that the distribution of expression is the expressed, identical in both graphs. Finally, in figure 3 and 4 we present the MA plots, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
+From the plots above, we see that in figure 1 the distribution of library size presents some stratifiction, with values of 20 M and a mean of 40 M. This changes in lib size will be compensated by the normalization. In figure 2, we observe that the distribution of expression is the expected, identical in both graphs. Finally, in figure 3 and 4 we present the MA plots, the tendency line representing the mean of normalized values (red line) is reasonably close to the expected tendency line (blue line), which is centered at mean 0, thus normalization procedure has been succesfully applied.
 
 #Batch Effect Identification
 
-From all the potential soucre of batch effect in an experiment of this magnitude, one of the most ocasional is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples.
+From all the potential soucre of batch effect in an experiment of this magnitude, one of the most interessting to check is TSS. We proceed to analyse the sample distribution in the different processing steps of the samples.
 
 ```{r batch effect, echo = FALSE}
 
@@ -193,7 +194,9 @@ table(data.frame(TYPE=prac.se.dupl$type, Plate=plate))
 
 ```
 
-By looking at the distributions of the tables, we observe that the values are equally distributed. It is expected to not present any batch effect. One of the possible batch effects would be the plate distribution, but in relation of the type variable they are equally analysed.
+By looking at the distributions of the tables, we observe that the values are equally distributed. As expected there is no batch effect. 
+
+_*One of the possible batch effects would be the plate distribution, but in relation of the type variable they are equally analysed.???????? NO ENTENC RES! RESCRIURE*_
 
 ```{r dendogram, echo=FALSE, fig.width=10, fig.cap="Fig. 5: Dendogram of Spearman distances."}
 par(old.par)
@@ -271,6 +274,8 @@ prac.se.dupl <- prac.se.dupl[,rownames(prac.dgenorm$samples)]
 table(colData(prac.se.dupl)$type)
 ```
 
+The dataset finally consists of 42 normal samples and 42 tumour samples.
+
 After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved.
 
 ```{r FinalClustering, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
@@ -321,7 +326,7 @@ Having the samples / genes filtered we can finnish the **Quality Assesment** of 
 
 # Differential Expression Analysis
 
-Initially, we observe the differental expression with a multiple linear regression test, having as a cutoff a FDR of 0.001. This highly restringent value have been used because of the large number of differential expressed genes in our data.
+Initially, we observe the differental expression with a multiple linear regression test, having as a cut-off a FDR of 0.001. This highly restringent value have been used because of the large number of differential expressed genes in our data.
 
 ```{r DE1}
 colData(prac.se.dupl)$bcr_patient_barcode <- droplevels(colData(prac.se.dupl)$bcr_patient_barcode)
@@ -349,8 +354,10 @@ qqline(fit$t[, 2], col=2, lwd=3)
 abline(0, 1, lwd=3)
 
 ```
+At first, it seems that the number of genes that are over-expressed in tumour tissues are 2127, under-expressed 2168 and 7569 that have no significant change when compared to normal samples.
 
-In black we can see the Normal distribution ( \(\sigma = 1 \) ) and the red is the `qqline` extracted from the distribution itself.
+
+In black, at the plots, it can be seen a Normal distribution ( \(\sigma = 1 \) ) and the red is the `qqline` extracted from the distribution itself.
 
 Right now we have a real true candidate overexpressed in tumor at the right top. The other genes, although with a high variability seem to follow a normal distribution of \(\sigma = 4 \).
 
@@ -380,7 +387,7 @@ abline(0, 1, lwd=3)
 
 ```
 
-
+The central depression on the voom plot reveals that in principle it has corrected the expressions levels by its weights correctly.
 
 ## Introducing SV as covariates
 
@@ -560,15 +567,15 @@ library(GOstats)
 params <- new("GOHyperGParams", geneIds=DEgenes,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.01, testDirection="over")
+                pvaluecutoff=0.01, testDirection="over")
 params.over <- new("GOHyperGParams", geneIds=DEgenes.over,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.01, testDirection="over")
+                pvaluecutoff=0.01, testDirection="over")
 params.under <- new("GOHyperGParams", geneIds=DEgenes.under,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.01, testDirection="over")
+                pvaluecutoff=0.01, testDirection="over")
 
 
 ```
@@ -661,6 +668,8 @@ xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|")
 print(xtab, type="latex")
 
 ```
+_*CALEN COMENTARIS AQUIII*_
+
 
 # Gese Set Expression Analysis
 
