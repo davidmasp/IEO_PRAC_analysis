@@ -205,11 +205,18 @@ It can be concluded, thus, that the main over-expressed genes in tumour samples 
 
 \subsubsection*{Functional Enrichment}
 
-From the 11143 gene ontology (GO) terms for biological processes (BP) tested, only 21 presented significant results (p < 0.01). The top 5 results in odds ratio decreasing order are listed in Table \ref{tab:GOenrichment}.
+From the 11143 gene ontology (GO) biological processes (BP) terms tested, only 21 presented significant results (p < 0.01). The top 5 results in odds ratio decreasing order are listed in Table \ref{tab:GOenrichment}.
 
-The first result is related with processes that modulate the frequency, rate or extent of astrocyte differentiation (GO:0048710).
+The first result is related with processes that modulate the frequency, rate or extent of astrocyte differentiation (GO:0048710). This result coincides with other studies provided by \cite{neuroendocrine3, neuroendocrine2} and the review realized by \cite{neuroendocrine1}. Some of the set genes haven been described in other studies as neurodifferentiaton markers, such as EPHA4 \cite{neuroendocrine_EPA}, SEPRINE2 \cite{mckee2013protease} and others. 
 
-One consideration about the Gene Ontology is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis change considerably. This makes the assay subjective for each researcher, making the results quite bad. It is for this reason that our main functional analysis will be based in GSEA / GSVA results.
+Response to vitamin A is a unexpected result: it is well known in prostate cancer the relationship with vitamin D \citep{vitamin0,vitamind1,vitamind2,vitamind3}, but little is known of the relationship with vitamin A. \cite{vitamina1} described a correlation between lack of vitamin A and prostate cancer, but there is no much other analysis in such aspect. Also, \cite{vitamina2} studied the relationship between vitamin A and apoptosis in prostate cancer, relating indirectly some of the genes such as retinoic acid receptor-beta (RARA), whose expression could be downregulated in cancer. 
+
+Both icosanoid secretion and fatty acid transport have been related with cancer \citep{fat1,fat2}. Eicosanoid are biological lipid molecules that are implicated in pathological processes. Being part of the  cyclooxygenase (COX) and lipoxygenase (LOX) pathways, they present mediator effect in the proliferation of cancerous cells and regulate tumor vascularization \citep{fatvascu} As we can see, the gene sets are almost identical, with SLCO2A1 present as a difference in fatty acid transport. 
+
+Finally, hystone acetylation (HA) presents relationship with cancer due to the regulatory role during transcription of genes through its influence on chromatin conformation \citep{histoneacet, histoneacet2, histoneacet3, histoneacet4}. Since in GO studies we only evaluate DE gene sets, this gene ontology factor can be related with the normal type. This would coincide with the expectation, since HA supresses tumour formation \cite{histonea}. 
+
+
+One consideration about the Gene Ontology analysis using hypergeometric tests is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis considerably. This makes the assay subjective for each researcher parametic decisions. With that purpose in mind, our analysis was restrictive to an small specific subset of GO terms, losing some other authentic results but reassuring the ones obtained. 
 
 \subsubsection*{Gene set expression analysis}
 
