@@ -21,9 +21,9 @@
 
 \keywords{prostate cancer; adenocarcinoma; RNA-Seq; paired data.}
 
-\runningtitle{GENETICS Journal Template on Overleaf} % For use in the footer
+\runningtitle{GENETICS} % For use in the footer
 
-\correspondingauthor{Robert Castelo Valdueza}
+\correspondingauthor{Auladell-Martin}
 
 \begin{abstract}
 The abstract should be written for people who may not read the entire paper, so it must stand on its own. The impression it makes usually determines whether the reader will go on to read the article, so the abstract must be engaging, clear, and concise. In addition, the abstract may be the only part of the article that is indexed in databases, so it must accurately reflect the content of the article. A well-written abstract is the  most effective way to reach intended readers, leading to more robust search, retrieval, and usage of the article.
@@ -78,7 +78,18 @@ Since the first publication of the human genome, multiple international projects
 The aim of this study is to provide a second outlook to the released data of the TCGA. For doing so we are to perform a differential expression analysis using paired data from the TCGA.
 
 \section*{Materials and Methods}
+
+
+
 The examination of the RNA counts can be performed in an average laptop. As a limiting factor for analysing the data, it is recommended to have at least 4 Gb of RAM and CPU Intel Core i5 or superior. HDD memory is not a limiting factor for this analysis.
+
+\begin{figure*}[!h]
+\centering
+\includegraphics[width=\textwidth]{Clustering.eps}
+\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples.
+}
+\label{fig:Clustering}
+\end{figure*}
 
 The software used was R version 3.3.0 "Supposedly Educational" \cite{R}. Main packages where download and installed through Bioconductor version 3.3 (BiocInstaller 1.22.2)\cite{bioconductor}.
 
@@ -111,6 +122,8 @@ Batch effect was evaluated by means of the TCGA barcode information. The code sp
 
 To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining 42 tumour and 42 normal samples.
 
+
+
 \subsection*{Differential Expression Analysis}
 
 A design matrix was built with sample type (tumor/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \cite{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \cite{GSVA}.
@@ -141,6 +154,15 @@ The GSVA package \cite{GSVA} was used to define the set expression values. Then,
 \section*{Results}
 \subsubsection*{Differential Expression Analysis}
 
+\begin{figure*}[!h]
+\centering
+\includegraphics[width=\textwidth]{Volcano.eps}
+\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
+}
+\label{fig:Volcano plot}
+
+\end{figure*}
+
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
 
 \begin{itemize}
@@ -157,13 +179,9 @@ After defining the null model (bcr patient code variable, which corrects by pati
 Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
 
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{Volcano.eps}
-\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
-}
-\label{fig:Volcano plot}
-\end{figure}
+
+
+
 
 Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
 \begin{itemize}
@@ -206,21 +224,15 @@ Creure'ns o no els resultats
 
 Figures and Tables should be labelled and referenced in the standard way using the \verb|\label{}| and \verb|\ref{}| commands.
 
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=\linewidth]{Clustering.eps}
-\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples.
-}%
-\label{fig:Clustering}
-\end{figure}
 
-\begin{figure}[htbp]
+
+\begin{figure*}[htbp]
 \centering
 \includegraphics[width=\linewidth]{ClusteringGSVA.eps}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.
 }
 \label{fig:ClusteringGSVA}
-\end{figure}
+\end{figure*}
 
 
 

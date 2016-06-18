@@ -273,7 +273,7 @@ table(colData(prac.se.dupl)$type)
 
 After pruning those samples out we can plot again the heatmap and the MDS to see weather the results have improved.
 
-```{r Custering 2, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
+```{r InitialClustering, echo = FALSE, fig.height=10, fig.width=10, fig.cap="Fig. 7: Heatmap of Spearman distances without the disturbing samples."}
 
 logCPM <- assays(prac.se.dupl)$logCPM
 d <- as.dist(1-cor(logCPM, method="spearman"))
@@ -446,7 +446,7 @@ abline(v=-1)
 ggvolcano <- function(tt,FDR,hll = 3, hlr = 3,title = element_blank(), fc = 1){
   ggplot(tt, aes(logFC, B,
   colour = ifelse(B>-log10(FDR) & (logFC < -fc |logFC > fc) ,"red","black" ))) +
-  geom_point() +
+  geom_point(size=1) +
   ggtitle(title) + geom_vline(xintercept = c(fc, -fc), col = "red")+
   geom_hline(yintercept =-log10(FDR),
              col = "red") +
@@ -455,15 +455,18 @@ ggvolcano <- function(tt,FDR,hll = 3, hlr = 3,title = element_blank(), fc = 1){
   geom_text(data= tt[order(tt$B,decreasing = TRUE),][( tt$logFC > fc),][1:hlr,],
   aes(logFC, B, label=symbol),angle = 25, vjust = -1) +
   guides(colour=FALSE) +
-  theme(plot.title = element_text(size = rel(3)))
+  theme(plot.title = element_text(size = rel(2)), panel.grid.minor = element_blank(),
+panel.background = element_blank(), axis.line = element_line(colour = "black"))
 }
 
-par(mfrow=c(2,1))
+par(mfrow=c(2,1)) 
 ggvolcano(tt,FDRcutoff,title = "Base Model")
 ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
+```
 
+```{r VolcanoPlotSV}
 par(mfrow=c(1,1))
-ggvolcano(tt4,FDRcutoff,title = "SV")
+ggvolcano(tt4,FDRcutoff)
 ```
 
 
@@ -501,7 +504,7 @@ We can see that some of the chromosome mentioned before, are overexpressed in tu
 In order to visualize our top 3 results, we use the package `Gviz` ( @Gviz ) that plots a great quality genome browser figure. As the standard database for UCSC genes do not contain our most expressed genes and moreover our data is mapped in the hg38 Human Reference Genome we have used the RefSeq gene track from UCSC browser downloaded from the web. Therefore, in order to execute the following chunk you will need internet connection.
 
 
-```{r, echo=FALSE, eval = TRUE, dev= 'png'}
+```{r, echo=FALSE, eval = TRUE, dev= 'png', eval=FALSE}
 
 library(Gviz)
 
