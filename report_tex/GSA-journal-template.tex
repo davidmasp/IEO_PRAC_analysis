@@ -134,7 +134,7 @@ With the design matrix and voom logCPM values, Multiple linear regression (MLR) 
 \subsection*{Functional Enrichment}
 
 
-The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.05 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cutoff of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
 
 The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results.
 
@@ -146,7 +146,7 @@ In order to analyse differential expression in gene sets and not uniquely at the
 For both GSEA and GSVA the gene sets from the GSVAdata package \cite{GSVAdata} have been selected. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \cite{kanehisa2016kegg}, Reactome \cite{fabregat2016reactome} and   Biocarta \cite{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
 
 
-The package GSEABase \cite{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes. It is also an enrichment approach, however, it uses the expression values from the expressed genes to rank them so therefore it is been using expression data. 
+The package GSEABase \cite{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes. It is also an enrichment approach, however, it uses the expression values from the expressed genes to rank them so therefore it is been using expression data.
 
 The GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \cite{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
 
@@ -154,14 +154,13 @@ The GSVA package \cite{GSVA} was used to define the set expression values. Then,
 \section*{Results}
 \subsubsection*{Differential Expression Analysis}
 
-\begin{figure*}[!h]
+\begin{figure}[!h]
 \centering
-\includegraphics[width=\textwidth]{Volcano.eps}
+\includegraphics[width=\linewidth]{Volcano.eps}
 \caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Most scoring genes are highlighted.
 }
-\label{fig:Volcano plot}
-
-\end{figure*}
+\label{fig:volcano}
+\end{figure}
 
 After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
 
@@ -174,11 +173,9 @@ After computing the multiple linear model test, and the eBayes test \cite{limma}
 As there are many variables that can affect the expression data, and not all of them might be taken into account in the analysis or even taken into account by the design of the original project, it was decided that the best option was to use surrogate variable analysis \cite{leek2007capturing}, which is implemented in the SVA package \cite{SVA}.
 
 
-After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plots were performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
+After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plot (\ref{fig:volcano}) was performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
 
 Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
-
-
 
 
 
@@ -188,7 +185,7 @@ Despite that there are lots of genes that fall out of the rejection zones, in fa
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
 \item chr2:101 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SNORD89}{SNORD89} which is a small nucleolar RNA.
 \item chr3:385 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=SCN5A}{SCN5A} which is a sodium channel voltage gated V Type.
-\item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which is an oxyreductase mitocondrial protein (does not appear on RefSeq).
+\item chr11:11 codifies for \href{http://www.ensembl.org/Homo_sapiens/Gene/Summary?g=ENSG00000255292;r=11:112086903-112193805}{AP002884.2} which seems to mitocondrial protein (but does not appear on RefSeq).
 \item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
 \end{itemize}
 
@@ -204,11 +201,19 @@ We suggest that in the case of AP002884.2 there has been an error in the mapping
 
 CACNA1F is related with several cancer-related pathways: colon cancer, breast cancer, melanoma, myeloma, prostate cancer, etc \cite{tcng}.
 
-\subsubsection*{Functional Enrichment}
-ADRIA
-\subsubsection*{Gene Set Expression Analysis}
+It can be concluded, thus, that the main over-expressed genes in tumour samples are those related with signalling, metabolism and transcription modulation; fields that are usually related to carcinogenic processes.
 
-As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment}. 
+\subsubsection*{Functional Enrichment}
+
+From the 11143 gene ontology (GO) terms for biological processes (BP) tested, only 21 presented significant results (p < 0.01). The top 5 results in odds ratio decreasing order are listed in Table \ref{tab:GOenrichment}.
+
+The first result is related with processes that modulate the frequency, rate or extent of astrocyte differentiation (GO:0048710).
+
+One consideration about the Gene Ontology is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis change considerably. This makes the assay subjective for each researcher, making the results quite bad. It is for this reason that our main functional analysis will be based in GSEA / GSVA results.
+
+\subsubsection*{Gene set expression analysis}
+
+As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment}.
 
 \paragraph{Under-expression of Endogenous Sterols } The genes in this gene set,
 
@@ -249,15 +254,15 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
- \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{3cm}|}
+ \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{4.3cm}|}
   \hline
  & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
   \hline
-1 & GO:0032891 & 0.01 & Inf & 4.30 &   8 &   8 & negative regulation of organic acid transport & HRH3, ABAT, AGTR2, AKT2, ACSL4, IL1B, TRH, CYP4F2 \\
-  2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\
-  3 & GO:0051016 & 0.02 & 7.75 & 5.38 &   9 &  10 & barbed-end actin filament capping & TWF2, ADD1, EPS8, FAM21C, TWF1, VIL1, CAPG, CAPZB, CAPZA3 \\
-  4 & GO:0010954 & 0.03 & 6.88 & 4.84 &   8 &   9 & positive regulation of protein processing & ADAM8, F12, HPN, ASTL, PHB, PLGRKT, CNTN2, CLEC3B \\
-  5 & GO:0022401 & 0.03 & 6.88 & 4.84 &   8 &   9 & negative adaptation of signaling pathway & ADM, ADRB2, ADRBK1, DNM1, DNM2, DRD3, HTR2B, CAMK2B \\
+ 1 & GO:0048710 & 0.00 & 11.20 & 7.53 &  13 &  14 & regulation of astrocyte differentiation & DAB1, EPHA4, F2, FGFR3, ATF5, PRPF19, BIN1, HES1, IL1B, NTRK3, SERPINE2, CNTN2, NR2E1 \\
+   2 & GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\
+   3 & GO:0032309 & 0.01 & 6.03 & 8.60 &  14 &  16 & icosanoid secretion & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SYK, CYP4F2, TNFSF11 \\
+   4 & GO:1901571 & 0.01 & 4.31 & 9.68 &  15 &  18 & fatty acid derivative transport & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SLCO2A1, SYK, CYP4F2, TNFSF11 \\
+   5 & GO:0043966 & 0.01 & 3.45 & 13.45 &  20 &  25 & histone H3 acetylation & TRIM16, TAF6L, WDR5, CHEK1, KAT7, SGF29, DR1, BRD4, KAT6B, WBP2, SIN3A, BRPF3, PER1, PIH1D1, CSRP2BP, BRCA2, TAF10, BRPF1, KAT2B, SUPT7L \\
    \hline
  \end{tabular}
  \label{tab:GOenrichment}
@@ -272,12 +277,12 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 \begin{tableminipage}{\textwidth}
 \begin{tabular}{|l|c|c|p{3cm}|}
  \hline
-Gene Set & Relative tumor expression &  Z-value & Genes \\ 
+Gene Set & Relative tumor expression &  Z-value & Genes \\
   \hline
-REACTOME DEADENYLATION OF MRNA & Over-Expressed  & 19.19 & EIF4A1, EIF4A2, EIF4B, EIF4E, EIF4G1, CNOT2, CNOT4, RQCD1, CNOT8, PAN2, CNOT1, CNOT10, PABPC1, CNOT7, CNOT6, TNKS1BP1, CNOT6L, PAN3 \\ 
-REACTOME SMOOTH MUSCLE CONTRACTION & Under-Expressed & 18.70 & ACTA2, ACTG2, CALM1, CALM3, ITGA1, ITGB5, PXN, TPM2, VCL, SORBS1 \\ 
-REACTOME BOTULINUM NEUROTOXICITY & Over-Expressed &  17.62 & SNAP25, SYT1, STX16, STX11, STX10, STX6, STX12, STX1B \\ 
-REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1, CYP46A1, CYP39A1 \\  
+REACTOME DEADENYLATION OF MRNA & Over-Expressed  & 19.19 & EIF4A1, EIF4A2, EIF4B, EIF4E, EIF4G1, CNOT2, CNOT4, RQCD1, CNOT8, PAN2, CNOT1, CNOT10, PABPC1, CNOT7, CNOT6, TNKS1BP1, CNOT6L, PAN3 \\
+REACTOME SMOOTH MUSCLE CONTRACTION & Under-Expressed & 18.70 & ACTA2, ACTG2, CALM1, CALM3, ITGA1, ITGB5, PXN, TPM2, VCL, SORBS1 \\
+REACTOME BOTULINUM NEUROTOXICITY & Over-Expressed &  17.62 & SNAP25, SYT1, STX16, STX11, STX10, STX6, STX12, STX1B \\
+REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1, CYP46A1, CYP39A1 \\
 \hline
 \end{tabular}
 \label{tab:GSEAenrichment}

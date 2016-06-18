@@ -560,15 +560,15 @@ library(GOstats)
 params <- new("GOHyperGParams", geneIds=DEgenes,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.05, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 params.over <- new("GOHyperGParams", geneIds=DEgenes.over,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.05, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 params.under <- new("GOHyperGParams", geneIds=DEgenes.under,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvalueCutoff=0.05, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 
 
 ```
@@ -589,10 +589,8 @@ dim(goresults)
 ```
 
 ```{r}
-goresults <- goresults[ goresults$Size >= 8 & goresults$Count >= 8 , ]
+goresults <- goresults[ goresults$Size >= 9 & goresults$Count >= 8 ,]
 dim(goresults)
-goresults <- goresults[order(goresults$Pvalue, decreasing=FALSE), ]
-head(goresults)
 goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ]
 head(goresults)
 ```
