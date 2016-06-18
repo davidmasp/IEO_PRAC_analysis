@@ -211,46 +211,9 @@ The first result is related with processes that modulate the frequency, rate or 
 
 One consideration about the Gene Ontology is the variation of results with the parametic adjustment of the researcher. Pvalue cutoff and minimal gene sizes change the results of the functional enrichment analysis change considerably. This makes the assay subjective for each researcher, making the results quite bad. It is for this reason that our main functional analysis will be based in GSEA / GSVA results.
 
-\subsubsection*{Gene set expression analysis}
-
-As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment}.
-
-\paragraph{Under-expression of Endogenous Sterols } The genes in this gene set,
 
 
-Purament el resultat
-
-
-\section*{Discussion}
-
-Creure'ns o no els resultats
-
-\section*{Figures and Tables}
-
-Figures and Tables should be labelled and referenced in the standard way using the \verb|\label{}| and \verb|\ref{}| commands.
-
-
-
-\begin{figure*}[htbp]
-\centering
-\includegraphics[width=\linewidth]{ClusteringGSVA.eps}
-\caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.
-}
-\label{fig:ClusteringGSVA}
-\end{figure*}
-
-
-
-
-\subsection*{Sample Table}
-
-Table \ref{tab:shape-functions} shows an example table. Avoid shading, color type, line drawings, graphics, or other illustrations within tables. Use tables for data only; present drawings, graphics, and illustrations as separate figures. Histograms should not be used to present data that can be captured easily in text or small tables, as they take up much more space.
-
-Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1B, etc., but if necessary, interior parts of the table can be labeled A, B, etc. for easy reference in the text.
-
-% latex table generated in R 3.3.0 by xtable 1.8-2 package
-% Tue Jun 14 13:44:38 2016
-\begin{table*}[htbp]
+\begin{table*}[!h]
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
@@ -271,7 +234,7 @@ Tables numbers are given in Arabic numerals. Tables should not be numbered 1A, 1
 
 
 
-\begin{table*}[htbp]
+\begin{table*}[!h]
 \centering
 \caption{\bf GSEA enriched normal scores}
 \begin{tableminipage}{\textwidth}
@@ -288,6 +251,48 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 \label{tab:GSEAenrichment}
 \end{tableminipage}
 \end{table*}
+
+
+\subsubsection*{Gene set expression analysis}
+
+
+
+\begin{figure*}[!h]
+\centering
+\includegraphics[width=\linewidth]{ClusteringGSVA.eps}
+\caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.}
+\label{fig:ClusteringGSVA}
+\end{figure*}
+
+
+As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment} meanwhile the results from the Variation approach are shown in figure \ref{fig:ClusteringGSVA}.
+
+In the first approach (table \ref{tab:GSEAenrichment}), the top ranked gene set differentially expressed in the deanylation of mRNA which is a gene set related to the maturation of transcribed RNA. They are mostly expressed ubiquitously among the human tissues as they play a basic role in rotein synthesis. From the selected genes 4 families sum up their function, EIF4 and CNOT act directly as transcriptional regulators as they are part of the protein complex involved in this process. PAN in the other hand is important in the stabilitation of the mRNA and participates in the binding to the polyA tail. Finally, the TNKS1BP1 is a gene reported as key in nuclear stability of genome and have also been related to participate in the p53 pathway, which is a clear tumorsupresor. This pathway presents a small over-expression that may indicate a highly protein transcription activity in cancer cells \cite{proteinatlas}.
+
+The next gene set in the top ranked DE is the muscle contraction, also from the reactome database. This pathway is expressed mostly in the muscle tissue but it also presents expression in the urinary bladder, the gastrointestinal track and the prostate \cite{proteinatlas}. Its genes code for cytoskeletic related proteins like Actin, Calmodulin and Integrins that are key proteins in the cell shape pathways. An under-expression of this pathway could easily be related with a dedifferentiation of the cancer cells through the Epithelial–mesenchymal transition (EMT) \citep{yilmaz2009emt}.
+
+The top3 and top5 hits from the GSEA are in fact related. Although the Botylium Toxicity pathway has some brain specific genes (SNAP25 and SYT1) and this seems to be unrelated with prostate and with cancer, the other genes in the set are expressed ubiquitously among the body. These genes are related with the SNARE vessels and are also detected in the top5 gene set from the KEGG database \textit{SNARE INTERACTIONS IN VESICULAR TRANSPORT} as seen in the supplementary material report. SNAREs have been widely reported as tumorogenesis genes due to their control in multiple signalling and transportation pathways.
+
+Finally, the top4 gene set detected, Endogenous Sterols is a gene formed by the CYtochrome P450 family that is key in the clorestherol homeostasis. There are genes responsible for its biosynthesis like CYP8B1 and from its degradation and conversion to bile salts like CYP39A1. This production of bile salts is also found to be related with prostate cancer in our following analysis, GSVA. The diferent genes in the set are expressed in a range of hormone secretor organs. Moreover, Prostate Cancer has been associated as a cholesterol dependent cancer as the cholesterol levels in blood are associated with bad prognosis \cite{krycer2013cholesterol}. This can be explained as cholesterol is a key molecule to  maintain the structure of the cell membrane and it is a important component of the lipid-rafts involved in signal transduction.
+
+
+The top30 results from the Variation approach can be summed up in the figure \ref{fig:ClusteringGSVA} with a heat map that cluster the different gene sets in weather over-expressed or under-expressed in Prostate Cancer. The volcano plot regarding their significance is shown in the supplementary material (). In the volcano plot is clear how the under-expressed side of the plot is more noisy (and more significant) than the over-expressed.
+
+As first observation is clear the overlap between the GSVA and the GSEA that from their significant predictions we get an 74\% of hits (see supplementary material). We can also get a similar idea from the selected top30 where already reported gene sets are significant also in this analysis. For instance, the mRNA deanylation and the SNAREs pathways are found also over-expressed in tumor cells. The deregulation of cholesterol levels and the dedifferentiation via under-expression of actins and integrins can be also seen in this analysis.
+
+As a new hits we can get some interesting results in both sides of the expression. The HER2 pathway is strongly related with other cancers like Breast Cancer but have also been associated to prostate cancer by \cite{yeh1999her2} and its the most clear hit in our GSVA. Our top2 hit is the interleukine related gene set that would imply the inflamation of the cancer tissue. A role for IL-6 in prostate cancer has also been reported \citep{chung1999characterization}.
+
+In the over-expression hits can still be found other growth factors like the Insulin-like growth factor, also reported in \cite{hellawell2002expression}, or the cell cycle regulator E2F gene set that some studies have used as target to unresponsive prostate cancers tumors to androgen-deprivation therapy \citep{kaseb2007androgen}.
+
+In the top part of the heatmap there are also new hits reported from the GSVA. The  \textit{VAV3 PROSTATE CARCINOGENESIS DN} \citep{liu2008targeted} is a gene set from Reactome that contain downregulated genes in a specific prostate cancer type chractarized by the over-expression of VAV3. The Hsp27 gene code for a heat-shock protein that could be related with the heat response GO biological process found also in the GO enrichment analysis.
+
+
+
+\section*{Conclusions}
+
+
+
+
 
 
 
