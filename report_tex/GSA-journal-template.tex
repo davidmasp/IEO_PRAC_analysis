@@ -155,12 +155,7 @@ After computing the multiple linear model test, and the eBayes test \cite{limma}
 \item 2127 genes are over-expressed in tumor samples compared to normal samples.
 \end{itemize}
 
-After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plot (Fig. \ref{fig:volcano}) was performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
-
-Genes out of the area formed by minimum levels of signification (depends on FDR cutoff) and minimum intensity.
-
-
-Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of signification and only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date (see supplementary material).
+Volcano plot (Fig. \ref{fig:volcano}) was performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity). Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of signification and only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date (see supplementary material).
 
 \begin{itemize}
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
@@ -185,6 +180,7 @@ CACNA1F is related with several cancers like colon cancer, breast cancer, melano
 
 It can be concluded, thus, that the main over-expressed genes in tumor samples are those related with signalling, metabolism and transcription modulation; fields that are usually related to carcinogenic processes.
 
+
 \subsubsection*{Functional Enrichment}
 
 From the 11143 gene ontology (GO) biological processes (BP) terms tested, only 21 presented significant results (p < 0.01). The top 5 results in odds ratio decreasing order are listed in Table \ref{tab:GOenrichment}.
@@ -206,7 +202,8 @@ One consideration about the Gene Ontology analysis using hypergeometric tests is
 \centering
 \caption{\bf GO enriched terms}
 \begin{tableminipage}{\textwidth}
- \begin{tabular}{|l|c|r|r|r|r|r|p{3cm}|p{4.3cm}|}
+\small
+ \begin{tabular}{|l|c|r|r|r|r|r|p{3.4cm}|p{5cm}|}
   \hline
  & GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\
   \hline
@@ -227,7 +224,8 @@ One consideration about the Gene Ontology analysis using hypergeometric tests is
 \centering
 \caption{\bf GSEA enriched normal scores}
 \begin{tableminipage}{\textwidth}
-\begin{tabular}{|l|c|c|p{4.5cm}|}
+\small
+\begin{tabular}{|l|c|c|p{6.3cm}|}
  \hline
 Gene Set & Relative tumor expression &  Z-value & Genes \\
   \hline
@@ -248,7 +246,7 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 
 \begin{figure*}[!h]
 \centering
-\includegraphics[width=1.1\textwidth]{ClusteringGSVA.eps}
+\includegraphics[width=1\textwidth]{ClusteringGSVA.eps}
 \caption{Heatmap from the Clustering of the DE gene sets obtained from GSVA and samples.}
 \label{fig:ClusteringGSVA}
 \end{figure*}
