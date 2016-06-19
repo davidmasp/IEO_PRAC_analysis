@@ -43,12 +43,13 @@ Transciptomics studies have improved substantially the molecular analysis of can
 
 \section*{Introduction}
 
-Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer (following lung cancer), and one with the highest prevalence. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed, about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), this is not frequent. The mean of diagnosis is around 66 years old \cite{prostatestatistics}.
+Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer (following lung cancer), and one with the highest prevalence. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed, about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), this is not frequent. The mean of diagnosis is around 66 years old \citep{prostatestatistics}.
 
 For patients whose cancer has spread, their survival time is usually one to three years. It was estimated that for 2011, 240,890 men would be diagnosed and 33,720 would die from prostate cancer. 
 
- The Cancer Genome Atlas Project (TCGA) \cite{tgca} most prominent international project about cancer research in recent years and the availability of the data have been a key feature for scientist around the world to make a collaborative effort in order to analyze such amount of data. In the field of Prostate Cancer and as official publication, the authors of the Project have published a paper about the taxonomy of the cancer type \citep{Abeshouse2015}. In this study they have been able to detect the driver mutations in the samples and therefore classify the heterogeneity of the tumor in different molecular subtypes. 
- 
+There has been multiple analysis of prostate cancer focused in RNA seq expression profiles \citep{rnaseq1,rnaseq2,zhai,rnaseq3,rnaseq4}. \cite{rnaseq1} finded with a study of 14 profiles of prostate cancer multiple gene fusions, such as CTAGE5-KHDRBS3 and USP9Y-TTTY15, and a differential expression of long non-condign RNA in tumor samples. \cite{zhai} founded a low expression of Cullin-associated and neddulation-dissociated 1 (CAND1) and high expression of lincRNA in tumor samples.  But most of these studies were established with small cohorts, producing sometimes results not extrapolable to all the prostate cancer cases.
+
+ The Cancer Genome Atlas Project (TCGA) \citep{tgca} is one of the most prominent international projects about cancer research in recent years and the availability of the data have been a key feature for scientist around the world to make a collaborative effort in order to analyze such amount of data. In the field of prostate cancer and as official publication, the authors of the Project have published a paper about the taxonomy of the cancer type \citep{Abeshouse2015}. In this study they have been able to detect the driver mutations in the samples and therefore classify the heterogeneity of the tumor in different molecular subtypes. 
  
 \begin{itemize}
 \item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenes drivers:
@@ -57,14 +58,11 @@ For patients whose cancer has spread, their survival time is usually one to thre
 \item 25\% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signalling pathways, and DNA repair genes were inactivated in 19\%.
 \end{itemize}
 
-One of their important conclusions is that each molecular subtype present a significant different expression pattern. Considering that our analysis does not segregate for molecular subtype we already expect a big amount of variability that might be a caveat of our approach. However, it is possible that considering all the tumors we can get common insights from multiple subtypes of prostate cancer that can be also useful in future drug design studies. 
+But the main conclusions were established at genome level, without producing a deep analysis of the different RNA seq profiles decribed in the transcriptome assay provided by the project. For the presented reason we believe a differential expression Analysis is needed to fully understand the nature of this data and to proper interpret a common insight from different molecular tumor subtypes.  
 
-It is remarkable to note that the original paper did not report a proper differential expression analysis as the one presented in this paper. For the presented reason we believe a Differential Expression Analysis is needed to fully understand the nature of this data and to proper interpret a common insight from different molecular tumor sub-types. From our knowledge, this is the first study in this matter as other gene expression analysis of prostate cancer have been gene (or gene set) specific. 
-
- It is also important to consider that for further analysis it would be suitable to segregate the tumors in molecular sub-types before performing the analysis and that this step would increase the significance and value of the results. However, we were not able to distinguish between them as we did not have the corresponding data.
+The aim of this study is to analyse prostate adenocarcinoma RNA seq dataset provided publicly by TCGA in order to establish (1) differentially expressed genes (2) a functional analysis of this gene sets at individual level, gene ontology level and gene pathways level, and finally (3) an integration of the functional results in general prostate cancer traits. 
 
 \section*{Materials and Methods}
-
 
 
 The examination of the RNA counts can be performed in an average laptop. As a limiting factor for analysing the data, it is recommended to have at least 4 Gb of RAM and CPU Intel Core i5 or superior. HDD memory is not a limiting factor for this analysis.
@@ -79,40 +77,33 @@ The examination of the RNA counts can be performed in an average laptop. As a li
 \label{fig:Clustering}
 \end{figure*}
 
-The software used was R version 3.3.0 "Supposedly Educational" \cite{R}. Main packages where download and installed through Bioconductor version 3.3 (BiocInstaller 1.22.2)\cite{bioconductor}.
-
-Detailed information about package versions can be found on the section "Session Info" of the Supplementary Materials (SM).
+The software used was R version 3.3.0 "Supposedly Educational" \cite{R}. Main packages where download and installed through Bioconductor version 3.3 \citep{bioconductor}. Detailed information about package versions can be found on the section "Session Info" of the Supplementary Materials (SM).
 
 In the following sections we describe briefly our analyses. However, a reproducible version of our analysis with all the code elements is also available in SM.
 
+
 \subsection*{Data Availability}
 
-The data sets are tables of RNA-seq counts generated by Rahman et al. \cite{Rahman15112015} from the TCGA raw sequence read data using the Rsubread/featureCounts pipeline for all data sets \cite{Rsubread}. They also processed clinical data that forms part of these data sets. PRAC dataset consist initially of 502 tumour samples and 52 normal samples. The phenotypic variable that indicates the tumour or normal status of the sample is called type.
+The data sets are tables of RNA-seq counts generated by Rahman et al. \cite{Rahman15112015} from the TCGA raw sequence read data using the Rsubread/featureCounts pipeline for all data sets \cite{Rsubread}. The data was used for this analysis is a variation of the above mentioned datasets, curated by PhD. Robert Castelo-Valdueza. In the SM a link to the data is attached in order to download it. 
 
-The data was used for this analysis is a variation of the above mentioned datasets, curated by PhD. Robert Castelo-Valdueza. In SM a link is attached in order to download it.
-
+PRAC dataset consist initially of 502 tumour samples and 52 normal samples with clinical information of each sample. Library sizes of the samples presented different coverage, with values ranging from 20M reads per sample to even 90M.  The phenotypic variable that indicates the tumour or normal status of the sample is called type.  Considering that our analysis does not segregate for molecular subtype we already expect a big amount of variability that might be a caveat of our approach. However,it is possible that considering all the tumors we can get common insights from multiple subtypes of prostate cancer that can be also useful in future drug design studies. But for this reason the analysis will be realized in a subset of the complete dataset. 
 \subsection*{Experimental Design}
 
-The initial dataset presented 52 normal samples and 502 tumour samples. Searching for coincidences in the patients barcode, it was found out that the dataset had mixed paired and unpaired data. It was decided that the paired design was a better choice, as it takes better into account the differences between subjects.
+The initial dataset presented 52 normal samples and 502 tumour samples. From this dataset, by patient barcode the dataset can be subsetted in a paired design of 50 normal and 50 tumoral samples and an unpaired design with 52 normal samples (with 50 form the paired design) and 452 tumor samples. It was decided that the paired design was a better choice, as this data presents almost no differences in the processement, suposing partially the elimination of possbile batch effects.
 
-After applying the corresponding logical mask, the dataset was composed by 50 normal samples and 50 tumour samples.
+After applying the corresponding filterings (see SM), the dataset was composed by 50 normal samples and 50 tumour samples.
 
 \subsection*{Quality Assessment and Normalization}
 
-DGE functions were used for normalization, which belongs to edgeR package \cite{Robinson01012010}. Normalization factors were calculated and counts per million reads (logCPM) computed.
+The dataset presented 20115 genes with expression data.  DGE functions were used for normalization, which belongs to edgeR package \cite{Robinson01012010}. Initially, normalization factors were calculated and counts per million reads (logCPM) computed. LogCPM distributions area were compared between normal samples and tumour samples. There were no significant differences, but a peak was observed below logCPM = 1. Since for these values the CPM the expression level we cannot establish real conclusions for those genes, transcripts with logCPM < 1 were deprecated. With this filtering, the number of genes analysed was reduced to 11722 genes. 
 
-LogCPM distributions area compared between normal samples and tumour samples. There are no significant differences. Transcripts with logCPM < 1 were deprecated.
-
-Despite there was a peak of high library size in the library size distribution, it was decided to not to take it out. The rest of the distribution was considered to be uniform.
-
-When plotting the log ratio - mean average plots (MA-plots) for all samples, it was noticed that the normalization procedure succeeded. Any deviation was considered as non-significance.
+When plotting the log ratio - mean average plots (MA-plots) for all samples, it was noticed that the normalization procedure succeeded. There were no significant deviation of the samples, and the analysis proceeded without any other filtering.
 
 \subsection*{Batch Effect Identification}
 
 Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumour/normal comparison (see SM).
 
 To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining 42 tumour and 42 normal samples.
-
 
 
 \subsection*{Differential Expression Analysis}
