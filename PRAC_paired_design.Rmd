@@ -194,7 +194,7 @@ table(data.frame(TYPE=prac.se.dupl$type, Plate=plate))
 
 ```
 
-By looking at the distributions of the tables, we observe that the values are equally distributed. As expected there is no batch effect. 
+By looking at the distributions of the tables, we observe that the values are equally distributed. As expected there is no batch effect.
 
 _*One of the possible batch effects would be the plate distribution, but in relation of the type variable they are equally analysed.???????? NO ENTENC RES! RESCRIURE*_
 
@@ -466,7 +466,7 @@ ggvolcano <- function(tt,FDR,hll = 3, hlr = 3,title = element_blank(), fc = 1){
 panel.background = element_blank(), axis.line = element_line(colour = "black"))
 }
 
-par(mfrow=c(2,1)) 
+par(mfrow=c(2,1))
 ggvolcano(tt,FDRcutoff,title = "Base Model")
 ggvolcano(tt2,FDRcutoff,title = "Voom + patient ID")
 ```
@@ -479,7 +479,7 @@ ggvolcano(tt4,FDRcutoff)
 
 After considering the differents model we believe the one that predicts better and in a most reliable manner the De genes is the Surrogate Variable model. With other methods we could not distinguish clearly between an artifact of the data and a real hit.
 
-It should be noted that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction. 
+It should be noted that the clear hit in the first 2 models (chr1-101) has a decrase in significance when we apply the SV correction.
 From the SV model, it can be seen that the following genomic regions as **top** differentially expressed:
 
 - chr1:225
@@ -567,20 +567,20 @@ library(GOstats)
 params <- new("GOHyperGParams", geneIds=DEgenes,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvaluecutoff=0.01, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 params.over <- new("GOHyperGParams", geneIds=DEgenes.over,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvaluecutoff=0.01, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 params.under <- new("GOHyperGParams", geneIds=DEgenes.under,
                 universeGeneIds=rownames(prac.se.dupl),
                 annotation="org.Hs.eg.db", ontology="BP",
-                pvaluecutoff=0.01, testDirection="over")
+                pvalueCutoff=0.01, testDirection="over")
 
 
 ```
 
-It can be observed that there are 6347 differential expresses genes (over and under represented). Now the procedure is repeated, conditioned by the child:
+It can be observed that there are 6347 differential expresses genes (over and under represented).
 
 ```{r}
 conditional(params) <- TRUE
@@ -591,9 +591,9 @@ hgOverCond
 
 ```{r}
 goresults <- GOstats::summary(hgOverCond)
-head(goresults)
-dim(goresults)
+
 ```
+We filter out the gene sets that have less than 9 as Size and 8 as count to avoid Infinite OddsRatio.
 
 ```{r}
 goresults <- goresults[ goresults$Size >= 9 & goresults$Count >= 8 ,]
@@ -602,18 +602,15 @@ goresults <- goresults[order(goresults$OddsRatio, decreasing=TRUE), ]
 head(goresults)
 ```
 
-
-```{r plotting go results}
-go.plot <- ggplot(goresults, aes(Size, Count, size = OddsRatio, colour = Pvalue)) + geom_point() + xlim(5,50) + ylim(5,50) + geom_abline(intercept = 0, slope = 1)
-
-go.plot
-```
+In the following graph we can see how the OddsRatio value decrase significantñy when increasing the size of the gene set. This is due to the HyperGeometric test applied.
 
 ```{r plot go 2}
 go.plot <- ggplot(goresults, aes(OddsRatio, Size, size = Count, colour = Pvalue)) + geom_point()  + ylim(0,500)
 
 go.plot
 ```
+
+Here we plot the results by odds ratio and P-values to obatain the real extreme values of the distribution.
 
 ```{r plot go 3}
 ggGO <- function(goresults,OR = 7.5){
@@ -625,7 +622,7 @@ ggGO <- function(goresults,OR = 7.5){
 }
 ggGO(goresults)
 ```
-
+Now, we repeat the process with the over expressed and under expressed genes.
 ```{r go over}
 conditional(params.over) <- TRUE
 hgOverCond.over <- hyperGTest(params.over)
@@ -651,7 +648,7 @@ head(goresults.under, n=6)
 ```{r}
 ggGO(goresults.under)
 ```
-
+Finally, we obtain the genes from each category and we print the latex table.
 ```{r}
 geneIDs <- geneIdsByCategory(hgOverCond)[goresults$GOBPID]
 geneSYMs <- sapply(geneIDs, function(id) select(org.Hs.eg.db, columns="SYMBOL", key=id, keytype="ENTREZID")$SYMBOL)
@@ -668,18 +665,23 @@ xtab <- xtable(goresults[1:5,], align="l|c|r|r|r|r|r|p{3cm}|p{3cm}|")
 print(xtab, type="latex")
 
 ```
-_*CALEN COMENTARIS AQUIII*_
+
 
 
 # Gese Set Expression Analysis
 
 ## GSEA
 
+
+The gene sets to perform the enrichment and variability approach have been taken from GSVAdata (@GSVAdata). The package used to map the gene set to our current notation have been GSEABase (@GSEABase).
+
+
 ```{r loading packages, results='hide'}
 library(GSEABase)
 library(GSVAdata)
 ```
 
+All GSEA base steps are done in the following steps.
 
 ```{r, fig.width=10}
 genesmd <- data.frame(chr=as.character(seqnames(rowRanges(prac.se.dupl))),
@@ -732,6 +734,8 @@ qqline(zS)
 #abline(0, 4)
 ```
 
+The gene sets are sorted in the rank object to select the most significant ones.
+
 ```{r plot Gene sets, fig.width=12}
 rnkGS <- sort(abs(zS), decreasing=TRUE)
 head(rnkGS)
@@ -782,9 +786,11 @@ plotGS(prac.se.GSEA, genesGS2, "type", main=names(rnkGS)[2], cex.lab=2, las=1)
 plotGS(prac.se.GSEA, genesGS3, "type", main=names(rnkGS)[3], cex.lab=2, las=1)
 plotGS(prac.se.GSEA, genesGS4, "type", main=names(rnkGS)[4], cex.lab=2, las=1)
 ```
-
+Each point is a gene in the gene set and the position depends on the expression in tumor and normal samples.
 
 ## GSVA
+
+The Gene Set Variantion Analysis have been performed using the GSVA package (@GSVA).
 
 ```{r, fig.height=6, fig.width=8}
 library(GSVA)
@@ -858,7 +864,7 @@ par(oma=c(2,1,1,1))
 
 heatmap(GSVAsco, ColSideColors=sample.color.map,  margins=c(2, 20),
         labRow=substr(gsub("_", " ", gsub("^KEGG_|^REACTOME_|^BIOCARTA_", "", rownames(GSVAsco))), 1, 35),
-        labCol="", scale="row", cexRow = 2, 
+        labCol="", scale="row", cexRow = 2,
         Colv=as.dendrogram(sampleClustering), Rowv=as.dendrogram(geneSetClustering), col=colors)
 legend("topleft", names(colorLegend), fill=colorLegend, inset=0.01, bg="white", cex = 2)
 mtext('Samples', side = 1, cex=2, line = 6)
@@ -869,8 +875,11 @@ mtext('Gene sets and Pathways', side = 4, cex=2)
 
 ### Comparing GSEA and GSVA resuts
 
+In order to compare the 2 methods, we have analysed the significant results of both by comparing the overlap of the significant results. Although we only have considered the top results from both approaches we can get the significant results using the FDRcutoff from previous analyses.
+
 ```{r venn 1, dev= "png"}
 library(VennDiagram)
+
 # GS from GSEA
 rnkGS.pvalues <- 2*pnorm(-abs(rnkGS))
 rnkGS.df <- data.frame(names(rnkGS),rnkGS.pvalues)
@@ -887,6 +896,8 @@ grid::grid.newpage()
 draw.pairwise.venn(area1 = area.GSEA, area2 = area.GSVA , cross.area = area.junct, category = c("GSEA","GSVA"), fill = c("red","blue"),alpha=c(0.3,0.3), lwd = c(2,2), cat.fontfamily = c("Helvetica","Helvetica"))
 ```
 
+
+Although the `limma` venn diagram is not designed to do this, we can also see the results.
 ```{r}
 in.GSEA <- (gs.all %in% gs.GSEA)
 in.GSVA <- (gs.all %in% gs.GSVA)
