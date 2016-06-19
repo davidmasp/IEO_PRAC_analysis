@@ -43,13 +43,13 @@ Transciptomics studies have improved substantially the molecular analysis of can
 
 \section*{Introduction}
 
-Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer disease (following lung cancer), and one with the highest prevalences. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), it is not frequent. The mean of diagnosis is around 66 years old \cite{prostatestatistics}.
+Prostate adenocarcinoma (PRAC), also referred as prostate cancer, is  the second most deadly cancer (following lung cancer), and one with the highest prevalence. As the American Cancer Society explains, about 1 man in 7 will be diagnosed with PRAC during his lifespan, and of those diagnosed, about 60\% are men over 65 years. Despite it might affect younger men (under 40 years old), this is not frequent. The mean of diagnosis is around 66 years old \cite{prostatestatistics}.
 
-For patients whose cancer has spread, their survival time is usually one to three years. It was estimated that for 2011, 240,890 men would be diagnosed and 33,720 would die from prostate cancer.
+For patients whose cancer has spread, their survival time is usually one to three years. It was estimated that for 2011, 240,890 men would be diagnosed and 33,720 would die from prostate cancer. 
 
-
-Since the first publication of the human genome, multiple international projects have been carried in order to study the genetic bases of the this pathology. One of the most prominent is The Cancer Genome Atlas Project (TCGA) \cite{tgca}. Recently, part of its information was released with part of the original data \cite{Rahman15112015}. TCGA established the following points:
-
+ The Cancer Genome Atlas Project (TCGA) \cite{tgca} most prominent international project about cancer research in recent years and the availability of the data have been a key feature for scientist around the world to make a collaborative effort in order to analyze such amount of data. In the field of Prostate Cancer and as official publication, the authors of the Project have published a paper about the taxonomy of the cancer type \citep{Abeshouse2015}. In this study they have been able to detect the driver mutations in the samples and therefore classify the heterogeneity of the tumor in different molecular subtypes. 
+ 
+ 
 \begin{itemize}
 \item 74\% of all tumors being assignable to one of seven molecular classes based on distinct oncogenes drivers:
         fusions involving (1) ERG, (2) ETV1, (3) ETV4, or (4) FLI1 (46\%, 8\%, 4\%, and 1\%, respectively)
@@ -57,8 +57,11 @@ Since the first publication of the human genome, multiple international projects
 \item 25\% of the prostate cancers had a presumed actionable lesion in the PI3K or MAPK signalling pathways, and DNA repair genes were inactivated in 19\%.
 \end{itemize}
 
+One of their important conclusions is that each molecular subtype present a significant different expression pattern. Considering that our analysis does not segregate for molecular subtype we already expect a big amount of variability that might be a caveat of our approach. However, it is possible that considering all the tumors we can get common insights from multiple subtypes of prostate cancer that can be also useful in future drug design studies. 
 
-The aim of this study is to provide a second outlook to the released data of the TCGA. For doing so we are to perform a differential expression analysis using paired data from the TCGA.
+It is remarkable to note that the original paper did not report a proper differential expression analysis as the one presented in this paper. For the presented reason we believe a Differential Expression Analysis is needed to fully understand the nature of this data and to proper interpret a common insight from different molecular tumor sub-types. From our knowledge, this is the first study in this matter as other gene expression analysis of prostate cancer have been gene (or gene set) specific. 
+
+ It is also important to consider that for further analysis it would be suitable to segregate the tumors in molecular sub-types before performing the analysis and that this step would increase the significance and value of the results. However, we were not able to distinguish between them as we did not have the corresponding data.
 
 \section*{Materials and Methods}
 
@@ -158,10 +161,10 @@ After computing the multiple linear model test, and the eBayes test \cite{limma}
 
 After defining the null model (bcr patient code variable, which corrects by patients variability) and computing the SV analysis, the volcano plot (\ref{fig:volcano}) was performed to graphically represent the distribution of genes by its B (signification) and its log fold changes (intensity).
 
-Genes out of the area formed by minimum levels of signification (depends on FDR) and minimum intensity (expression is doubled).
+Genes out of the area formed by minimum levels of signification (depends on FDR cutoff) and minimum intensity (expression is doubled).
 
 
-Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of significant gene, only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date.
+Despite that there are lots of genes that fall out of the rejection zones, in fact they conform a gradient of signification and only the topmost 5 will be taken into account for the rest of the article, as it is more likely that their values are worth. These 5 genes were then searched using the UCSC browser, using the RefSeq track, as it is more up-to-date (see supplementary material).
 
 \begin{itemize}
 \item chr1:225 codifies for \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=EPHA8}{EPHA8} which is an ephrin receptor, a neuronal factor.
@@ -171,13 +174,13 @@ Despite that there are lots of genes that fall out of the rejection zones, in fa
 \item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
 \end{itemize}
 
-EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumour types, between them prostate cancer \cite{proteinatlas}.
+EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumour types, between them prostate cancer \cite{proteinatlas,uhlen2015tissue}.
 
 SNORD89 is related with several cancer-related pathways:  anaplastic large cell lymphomas, lymphoma (NHL) cell lines, metastasis and death cell in colon cancer, prostate cancer, ovarian adenocarcinomas, etc \cite{tcng}.
 
 SCN5A is a voltage-gated sodium channel (VGSC), a group that is known to be related with metastatic potential of breast cancer, prostate cancer and lung cancer between others \cite{Nelson2015}.
 
-AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have and strong relation with all kinds of cancer \cite{proteinatlas}.
+AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have and strong relation with all kinds of cancer \cite{proteinatlas,uhlen2015tissue}.
 
 We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
 
@@ -192,7 +195,7 @@ From the 11143 gene ontology (GO) biological processes (BP) terms tested, only 2
 
 The first result is related with processes that modulate the frequency, rate or extent of astrocyte differentiation (GO:0048710). This result coincides with other studies provided by \cite{neuroendocrine3, neuroendocrine2} and the review realized by \cite{neuroendocrine1}. Some of the set genes haven been described in other studies as neurodifferentiaton markers, such as EPHA4 \cite{neuroendocrine_EPA}, SEPRINE2 \cite{mckee2013protease} and others.
 
-Response to vitamin A is a unexpected result: it is well known in prostate cancer the relationship with vitamin D \citep{vitamin0,vitamind1,vitamind2,vitamind3}, but little is known of the relationship with vitamin A. \cite{vitamina1} described a correlation between lack of vitamin A and prostate cancer, but there is no much other analysis in such aspect. Also, \cite{vitamina2} studied the relationship between vitamin A and apoptosis in prostate cancer, relating indirectly some of the genes such as retinoic acid receptor-beta (RARA), whose expression could be downregulated in cancer.
+Response to vitamin A is a unexpected result: it is well known in prostate cancer the relationship with vitamin D \citep{vitamin0,vitamind1,vitamind2,vitamind3}, but little is known of the relationship with vitamin A. \cite{vitamina1} described a correlation between lack of vitamin A and prostate cancer, but there is no much other analysis in the field. Also, \cite{vitamina2} studied the relationship between vitamin A and apoptosis in prostate cancer, relating indirectly some of the genes such as retinoic acid receptor-beta (RARA), whose expression could be downregulated in cancer.
 
 Both icosanoid secretion and fatty acid transport have been related with cancer \citep{fat1,fat2}. Eicosanoid are biological lipid molecules that are implicated in pathological processes. Being part of the  cyclooxygenase (COX) and lipoxygenase (LOX) pathways, they present mediator effect in the proliferation of cancerous cells and regulate tumor vascularization \citep{fatvascu} As we can see, the gene sets are almost identical, with SLCO2A1 present as a difference in fatty acid transport.
 
@@ -257,29 +260,30 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 
 As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment} meanwhile the results from the Variation approach are shown in figure \ref{fig:ClusteringGSVA}.
 
-In the first approach (table \ref{tab:GSEAenrichment}), the top ranked gene set differentially expressed in the deanylation of mRNA which is a gene set related to the maturation of transcribed RNA. They are mostly expressed ubiquitously among the human tissues as they play a basic role in rotein synthesis. From the selected genes 4 families sum up their function, EIF4 and CNOT act directly as transcriptional regulators as they are part of the protein complex involved in this process. PAN in the other hand is important in the stabilitation of the mRNA and participates in the binding to the polyA tail. Finally, the TNKS1BP1 is a gene reported as key in nuclear stability of genome and have also been related to participate in the p53 pathway, which is a clear tumorsupresor. This pathway presents a small over-expression that may indicate a highly protein transcription activity in cancer cells \cite{proteinatlas}.
+In the first approach (table \ref{tab:GSEAenrichment}), the top ranked gene set differential expressed is the deanylation of mRNA which is a gene set related to the maturation of transcribed RNA. They are mostly expressed ubiquitously among the human tissues as they play a basic role in protein synthesis. From the selected genes, 4 families sum up their function. EIF4 and CNOT have a role as transcriptional regulators as they are part of the protein complex involved in this process. PAN in the other hand is important in the stabilitation of the mRNA and participates in the binding to the polyA tail. Finally, the TNKS1BP1 is a gene reported as key in nuclear stability of genome and have also been related to participate in the p53 pathway, which is a clear tumorsupresor. This pathway presents a small over-expression that may indicate a higher rate of protein transcription activity in cancer cells \cite{proteinatlas,uhlen2015tissue}.
 
-The next gene set in the top ranked DE is the muscle contraction, also from the reactome database. This pathway is expressed mostly in the muscle tissue but it also presents expression in the urinary bladder, the gastrointestinal track and the prostate \cite{proteinatlas}. Its genes code for cytoskeletic related proteins like Actin, Calmodulin and Integrins that are key proteins in the cell shape pathways. An under-expression of this pathway could easily be related with a dedifferentiation of the cancer cells through the Epithelial–mesenchymal transition (EMT) \citep{yilmaz2009emt}.
+The next gene set in the top ranked DE is the muscle contraction, also from the reactome database. This pathway is expressed mostly in the muscle tissue but it also presents expression in the urinary bladder, the gastrointestinal track and the prostate \cite{proteinatlas,uhlen2015tissue}. Its genes code for cytoskeletic related proteins like Actin, Calmodulin and Integrins that are key proteins in the cell shape determination. An under-expression of this pathway could easily be related with a undifferentiation of the cancer cells through the Epithelial–mesenchymal transition (EMT) \citep{yilmaz2009emt}.
 
-The top3 and top5 hits from the GSEA are in fact related. Although the Botylium Toxicity pathway has some brain specific genes (SNAP25 and SYT1) and this seems to be unrelated with prostate and with cancer, the other genes in the set are expressed ubiquitously among the body. These genes are related with the SNARE vessels and are also detected in the top5 gene set from the KEGG database \textit{SNARE INTERACTIONS IN VESICULAR TRANSPORT} as seen in the supplementary material report. SNAREs have been widely reported as tumorogenesis genes due to their control in multiple signalling and transportation pathways.
+The top3 and top5 hits from the GSEA are in fact related. Although the Botylium Toxicity pathway has some brain specific genes (SNAP25 and SYT1) and this seems to be unrelated with prostate and with cancer, the other genes in the set are expressed ubiquitously among the human body. These genes are related with the SNARE vessels and are also detected in the top5 gene set from the KEGG database \textit{SNARE INTERACTIONS IN VESICULAR TRANSPORT} as seen in the supplementary material report. SNAREs have been widely reported as tumorogenesis genes due to their control in multiple signalling and transportation pathways.
 
-Finally, the top4 gene set detected, Endogenous Sterols is a gene formed by the CYtochrome P450 family that is key in the clorestherol homeostasis. There are genes responsible for its biosynthesis like CYP8B1 and from its degradation and conversion to bile salts like CYP39A1. This production of bile salts is also found to be related with prostate cancer in our following analysis, GSVA. The diferent genes in the set are expressed in a range of hormone secretor organs. Moreover, Prostate Cancer has been associated as a cholesterol dependent cancer as the cholesterol levels in blood are associated with bad prognosis \cite{krycer2013cholesterol}. This can be explained as cholesterol is a key molecule to  maintain the structure of the cell membrane and it is a important component of the lipid-rafts involved in signal transduction.
+Finally, the top4 gene set detected, Endogenous Sterols is a gene formed by the CYtochrome P450 family that is key in the clorestherol homeostasis. There are genes responsible for its biosynthesis like CYP8B1 and from its degradation and conversion to bile salts like CYP39A1. This production of bile salts is also found to be related with prostate cancer in our following analysis, GSVA. The different genes in the set are expressed in a range of hormone secretory organs. Moreover, Prostate Cancer has been associated as a cholesterol dependent cancer and the cholesterol levels in blood are associated with bad prognosis \cite{krycer2013cholesterol}. This can be explained as cholesterol is a key molecule to  maintain the structure of the cell membrane and it is a important component of the lipid-rafts involved in signal transduction.
 
 
-The top30 results from the Variation approach can be summed up in the figure \ref{fig:ClusteringGSVA} with a heat map that cluster the different gene sets in weather over-expressed or under-expressed in Prostate Cancer. The volcano plot regarding their significance is shown in the supplementary material (). In the volcano plot is clear how the under-expressed side of the plot is more noisy (and more significant) than the over-expressed.
+The top30 results from the Variation approach can be summed up in the figure \ref{fig:ClusteringGSVA} with a heat map that cluster the different gene sets in weather over-expressed or under-expressed in Prostate Cancer. The volcano plot regarding their significance is shown in the supplementary material. In the volcano plot is clear how the under-expressed side of the plot is more noisy (and more significant) than the over-expressed.
 
-As first observation is clear the overlap between the GSVA and the GSEA that from their significant predictions we get an 74\% of hits (see supplementary material). We can also get a similar idea from the selected top30 where already reported gene sets are significant also in this analysis. For instance, the mRNA deanylation and the SNAREs pathways are found also over-expressed in tumor cells. The deregulation of cholesterol levels and the dedifferentiation via under-expression of actins and integrins can be also seen in this analysis.
+As first observation is clear the overlap between the GSVA and the GSEA that from their significant predictions we get an 74\% of overlap in their hits (see supplementary material). We can also get a similar idea from the selected top30 where already reported gene sets are significant also in this analysis. For instance, the mRNA deanylation and the SNAREs pathways are found also over-expressed in tumor cells. The deregulation of cholesterol levels and the dedifferentiation via under-expression of actins and integrins can be also seen in this analysis.
 
 As a new hits we can get some interesting results in both sides of the expression. The HER2 pathway is strongly related with other cancers like Breast Cancer but have also been associated to prostate cancer by \cite{yeh1999her2} and its the most clear hit in our GSVA. Our top2 hit is the interleukine related gene set that would imply the inflamation of the cancer tissue. A role for IL-6 in prostate cancer has also been reported \citep{chung1999characterization}.
 
-In the over-expression hits can still be found other growth factors like the Insulin-like growth factor, also reported in \cite{hellawell2002expression}, or the cell cycle regulator E2F gene set that some studies have used as target to unresponsive prostate cancers tumors to androgen-deprivation therapy \citep{kaseb2007androgen}.
+In the over-expression hits can still be found other growth factors like the Insulin-like growth factor, also reported in \cite{hellawell2002expression}, or the cell cycle regulator E2F gene set that some studies have used as target to unresponsive prostate tumors to androgen-deprivation therapy \citep{kaseb2007androgen}.
 
-In the top part of the heatmap there are also new hits reported from the GSVA. The  \textit{VAV3 PROSTATE CARCINOGENESIS DN} \citep{liu2008targeted} is a gene set from Reactome that contain downregulated genes in a specific prostate cancer type characterized by the over-expression of VAV3. The Hsp27 gene code for a heat-shock protein that could be related with the heat response GO biological process found also in the GO enrichment analysis.
+In the top part of the heatmap there are also new hits reported from the GSVA. The  \textit{VAV3 PROSTATE CARCINOGENESIS DN} \citep{liu2008targeted} is a gene set from Reactome that contain downregulated genes in a specific prostate cancer type characterized by the over-expression of VAV3. The Hsp27 gene code for a heat-shock protein that could be related with the heat response GO biological process found also in the GO enrichment analysis (see supplementary material).
 
 
 
 \section*{Conclusions}
-As 
+
+
 
 
 
