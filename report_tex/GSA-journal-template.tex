@@ -26,7 +26,7 @@
 \correspondingauthor{Auladell-Martin}
 
 \begin{abstract}
-Transciptomics studies have improved substantially the molecular analysis of cancer, with the discovery of many new drug targets. The Cancer Genome Atlas Project has provided to the research society high quality RNA-seq data in many different tumour types. Prostate cancer, or prostate adenocarcinoma, is the second most deadly cancer disease, and one with the highest prevalences. The present article aims to perform an analysis of the differential expression and a functional analysis of RNA-seq data obtained from The Cancer Genome Atlas project. With previous sub-setting and normalization, a paired design of 42 tumour and 42 normal samples was used. Differential expression analysis was realized by multiple linear regression. Finally, a functional analysis was realized by hypergeometric test on gene ontology and gene set enrichment analysis/gene set variation analysis on various pathway datasets. A detailed analysis revealed that there is function enrichment in tumour samples when compared to normal samples. Differential gene expression seems to be less consistent than functional analysis. The functional analysis is focused in some of the traditional hallmarks of tumourgenic processes: transporters, channels and fatty acid pathways (most of them related to the oncosmosis and oncometabolites), transcription factors (relating to immortalising cells), between others.
+Transciptomics studies have improved substantially the molecular analysis of cancer, with the discovery of many new drug targets. The Cancer Genome Atlas Project has provided to the research society high quality RNA-seq data in many different tumour types. Prostate cancer, or prostate adenocarcinoma, is the second most deadly cancer disease, and one with the highest prevalences. The present article aims to perform an analysis of the differential expression and a functional analysis of RNA-seq data obtained from The Cancer Genome Atlas project. With previous sub-setting and normalization, a paired design of 42 tumour and 42 normal samples was used. Differential expression analysis was realized by multiple linear regression. Finally, a functional analysis was realized by hypergeometric test on gene ontology and gene set enrichment analysis/gene set variation analysis on various pathway datasets. A detailed analysis revealed that there is function enrichment in tumour samples when compared to normal samples. Differential gene expression seems to be less consistent than functional analysis. The functional analysis is focused in some of the traditional hallmarks of tumourgenic processes: transporters and channels (SCN5A and CACNA1F), fatty acid pathways (GO:190157 fatty acid derivative transport), transcription factors (GO:0048710 regulation of astrocyte differentiation, EPHA8), between others.
 \end{abstract}
 
 \setboolean{displaycopyright}{true}
@@ -71,7 +71,7 @@ The examination of the RNA counts can be performed in an average laptop. As a li
 
 \includegraphics[width=.9\textwidth]{Clustering.eps}
 
-\caption{Initial Cluster of Final data set clustered by gene expression levels. Although some samples are not clustered ideally with their correspondent type, 2 groups can be distinguished clearly. The top-left group contains most of the tumour samples and the bottom-right contains most of the Normal samples.
+\caption{Heatmap of sample-to-sample distances. After filtering and pruning our data set the image show the difference of all genes expression in logCPM units. The Clustering have been performed using a Spearman method. We can observe clearly 2 groups corresponding to tumour and normal samples. 
 }
 \label{fig:Clustering}
 \end{figure*}
@@ -137,7 +137,13 @@ The GSVA package \cite{GSVA} was used to define the set expression values. Then,
 \begin{figure*}[!h]
 \centering
 \includegraphics[width=\linewidth]{Volcano.eps}
-\caption{Volcano plot of the studies genes. Crossing lines represent the threshold by which genes have been minimally accepted. Blue dots are accepted transcripts, red dots are rejected. Most scoring genes are highlighted.}
+\caption{Volcano plot representing the DE genes (over-expressed) in the right side and under-expressed in the left side. Axis represent intensity, logFC (2-fold expressed genes) at X-axis, and significance, B (derived from FDRCutoof = 0.001) at Y-axis. Crossing lines represent the threshold by which genes have been minimally accepted. Blue dots are accepted transcripts, red dots are rejected. Most scoring genes are highlighted.
+
+As can be seen in the plot, there is an important number of genes that exceed the thresholds that were defined. Due that the number of loci would greatly exceed the amount of work, and in fact, it might be considered an article on its own, it was decided to reduce it to the 5 topmost scoring values.
+
+Those 5 loci are chr1:225 which codifies for EPHA8, chr2:101 for SNORD89, chr3:385 SCN5A, chr11:11 for AP002884.2 (which seem to map to SDHD-006 and BCO2-009 subunits) and chrX:492 for CACNA1F.
+}
+
 \label{fig:volcano}
 \end{figure*}
 
