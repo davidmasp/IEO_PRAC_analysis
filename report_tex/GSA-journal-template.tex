@@ -102,33 +102,32 @@ When plotting the log ratio - mean average plots (MA-plots) for all samples, it 
 
 Batch effect was evaluated by means of the TCGA barcode information. The code specified center of analysis, tissue source site and plate of the NGS machine. The center was the University of North Carolina for all samples and the tissue source site/plate variables were equilibrated in the tumor/normal comparison (see SM).
 
-To evaluate possible anomalous samples, hierarchical clustering (HC) from \cite{pheatmap} package and multidimensional scaling (MDS) from \cite{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining 42 tumor and 42 normal samples.
+To evaluate possible anomalous samples, hierarchical clustering (HC) from pheatmap \citep{pheatmap} package and multidimensional scaling (MDS) from limma \citep{limma} package were performed. HC, clustered by Spearman correlation, presented mainly a good clustering, with some of the paired samples clustering together due to the similarities within individual (see SM). MDS plot presented an anomalous clustering of normal samples from the same batch. These samples were filtered out, remaining 42 tumor and 42 normal samples.
 
 
 \subsection*{Differential Expression Analysis}
 
 A design matrix was built with sample type (tumor/normal). LogCPM measurements were corrected with the  voom (mean-variance relationship of the log-counts) function present in limma package \cite{voom}. As a covariates,  patient barcode and surrogate variables inferred by SVA analysis were included. Surrogate variables are covariates constructed directly from high-dimensional data that can be used in subsequent analyses to adjust for unknown, unmodeled, or latent sources of noise analysis \citep{Leek2012}.
 
-With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with \cite{limma} package. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were calculated with empirical Bayes statistics from \cite{limma} package. P-values were adjusted with FDR measurements and cut-off was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from \cite{limma} package (see SM). Top DE hits were visualized with Gviz package.
-
+With the design matrix and voom logCPM values, Multiple linear regression (MLR) was performed with limma package \citep{limma}. From MLR analysis, t statistics, moderated F-statistics and  log-odds ratios were calculated with empirical Bayes statistics from limma package. P-values were adjusted with FDR measurements and cut-off was established at genes presenting 1\% of FDR. To evaluate results p-values and moderated t-statistics were plotted and DE genes were visualized in volcano plots and  MA plots  from limma package (see SM). Top DE hits were visualized with Gviz package \citep{Gviz}.
 
 \subsection*{Functional Enrichment}
 
-The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package \cite{GOstats} was used. As parameters, a p-value cut-off of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
+The resulting DE genes from the previous analyses have been tested for functional enrichment using Gene Ontology gene sets. A hyper-geometrical test from the GOstats package was used \citep{GOstats}. As parameters, a p-value cut-off of 0.01 have been set in order to filter only the most significant results. Then, the results have been pruned again for sets with at least 8 genes to avoid extreme results with infinite OddsRatio.
 
-The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results.
+The same analysis have been also performed in the DE over-expressed and under-expressed gene lists to clarify if the GO biological process is indeed enhanced or decreased in tumor cells. The aim of this stratified analysis is to improve the biological content of our results. Some of the results will change due to a decrease in the gene set analyzed, but this las analysis is only qualitivately. The adequate results are present in the global functional enrichment analysis. 
 
 
 \subsection*{Gene Set Expression Analysis}
-In order to analyse differential expression in gene sets and not uniquely at the gene level 2 different approaches have been used, a Gene Set Enrichment Analysis (GSEA) and a Gene Set Variation Analysis (GSVA).
+In order to analyse differential expression in gene sets and not uniquely at the gene level, two approaches have been used: Gene Set Enrichment Analysis (GSEA) and Gene Set Variation Analysis (GSVA).
 
 
-For both GSEA and GSVA the gene sets from the GSVAdata package \cite{GSVAdata} have been selected. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \cite{kanehisa2016kegg}, Reactome \cite{fabregat2016reactome} and   Biocarta \cite{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
+For both GSEA and GSVA the gene sets from the GSVAdata package have been selected \citep{GSVAdata}. After that, the original gene sets were reduced only to curated gene sets  (C2 type) . In this case the KEGG  \citep{kanehisa2016kegg}, Reactome \citep{fabregat2016reactome} and   Biocarta \citep{nishimura2001biocarta} databases were selected. Gene Sets related with Prostate Cancer have been also included from the same data package.
 
 
-The package GSEABase \cite{GSEABase} was used to define Gene Sets and match gene identifiers to our Entrez Id codes. The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes. It is also an enrichment approach, however, it uses the expression values from the expressed genes to rank them so therefore it is been using expression data.
+GSEABase package was used to define Gene Sets and match gene identifiers to our Entrez Id codes \citep{GSEABase} . The classic GSEA consist in the generation of an incidence matrix that let us build a Enrichment Score by that is dependent on how many genes from the gene set are ranked as most DE genes. It is also an enrichment approach, however, it uses the expression values from the expressed genes to rank them so therefore it is using expression data.
 
-The GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \cite{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{leek2007capturing,svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
+GSVA package \cite{GSVA} was used to define the set expression values. Then, limma  \citep{limma} and SVA packages were used to perform the linear regression and to improve the model respectively \cite{svamanual} . Finally, the 30 top DE pathways have been clustered by sample in order to obtain a clear visualization of the ones over and under-expressed in tumor and normal samples.
 
 
 \section*{Results}
@@ -143,7 +142,7 @@ The GSVA package \cite{GSVA} was used to define the set expression values. Then,
 \label{fig:volcano}
 \end{figure*}
 
-After computing the multiple linear model test, and the eBayes test \cite{limma} 	it was found out that:
+After computing the multiple linear model test and the eBayes test it was found out that:
 
 \begin{itemize}
 \item 2168 genes are under-expressed in tumor samples compared to normal samples.
@@ -161,15 +160,13 @@ Volcano plot (Fig. \ref{fig:volcano}) was performed to graphically represent the
 \item chrX:492 codifies \href{http://www.genecards.org/cgi-bin/carddisp.pl?gene=CACNA1F}{CACNA1F} which is a calcium channel voltage dependant L type.
 \end{itemize}
 
-EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumor types, between them prostate cancer \cite{proteinatlas,uhlen2015tissue}.
+EPHA8 is a prognosis marker for cancer (malignant marker). It appears over-expressed in several tumor types, between them prostate cancer \citep{proteinatlas,uhlen2015tissue}.
 
-SNORD89 is related with several cancer-related pathways:  anaplastic large cell lymphomas, lymphoma (NHL) cell lines, metastasis and death cell in colon cancer, prostate cancer, ovarian adenocarcinomas, etc \cite{tcng}.
+SNORD89 is related with several cancer-related pathways:  anaplastic large cell lymphomas, lymphoma (NHL) cell lines, metastasis and death cell in colon cancer, prostate cancer, ovarian adenocarcinomas, etc \citep{tcng}.
 
-SCN5A is a voltage-gated sodium channel (VGSC), a group that is known to be related with metastatic potential of breast cancer, prostate cancer and lung cancer between others \cite{Nelson2015}.
+SCN5A is a voltage-gated sodium channel (VGSC), a group that is known to be related with metastatic potential of breast cancer, prostate cancer and lung cancer between others \citep{Nelson2015}.
 
-AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have and strong relation with all kinds of cancer \cite{proteinatlas,uhlen2015tissue}.
-
-We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
+AP002884.2 seems to be an unmapped transcript. A more accurated display of the region, reveal that AP002884.2 compromises 2 genes SDHD-006 and BCO2-009. SDHD-006 is the 6th subunit of the succinate dehydrogenase, which is known to play a role as oncometabolite \cite{oncometabolites} and BCO2-009 is related with the synthesis of vitamin A through oxidation of carotenoids  and beta-carotene and have a relation with all kinds of cancer \citep{proteinatlas,uhlen2015tissue}. We suggest that in the case of AP002884.2 there has been an error in the mapping phase of the reads. We have considered to take into account both proteins (SDHD-006 and BCO2-009) has both can be traced to carcinogenic processes.
 
 CACNA1F is related with several cancers like colon cancer, breast cancer, melanoma, myeloma and prostate cancer \citep{tcng}.
 
