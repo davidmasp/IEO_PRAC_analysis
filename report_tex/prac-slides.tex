@@ -133,23 +133,81 @@
 
 \subsection{Data Availability \& Experimental Design}
 
-\begin{frame}{Blocks}
-\begin{block}{Block Title}
-You can also highlight sections of your presentation in a block, with it's own title
-\end{block}
-\begin{theorem}
-There are separate environments for theorems, examples, definitions and proofs.
-\end{theorem}
-\begin{example}
-Here is an example of an example block.
-\end{example}
+\begin{frame}{Methods}{Data Availability \& Experimental Design}
+	\begin{block}{Data Availability}
+		\begin{itemize}
+			\item The original data was realised by Rahman et al. \cite{Rahman15112015} .
+			\item Constructed with Rsubread/featureCounts \cite{Rsubread}.
+			\item Curated by Robert Castelo-Valdueza.
+			\item 52 normal samples vs. 502 tumor samples.
+		\end{itemize}
+	\end{block}
+	
+	\begin{block}{Experimental Design}
+		\begin{itemize}
+			\item Paired design with 50 normal samples vs. 50 tumor samples.
+			\item After trimming, the design consisted of 42 normal samples vs. 42 tumor samples.
+		\end{itemize}
+	\end{block}
+
 \end{frame}
 
 \subsection{Processing}
+\begin{frame}{Methods}{Processing}
+	\begin{itemize}
+		\item Normalization with DGE algorithm \cite{Robinson01012010} 20115 genes.
+		\item Filtered transcripts with logCPM \textgreater 1, remaining 11722 genes.
+		\item Batch effect evaluated by patient barcode  (which contains center, site and plate).
+		\item Some samples where deprecated (1:1 ratio) as they disturbed the clustering of groups (mentioned before).
+		\item Clustering algorithms and HeatMap visualisation were performed to assess possible biases.
+	\end{itemize}
 
+\end{frame}
+
+\begin{frame}{Methods}{Data Display}
+	\centering
+	\includegraphics[width=0.8\textwidth,height=0.5\textheight,keepaspectratio]{mds2-1.eps}
+
+	\includegraphics[width=0.8\textwidth,height=0.5\textheight,keepaspectratio]{mds4-1.eps}
+
+\end{frame}
+
+\begin{frame}{Methods}{Clustering}
+	\centering
+\includegraphics[width=.9\textwidth]{dendogram-1.eps}
+
+\end{frame}
+
+\begin{frame}{Methods}{HeatMap}
+	\centering
+	\includegraphics[width=0.70\textwidth,height=0.9\textheight,keepaspectratio]{Clustering.eps}
+
+\end{frame}
 
 \subsection{Statistical Analysis}
 
+\begin{frame}{Methods}{Statistical Analysis}
+	\begin{block}{SA: Differential Gene Expression}
+		\begin{itemize}
+			\item Voom correction (mean-variance correction).
+			\item Surrogate Variables Analysis (SVA) was used \cite{leek2007capturing} \cite{svamanual}. Multiple Linear Regression (MLR)  and MA plots were used to analyse the data \cite{limma}.
+			\item FDR = 0.001.
+		\end{itemize}
+	\end{block}
+	\begin{block}{SA: Functional Enrichment}
+		\begin{itemize}
+			\item Gene Ontology sets were used for FE.
+			\item GOstats package \cite{GOstats} was used.
+		\end{itemize}
+	\end{block}
+	\begin{block}{SA: Gene Set Expression Analysis}
+		\begin{itemize}
+			\item Gene Set Enrichment Analysis (GSEA) \cite{GSEABase}.
+			\item Gene Set Variation Analysis \cite{GSVA} \& \cite{GSVAdata}.
+			\item KEGG \cite{kanehisa2016kegg}, Reactome \cite{fabregat2016reactome}, Biocarta \cite{nishimura2001biocarta} \& Prostat Cancer Gene Set.
+		\end{itemize}
+	\end{block}	
+\end{frame}
 
 
 \section{Results}
