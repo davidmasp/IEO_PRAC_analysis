@@ -4,6 +4,7 @@
 
 \documentclass{beamer}
 \usepackage{adjustbox}
+\usepackage{tikz}   
 %\usetheme{AnnArbor}
 %\usetheme{Antibes}
 %\usetheme{Bergen}
@@ -166,21 +167,28 @@
 
 \begin{frame}{Methods}{Data Display}
 	\centering
-	\includegraphics[width=0.8\textwidth,height=0.5\textheight,keepaspectratio]{mds2-1.eps}
-
-	\includegraphics[width=0.8\textwidth,height=0.5\textheight,keepaspectratio]{mds4-1.eps}
-
+	
+	
+  \begin{tikzpicture}
+    \node (img1){\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{mds2-1.eps}};
+  \end{tikzpicture}
+  
 \end{frame}
+
+\begin{frame}{Methods}{Data Display}
+  \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{mds4-1.eps}
+\end{frame}
+
 
 \begin{frame}{Methods}{Clustering}
 	\centering
-\includegraphics[width=.9\textwidth]{dendogram-1.eps}
+\includegraphics[width=\textwidth,height=0.9\textheight,keepaspectratio]{dendogram-1.eps}
 
 \end{frame}
 
 \begin{frame}{Methods}{HeatMap}
 	\centering
-	\includegraphics[width=0.70\textwidth,height=0.9\textheight,keepaspectratio]{Clustering.eps}
+	\includegraphics[width=0.70\textwidth,height=0.75\textheight,keepaspectratio]{Clustering.eps}
 
 \end{frame}
 
@@ -235,7 +243,7 @@
 \begin{frame}{Differential Gene Expression}{Top DE gene}
 
    \begin{figure}
-        \includegraphics[width=0.8\textwidth,height=0.8\textheight,keepaspectratio]{SCN5A}
+        \includegraphics[width=0.7\textwidth,height=0.7\textheight,keepaspectratio]{SCN5A}
     \end{figure}
 
 \end{frame}
@@ -262,7 +270,7 @@ The AP002884.2 transcript compromises 2 genes SDHD and BCO2 related with the suc
 \subsection{Functional Enrichment}
 \begin{frame}{Functional Enrichment}{Selected GO terms}
 \adjustbox{max width=\textwidth}{
-
+\small
 \begin{tabular}{|c|r|r|r|r|r|p{2cm}|p{6cm}|}
  \hline
 GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\ 
@@ -297,20 +305,25 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 \end{frame}
 
 \begin{frame}{Gene Set Expression Analysis}{ Enrichment approach (GSEA)}
-\centering \includegraphics[width=0.8\textwidth,height=0.4\textheight,keepaspectratio]{genesets1.eps} \\
-        \includegraphics[width=0.8\textwidth,height=0.4\textheight,keepaspectratio]{genesets2.eps}
+  \centering 
+    \includegraphics[width=0.75\textwidth,height=0.35\textheight,keepaspectratio]{genesets1.eps} \\
+    \includegraphics[width=0.75\textwidth,height=0.35\textheight,keepaspectratio]{genesets2.eps}
 \end{frame}
 
 \begin{frame}{Gene Set Expression Analysis}{ Variation  approach (GSVA)}
-   \centering
-        \includegraphics[width=1\textwidth,height=0.8\textheight,keepaspectratio]{ClusteringGSVA.eps}
+        \includegraphics[width=0.9\textwidth,height=0.8\textheight,keepaspectratio]{ClusteringGSVA.eps}
 
 \end{frame}
 
 
 \begin{frame}{Gene Set Expression Analysis}{ Comparison}
-\centering
-        \includegraphics[width=.7\textwidth,height=0.8\textheight,keepaspectratio]{venn}
+\begin{center}
+    \includegraphics[width=.5\textwidth,height=0.5\textheight,keepaspectratio]{venn}
+    \vskip
+    
+    74\% of GSEA and GSVA results are shared. 
+\end{center}
+    
 \end{frame}
 
 
