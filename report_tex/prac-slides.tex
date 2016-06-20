@@ -3,7 +3,7 @@
 
 
 \documentclass{beamer}
-
+\usepackage{adjustbox}
 %\usetheme{AnnArbor}
 %\usetheme{Antibes}
 %\usetheme{Bergen}
@@ -157,10 +157,104 @@ Here is an example of an example block.
 
 \subsection{DE genes}
 
+\begin{frame}{Differential Gene Expression}{Volcano Plot}
+
+   \begin{figure}
+        \includegraphics[width=1\textwidth]{Volcano.eps}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Differential Gene Expression}{MA plots}
+
+   \begin{figure}
+        \includegraphics[width=0.8\textwidth,height=0.8\textheight,keepaspectratio]{MAplot.eps}
+    \end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Differential Gene Expression}{Top DE gene}
+
+   \begin{figure}
+        \includegraphics[width=0.8\textwidth,height=0.8\textheight,keepaspectratio]{SCN5A}
+    \end{figure}
+
+\end{frame}
+
+\begin{frame}{Differential Gene Expression}{Top DE genes}
+The Top5 Selected Gene through significance level:
+\begin{itemize}
+	\item  EPHA8 - ephrin receptor, a neuronal factor.
+    \item SNORD89 - small nucleolar RNA.
+    \item SCN5A - sodium channel voltage gated V Type.
+    \item AP002884.2  - putative gene 
+    \item CACNA1F which is a calcium channel voltage dependant L type.
+\end{itemize}
+\pause
+\begin{block}{Neuronal Connection}
+Several DE genes present a connection with neuronal processes like EPHA8, SCN5A \& CACNA1F
+\end{block}
+\pause
+\begin{block}{Mapping Error}
+The AP002884.2 transcript compromises 2 genes SDHD and BCO2 related with the succinate dehydrogenase with vitamin A biosynthesis.
+\end{block}
+\end{frame}
 
 \subsection{Functional Enrichment}
+\begin{frame}{Functional Enrichment}{Selected GO terms}
+\adjustbox{max width=\textwidth}{
+
+\begin{tabular}{|c|r|r|r|r|r|p{2cm}|p{6cm}|}
+ \hline
+GOBPID & Pvalue & OddsRatio & ExpCount & Count & Size & Term & Genes \\ 
+\hline
+GO:0048710 & 0.00 & 11.20 & 7.53 &  13 &  14 & regulation of astrocyte differentiation & DAB1, EPHA4, F2, FGFR3, ATF5, PRPF19, BIN1, HES1, IL1B, NTRK3, SERPINE2, CNTN2, NR2E1 \\ 
+GO:0033189 & 0.01 & 9.47 & 6.45 &  11 &  12 & response to vitamin A & DNMT3A, DNMT3B, GATA4, ARG1, LTC4S, RARA, RXRA, TSHB, TYMS, CAT, ALDH1A2 \\ 
+ GO:0032309 & 0.01 & 6.03 & 8.60 &  14 &  16 & icosanoid secretion & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SYK, CYP4F2, TNFSF11 \\ 
+GO:1901571 & 0.01 & 4.31 & 9.68 &  15 &  18 & fatty acid derivative transport & ABCC4, ACE, DRD3, AGTR2, ACSL4, ANXA1, IL1B, NTSR1, OXT, P2RX7, BDKRB2, SLCO2A1, SYK, CYP4F2, TNFSF11 \\ 
+GO:0043966 & 0.01 & 3.45 & 13.45 &  20 &  25 & histone H3 acetylation & TRIM16, TAF6L, WDR5, CHEK1, KAT7, SGF29, DR1, BRD4, KAT6B, WBP2, SIN3A, BRPF3, PER1, PIH1D1, CSRP2BP, BRCA2, TAF10, BRPF1, KAT2B, SUPT7L \\ 
+   \hline
+\end{tabular}
+
+}
+\end{frame}
 
 \subsection{Gene Set Expression Analysis}
+
+
+\begin{frame}{Gene Set Expression Analysis}{ Enrichment approach (GSEA)}
+\adjustbox{max width=\textwidth}{
+\begin{tabular}{|l|c|c|p{6.3cm}|}
+ \hline
+Gene Set & Relative tumor expression &  Z-value & Genes \\
+  \hline
+REACTOME DEADENYLATION OF MRNA & Over-Expressed  & 19.19 & EIF4A1, EIF4A2, EIF4B, EIF4E, EIF4G1, CNOT2, CNOT4, RQCD1, CNOT8, PAN2, CNOT1, CNOT10, PABPC1, CNOT7, CNOT6, TNKS1BP1, CNOT6L, PAN3 \\
+REACTOME SMOOTH MUSCLE CONTRACTION & Under-Expressed & 18.70 & ACTA2, ACTG2, CALM1, CALM3, ITGA1, ITGB5, PXN, TPM2, VCL, SORBS1 \\
+REACTOME BOTULINUM NEUROTOXICITY & Over-Expressed &  17.62 & SNAP25, SYT1, STX16, STX11, STX10, STX6, STX12, STX1B \\
+REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1, CYP46A1, CYP39A1 \\
+\hline
+\end{tabular}
+}
+\end{frame}
+
+\begin{frame}{Gene Set Expression Analysis}{ Enrichment approach (GSEA)}
+\centering \includegraphics[width=0.8\textwidth,height=0.4\textheight,keepaspectratio]{genesets1.eps} \\
+        \includegraphics[width=0.8\textwidth,height=0.4\textheight,keepaspectratio]{genesets2.eps}
+\end{frame}
+
+\begin{frame}{Gene Set Expression Analysis}{ Variation  approach (GSVA)}
+   \centering
+        \includegraphics[width=1\textwidth,height=0.8\textheight,keepaspectratio]{ClusteringGSVA.eps}
+
+\end{frame}
+
+
+\begin{frame}{Gene Set Expression Analysis}{ Comparison}
+\centering
+        \includegraphics[width=.7\textwidth,height=0.8\textheight,keepaspectratio]{venn}
+\end{frame}
+
 
 
 
