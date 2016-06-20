@@ -19,8 +19,7 @@
 \affil[$\ast$]{M.Sc. in Bioinformatics at Department of Experimental and Health Sciences (CEXS), Universitat Pompeu Fabra}
 \affil[$\dagger$]{Authors Contributed Equally to this work}
 
-\keywords{prostate cancer; adenocarcinoma; RNA-Seq; paired data.}
-
+\keywords{prostate cancer; adenocarcinoma; RNA-Seq; Functional Enrichment; Gene Set Variation Analysis; Gene Set Enrichment Analysis}
 \runningtitle{GENETICS} % For use in the footer
 
 \correspondingauthor{Auladell-Martin}
@@ -71,7 +70,7 @@ The examination of the RNA counts can be performed in an average laptop. As a li
 
 \includegraphics[width=.7\textwidth]{Clustering.eps}
 
-\caption{\bf Heatmap of sample-to-sample distances. After filtering and pruning our data set the image show the difference of all genes expression in logCPM units. The Clustering have been performed using a Spearman method. We can observe clearly 2 groups corresponding to tumor and normal samples. 
+\caption{ Heatmap of sample-to-sample distances. After filtering and pruning our data set the image show the difference of all genes expression in logCPM units. The Clustering have been performed using a Spearman method. We can observe clearly 2 groups corresponding to tumor and normal samples. 
 }
 \label{fig:Clustering}
 \end{figure*}
@@ -136,7 +135,7 @@ GSVA package \cite{GSVA} was used to define the set expression values. Then, lim
 \begin{figure*}[!h]
 \centering
 \includegraphics[width=\linewidth]{Volcano.eps}
-\caption{\bf Volcano plot representing the DE genes (over-expressed) in the right side and under-expressed in the left side. Axis represent intensity, logFC (2-fold expressed genes) at X-axis, and significance, B (derived from FDRCutoof = 0.001) at Y-axis. Crossing lines represent the threshold by which genes have been minimally accepted. Blue dots are accepted transcripts, red dots are rejected. Most scoring genes are highlighted.
+\caption{Volcano plot representing the DE genes (over-expressed) in the right side and under-expressed in the left side. Axis represent intensity, logFC (2-fold expressed genes) at X-axis, and significance, B (derived from FDRCutoof = 0.001) at Y-axis. Crossing lines represent the threshold by which genes have been minimally accepted. Blue dots are accepted transcripts, red dots are rejected. Most scoring genes are highlighted.
 }
 
 \label{fig:volcano}
@@ -191,7 +190,7 @@ One consideration about the Gene Ontology analysis using hypergeometric tests is
 
 \begin{table*}[!h]
 \centering
-\caption{\bf Gene Ontology enriched terms. Columns present the GO identificator (GOBPID), the associated pvalue, odds ratio magnitude of the result, the Expected count of random hits (ExpCount), actual count (Count), size of the gene set (Size), a brief description (Term) and the hit genes. }
+\caption{Gene Ontology enriched terms. Columns present the GO identificator (GOBPID), the associated pvalue, odds ratio magnitude of the result, the Expected count of random hits (ExpCount), actual count (Count), size of the gene set (Size), a brief description (Term) and the hit genes. }
 \begin{tableminipage}{\textwidth}
 \small
  \begin{tabular}{|l|c|r|r|r|r|r|p{3.4cm}|p{5cm}|}
@@ -213,7 +212,7 @@ One consideration about the Gene Ontology analysis using hypergeometric tests is
 
 \begin{table*}[!h]
 \centering
-\caption{\bf Gene Set Enrichment Analysis terms. Columns present the Gene set names, the relative tumor expression (with relation to cancer samples), its Z-value (score used to rank them) and the genes that are related with it.}
+\caption{Gene Set Enrichment Analysis terms. Columns present the Gene set names, the relative tumor expression (with relation to cancer samples), its Z-value (score used to rank them) and the genes that are related with it.}
 \begin{tableminipage}{\textwidth}
 \small
 \begin{tabular}{|l|c|c|p{6.3cm}|}
@@ -243,7 +242,7 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 \end{figure*}
 
 
-As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in table \ref{tab:GSEAenrichment} meanwhile the results from the Variation approach are shown in figure \ref{fig:ClusteringGSVA}.
+As mentioned above, 2 approaches have been used to detect Differential Expression at gene set level. The results from the enrichment approach are in Table \ref{tab:GSEAenrichment} meanwhile the results from the Variation approach are shown in figure \ref{fig:ClusteringGSVA}.
 
 In the first approach (table \ref{tab:GSEAenrichment}), the top ranked gene set differential expressed is the deanylation of mRNA which is a gene set related to the maturation of transcribed RNA. They are mostly expressed ubiquitously among the human tissues as they play a basic role in protein synthesis. From the selected genes, 4 families sum up their function. EIF4 and CNOT have a role as transcriptional regulators as they are part of the protein complex involved in this process. PAN in the other hand, is important in the stabilization of the mRNA and participates in the binding to the polyA tail. Finally, the TNKS1BP1 is a gene reported as key in nuclear stability of the genome and has also been related to participate in the p53 pathway, which is a known tumor-suppressor. This pathway presents a small over-expression that may indicate a higher rate of protein transcription activity in cancer cells \cite{proteinatlas,uhlen2015tissue}.
 
