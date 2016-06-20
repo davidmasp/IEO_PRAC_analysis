@@ -57,7 +57,7 @@
 % is a graphic format that can be processed by latex or pdflatex,
 % resp., then you can add a logo as follows:
 
-\pgfdeclareimage[height=1cm]{upf-logo}{upf.png}
+\pgfdeclareimage[height=0.8cm]{upf-logo}{upf.png}
 \logo{\pgfuseimage{upf-logo}}
 
 % Delete this, if you do not want the table of contents to pop up at
@@ -97,8 +97,8 @@
 	\pause % The slide will pause after showing the first item
 	\begin{block}{Previous studies}
 		\begin{itemize}
-		\item Other RNA-seq studies have been published, most of them at gene level.
-		\item The TCGA Consortium gathered a big cohort of patients and have performed several tests and sequencing techniques.
+		\item Other RNA-seq studies have been published, but most of them presented an small cohort.
+		\item The TCGA Consortium gathered a big cohort of patients and have performed several tests and sequencing techniques (\cite{Abeshouse2015}).
 		\end{itemize}
 	\end{block}
 \end{frame}
@@ -107,7 +107,7 @@
 
 % You can reveal the parts of a slide one at a time
 % with the \pause command:
-\begin{frame}{Introduction}{TGCA \cite{Abeshouse2015}}
+\begin{frame}{Introduction}{TGCA prostate cancer article}
   \begin{itemize}
   \item<1-> {
     AIM: Create a molecular taxonomy of Prostate Cancer based on 333 tumor samples
@@ -146,8 +146,8 @@
 	
 	\begin{block}{Experimental Design}
 		\begin{itemize}
-			\item Paired design with 50 normal samples vs. 50 tumor samples.
-			\item After trimming, the design consisted of 42 normal samples vs. 42 tumor samples.
+			\item Dataset presented too much samples presenting non-biological/counfounding factors.
+			\item Best option: use paired subset design with 50 normal samples vs. 50 tumor samples.
 		\end{itemize}
 	\end{block}
 
@@ -158,8 +158,8 @@
 	\begin{itemize}
 		\item Normalization with DGE algorithm \cite{Robinson01012010} 20115 genes.
 		\item Filtered transcripts with logCPM \textgreater 1, remaining 11722 genes.
-		\item Batch effect evaluated by patient barcode  (which contains center, site and plate).
-		\item Some samples where deprecated (1:1 ratio) as they disturbed the clustering of groups (mentioned before).
+		\item Batch effect evaluated by patient barcode  (which contains center, tissue source site and plate).
+		\item Some samples where deprecated (1:1 ratio) as they disturbed the clustering of groups (mentioned later).
 		\item Clustering algorithms and HeatMap visualisation were performed to assess possible biases.
 	\end{itemize}
 
@@ -171,12 +171,15 @@
 	
   \begin{tikzpicture}
     \node (img1){\includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{mds2-1.eps}};
+    \pause;
+    \draw[red,thick] (4.8,2.3) circle (1cm);
   \end{tikzpicture}
   
 \end{frame}
 
 \begin{frame}{Methods}{Data Display}
-  \includegraphics[width=\textwidth,height=\textheight,keepaspectratio]{mds4-1.eps}
+  After trimming, the design consisted of 42 normal samples vs. 42 tumor samples.
+  \includegraphics[width=0.8\textwidth,height=0.8\textheight,keepaspectratio]{mds4-1.eps}
 \end{frame}
 
 
@@ -199,7 +202,7 @@
 		\begin{itemize}
 			\item Voom correction (mean-variance correction).
 			\item Surrogate Variables Analysis (SVA) was used \cite{leek2007capturing} \cite{svamanual}. Multiple Linear Regression (MLR)  and MA plots were used to analyse the data \cite{limma}.
-			\item FDR = 0.001.
+			\item FDR = 0.01.
 		\end{itemize}
 	\end{block}
 	\begin{block}{SA: Functional Enrichment}
@@ -288,26 +291,10 @@ GO:0043966 & 0.01 & 3.45 & 13.45 &  20 &  25 & histone H3 acetylation & TRIM16, 
 
 \subsection{Gene Set Expression Analysis}
 
-
-\begin{frame}{Gene Set Expression Analysis}{ Enrichment approach (GSEA)}
-\adjustbox{max width=\textwidth}{
-\begin{tabular}{|l|c|c|p{6.3cm}|}
- \hline
-Gene Set & Relative tumor expression &  Z-value & Genes \\
-  \hline
-REACTOME DEADENYLATION OF MRNA & Over-Expressed  & 19.19 & EIF4A1, EIF4A2, EIF4B, EIF4E, EIF4G1, CNOT2, CNOT4, RQCD1, CNOT8, PAN2, CNOT1, CNOT10, PABPC1, CNOT7, CNOT6, TNKS1BP1, CNOT6L, PAN3 \\
-REACTOME SMOOTH MUSCLE CONTRACTION & Under-Expressed & 18.70 & ACTA2, ACTG2, CALM1, CALM3, ITGA1, ITGB5, PXN, TPM2, VCL, SORBS1 \\
-REACTOME BOTULINUM NEUROTOXICITY & Over-Expressed &  17.62 & SNAP25, SYT1, STX16, STX11, STX10, STX6, STX12, STX1B \\
-REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1, CYP46A1, CYP39A1 \\
-\hline
-\end{tabular}
-}
-\end{frame}
-
 \begin{frame}{Gene Set Expression Analysis}{ Enrichment approach (GSEA)}
   \centering 
-    \includegraphics[width=0.75\textwidth,height=0.35\textheight,keepaspectratio]{genesets1.eps} \\
-    \includegraphics[width=0.75\textwidth,height=0.35\textheight,keepaspectratio]{genesets2.eps}
+    \includegraphics[width=0.7\textwidth,height=0.5\textheight,keepaspectratio]{genesets1.eps} \\
+    \includegraphics[width=0.7\textwidth,height=0.5\textheight,keepaspectratio]{genesets2.eps}
 \end{frame}
 
 \begin{frame}{Gene Set Expression Analysis}{ Variation  approach (GSVA)}
@@ -316,13 +303,14 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 \end{frame}
 
 
-\begin{frame}{Gene Set Expression Analysis}{ Comparison}
-\begin{center}
-    \includegraphics[width=.5\textwidth,height=0.5\textheight,keepaspectratio]{venn}
-    \vskip
-    
-    74\% of GSEA and GSVA results are shared. 
-\end{center}
+\begin{frame}{Gene Set Expression Analysis}{Comparison}
+  \centering
+  \includegraphics[width=0.5\textwidth,height=0.5\textheight,keepaspectratio]{venn}
+  \begin{itemize}
+    \item
+      74\% of GSEA and GSVA results are shared. 
+  \end{itemize}
+
     
 \end{frame}
 
@@ -334,11 +322,11 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 \begin{frame}{Summary}
   \begin{itemize}
   \item
-    The \alert{first main message} of your talk in one or two lines.
+    Detection of DE genes and ontology terms related with neuronal differentiation (EPHA8, SCN5A and GO astrocyte differentiation). 
+  \vspace{10pt}
   \item
-    The \alert{second main message} of your talk in one or two lines.
-  \item
-    Perhaps a \alert{third message}, but not more than that.
+    Overexpression of the Interleukine-6 pathway in tumors that may be related with promoting inflammation in the tumor region. There were other findings realted with typical tumorgenic behavior, such as genomic instability (SNORD89), desregulartion of cholesterol and fatty acids homeostasis (GO:1901571) and insulin growth factor and HER2 pathway signal increment. 
+
   \end{itemize}
   
   \begin{itemize}
@@ -346,9 +334,7 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
     Outlook
     \begin{itemize}
     \item
-      Something you haven't solved. 
-    \item
-      Something else you haven't solved.
+      Further research is needed in following a cancer sub-type approach more than the usual studies.
     \end{itemize}
   \end{itemize}
 \end{frame}
@@ -363,10 +349,16 @@ REACTOME ENDOGENOUS STEROLS & Under-Expressed & 17.54 & CYP8B1, CYP11B1, CYP51A1
 
 \begin{frame}[allowframebreaks]%in case more than 1 slide needed
 \frametitle<presentation>{References}
-    {\footnotesize
+    {\tiny
     \bibliographystyle{unsrt}
     \bibliography{prac-bibliography}
     }
+  \centering
+  Sorry for the long presentation, a DE cock.
+  
+  \vspace{50pt}
+  
+  \includegraphics[width=0.5\textwidth,height=0.5\textheight,keepaspectratio ]{gallinagigante.jpg}
 \end{frame}
 
 
